@@ -42,7 +42,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public ResponseDto updateOrderPayed(Integer user_id) {
+    public ResponseDto updateOrderPayed() {
         return null;
     }
 

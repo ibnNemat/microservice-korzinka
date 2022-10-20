@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 @RequestMapping("/orders")
 public class OrderController {
     private final OrderService orderService;
-    @GetMapping("byPage")
+    @GetMapping("/byPage")
     public ResponseDto<Page<OrderDto>> getAllOrdersByPage(@RequestParam Integer page,
                                                           @RequestParam Integer size) throws NoSuchMethodException {
         ResponseDto<Page<OrderDto>> responseDto = orderService.getAllOrdersByPage(page, size);
@@ -26,5 +26,24 @@ public class OrderController {
         return orderService.getById(id);
     }
 
+    @PostMapping
+    public ResponseDto addOrderIfNotExistUserOrders(@RequestParam Integer productid, @RequestParam Integer amount){
+        return orderService.addOrderIfNotExistUserOrders(productid, amount);
+    }
+
+    @PutMapping("/payedOrder")
+    public ResponseDto updateOrderPayed(){
+        return orderService.updateOrderPayed();
+    }
+
+    @PutMapping
+    public ResponseDto updateOrder(@RequestBody OrderDto orderDto){
+        return orderService.updateOrder(orderDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseDto deleteById(@PathVariable Integer id){
+        return orderService.deleteById(id);
+    }
 
 }

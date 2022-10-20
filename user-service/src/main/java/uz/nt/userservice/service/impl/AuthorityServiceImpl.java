@@ -2,8 +2,7 @@ package uz.nt.userservice.service.impl;
 
 import uz.nt.userservice.repository.AuthorityRepository;
 import uz.nt.userservice.service.AuthorityService;
-import com.example.userservice.service.manualMappers.AuthorityMapper;
-import com.example.userservice.service.manualMappers.UserAuthorityMapper;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import shared.libs.dto.AuthorityDto;

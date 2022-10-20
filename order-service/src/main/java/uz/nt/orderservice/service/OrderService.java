@@ -13,7 +13,7 @@ public interface OrderService {
     ResponseDto<Page<OrderDto>> getAllOrdersByPage(Integer page, Integer size);
     ResponseDto<Page<OrderDto>> responseDtoWithLink(Integer page, Integer size,
                                                     Method method, ResponseDto<Page<OrderDto>> responseDto);
-    ResponseDto updateOrderPayed(Integer user_id);
+    ResponseDto updateOrderPayed();
     ResponseDto updateOrder(OrderDto orderDto);
     ResponseDto deleteById(Integer id);
 }
