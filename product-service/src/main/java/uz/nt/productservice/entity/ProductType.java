@@ -23,9 +23,12 @@ public class ProductType {
     private Integer id;
 
     private String name;
+
     private String barcode;
+
     @OneToMany(mappedBy = "type")
     private List<Product> products;
+
     @ManyToOne
     private Unit unit;
 }

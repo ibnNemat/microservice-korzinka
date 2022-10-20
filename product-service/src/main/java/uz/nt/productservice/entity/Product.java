@@ -19,9 +19,13 @@ public class Product {
     @SequenceGenerator(name = "product_id_seq", sequenceName = "product_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private Integer id;
+
     private String name;
+
     @ManyToOne
     private ProductType type;
+
     private Integer amount;
+
     private Double price;
 }
