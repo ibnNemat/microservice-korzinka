@@ -1,18 +1,19 @@
 package com.example.userservice.service;
 
 import org.springframework.http.ResponseEntity;
+import shared.libs.dto.ResponseDto;
 import shared.libs.dto.UserDto;
 
 import java.util.List;
 
 public interface UserService {
-    ResponseEntity<List<UserDto>> getAllUser();
+    ResponseDto<List<UserDto>> getAllUser();
 
-    ResponseEntity<UserDto> getUserById(Integer id);
+    ResponseDto<UserDto> getUserById(Integer id);
 
-    ResponseEntity deleteUserById(Integer id);
+    ResponseDto deleteUserById(Integer id);
 
-    ResponseEntity updateUser(UserDto userDto);
+    ResponseDto updateUser(UserDto userDto);
 
-    ResponseEntity addUser(UserDto userDto);
+    ResponseDto addUser(UserDto userDto);
 }
