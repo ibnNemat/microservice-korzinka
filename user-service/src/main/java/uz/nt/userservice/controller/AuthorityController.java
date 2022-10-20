@@ -1,7 +1,6 @@
-package com.example.userservice.controller;
+package uz.nt.userservice.controller;
 
-import com.example.userservice.service.AuthorityService;
-import com.example.userservice.service.UserAuthorityService;
+import uz.nt.userservice.service.AuthorityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import shared.libs.dto.AuthorityDto;

@@ -1,4 +1,4 @@
-package com.example.userservice.service;
+package uz.nt.userservice.service;
 
 import shared.libs.dto.AuthorityDto;
 import shared.libs.dto.ResponseDto;

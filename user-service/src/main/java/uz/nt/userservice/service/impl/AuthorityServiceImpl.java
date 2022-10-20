@@ -1,7 +1,7 @@
-package com.example.userservice.service.impl;
+package uz.nt.userservice.service.impl;
 
-import com.example.userservice.repository.AuthorityRepository;
-import com.example.userservice.service.AuthorityService;
+import uz.nt.userservice.repository.AuthorityRepository;
+import uz.nt.userservice.service.AuthorityService;
 import com.example.userservice.service.manualMappers.AuthorityMapper;
 import com.example.userservice.service.manualMappers.UserAuthorityMapper;
 import lombok.RequiredArgsConstructor;

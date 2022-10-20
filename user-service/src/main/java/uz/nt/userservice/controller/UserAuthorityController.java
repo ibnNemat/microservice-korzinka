@@ -1,8 +1,7 @@
-package com.example.userservice.controller;
+package uz.nt.userservice.controller;
 
-import com.example.userservice.service.UserAuthorityService;
+import uz.nt.userservice.service.UserAuthorityService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.web.bind.annotation.*;
 import shared.libs.dto.ResponseDto;
 import shared.libs.dto.UserAuthorityDto;
