@@ -5,6 +5,8 @@ import shared.libs.dto.UnitDto;
 import uz.nt.productservice.entity.ProductType;
 import uz.nt.productservice.entity.Unit;
 
+import java.util.stream.Collectors;
+
 public class ProductTypeMapperImpl {
 
     public static ProductType toEntityWithoutProduct(ProductTypeDto dto){
@@ -32,6 +34,21 @@ public class ProductTypeMapperImpl {
                         .short_name(entity.getUnit().getShort_name())
                         .build())
                 .products(null)
+                .build();
+    }
+
+    public static ProductType toEntity(ProductTypeDto dto){
+        return ProductType.builder()
+                .id(dto.getId())
+                .name(dto.getName())
+                .barcode(dto.getBarcode())
+                .unit(Unit.builder()
+                        .id(dto.getUnit().getId())
+                        .name(dto.getUnit().getName())
+                        .short_name(dto.getUnit().getShort_name())
+                        .build())
+                .products(dto.getProducts().stream()
+                        .map(ProductMapperImpl::toEntityWithoutType).collect(Collectors.toList()))
                 .build();
     }
 }

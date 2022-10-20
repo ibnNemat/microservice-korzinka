@@ -24,4 +24,22 @@ public class ProductMapperImpl {
                 .type(ProductTypeMapperImpl.toDtoWithoutProduct(product.getType()))
                 .build();
     }
+
+    public static ProductDto toDtoWithoutType(Product product){
+        return ProductDto.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .amount(product.getAmount())
+                .price(product.getPrice())
+                .build();
+    }
+
+    public static Product toEntityWithoutType(ProductDto productDto){
+        return Product.builder()
+                .id(productDto.getId())
+                .name(productDto.getName())
+                .amount(productDto.getAmount())
+                .price(productDto.getPrice())
+                .build();
+    }
 }
