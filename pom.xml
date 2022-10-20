@@ -106,8 +106,10 @@
     <dependency>
       <groupId>uz_nt-korzinka</groupId>
       <artifactId>shared-libs</artifactId>
-      <version>My-version 24.08.97</version>
+      <version>1.0.0</version>
     </dependency>
+
+
   </dependencies>
 
 </project>
