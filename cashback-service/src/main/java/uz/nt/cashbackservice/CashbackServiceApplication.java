@@ -1,13 +1,13 @@
-package com.example.orderservice;
+package uz.nt.cashbackservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class OrderServiceApplication {
+public class CashbackServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(OrderServiceApplication.class, args);
+        SpringApplication.run(CashbackServiceApplication.class, args);
     }
 
 }
