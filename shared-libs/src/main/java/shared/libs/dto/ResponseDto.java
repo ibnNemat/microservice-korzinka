@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class ResponseDto<ResponseData> {
     private Integer code;
     private Boolean success;
-    private Integer message;
+    private String message;
     private ResponseData responseData;
 }
