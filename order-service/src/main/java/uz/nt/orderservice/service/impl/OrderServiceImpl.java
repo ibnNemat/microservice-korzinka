@@ -1,5 +1,6 @@
 package uz.nt.orderservice.service.impl;
 
+import org.springframework.hateoas.Link;
 import uz.nt.orderservice.dto.OrderDto;
 import uz.nt.orderservice.dto.ResponseDto;
 import uz.nt.orderservice.repository.OrderRepository;
@@ -9,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+
+import java.lang.reflect.Method;
 
 @Service
 @RequiredArgsConstructor
@@ -28,9 +31,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ResponseDto<Page<OrderDto>> getAllOrders() {
+    public ResponseDto<Page<OrderDto>> getAllOrdersByPage(Integer page, Integer size) {
         return null;
     }
+
+    @Override
+    public ResponseDto<Page<OrderDto>> responseDtoWithLink(Integer page, Integer size, Method method, ResponseDto<Page<OrderDto>> responseDto) {
+        return null;
+    }
+
 
     @Override
     public ResponseDto updateOrderPayed(Integer user_id) {
