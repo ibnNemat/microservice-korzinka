@@ -44,7 +44,6 @@ public class OrderServiceImpl implements OrderService {
             orderRepository.save(order1);
 
             order_id = orderRepository.getMax();
-
         }
 
         orderProductsService.addOrderProducts(order_id, amount, product_id);
@@ -58,7 +57,22 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public ResponseDto<OrderDto> getById(Integer id) {
-        return null;
+        if (orderRepository.existsById(id)){
+            Order order = orderRepository.findById(id).get();
+
+            OrderDto orderDto = orderMapper.toDto(order);
+
+            return ResponseDto.<OrderDto>builder()
+                    .code(200)
+                    .success(true)
+                    .message("OK")
+                    .responseData(orderDto)
+                    .build();
+        }
+        return ResponseDto.<OrderDto>builder()
+                .code(-4)
+                .message("Not found")
+                .build();
     }
 
     @Override
@@ -110,18 +124,61 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public ResponseDto updateOrder(OrderDto orderDto) {
-        return null;
+        try{
+            if (orderRepository.existsById(orderDto.getId())) {
+                Order order = orderRepository.findById(orderDto.getId()).get();
+
+                OrderDto orderDto1 = orderMapper.toDto(order);
+
+                return ResponseDto.builder()
+                        .code(200)
+                        .success(true)
+                        .message("Successfully updated")
+                        .responseData(orderDto1)
+                        .build();
+            }
+
+            return ResponseDto.builder()
+                    .code(-4)
+                    .message("Not found")
+                    .build();
+
+        }catch (Exception e){
+            return ResponseDto.builder()
+                    .code(500)
+                    .message(e.getMessage())
+                    .build();
+        }
     }
 
     @Override
     public ResponseDto deleteById(Integer id) {
-        return null;
+        try{
+            if (orderRepository.existsById(id)) {
+                orderRepository.deleteById(id);
+
+                return ResponseDto.builder()
+                        .code(200)
+                        .success(true)
+                        .message("Successfully deleted")
+                        .build();
+            }
+
+            return ResponseDto.builder()
+                    .code(-4)
+                    .message("Not found")
+                    .build();
+        }catch (Exception e){
+            return ResponseDto.builder()
+                    .code(500)
+                    .message(e.getMessage())
+                    .build();
+        }
     }
 
     @Override
     public ResponseDto payForOrders(Integer user_id, Double account) {
         Integer orderId = orderRepository.getByUser_idAndPayedIsFalse(user_id);
-
         if (orderId == null){
             return ResponseDto.builder()
                     .code(-2343)
@@ -129,6 +186,7 @@ public class OrderServiceImpl implements OrderService {
                     .message("User is not found!")
                     .build();
         }
+
         List<OrderedProductsDetail> orderedProducts = orderProductsService.getOrderedProductsToPayFor(orderId);
 
         Double total_price = 0D;
