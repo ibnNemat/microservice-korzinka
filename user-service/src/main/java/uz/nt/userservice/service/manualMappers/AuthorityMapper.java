@@ -1,19 +1,18 @@
-package com.example.userservice.service.manualMappers;
+package uz.nt.userservice.service.manualMappers;
 
-import com.example.userservice.entity.Authority;
-import com.example.userservice.entity.UserAuthority;
+import org.mapstruct.Mapper;
 import shared.libs.dto.AuthorityDto;
-import shared.libs.dto.UserAuthorityDto;
+import uz.nt.userservice.entity.Authority;
 
 public class AuthorityMapper {
-    public static AuthorityDto toDto(Authority authority){
+    public static AuthorityDto toDto(Authority authority) {
         return AuthorityDto.builder()
                 .id(authority.getId())
                 .permission(authority.getPermission())
                 .build();
     }
 
-    public static Authority toEntity(AuthorityDto authority){
+    public static Authority toEntity(AuthorityDto authority) {
         return Authority.builder()
                 .id(authority.getId())
                 .permission(authority.getPermission())

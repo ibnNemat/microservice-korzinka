@@ -1,9 +1,8 @@
-package com.example.userservice.service.manualMappers;
+package uz.nt.userservice.service.manualMappers;
 
-import com.example.userservice.entity.User;
-import com.example.userservice.entity.UserAuthority;
 import shared.libs.dto.UserAuthorityDto;
 import shared.libs.dto.UserDto;
+import uz.nt.userservice.entity.UserAuthority;
 
 public class UserAuthorityMapper {
     public static UserAuthorityDto toDto(UserAuthority userAuthority){

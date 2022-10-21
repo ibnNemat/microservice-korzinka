@@ -1,4 +1,4 @@
-package com.example.userservice.service;
+package uz.nt.userservice.service;
 
 import org.springframework.http.ResponseEntity;
 import shared.libs.dto.ResponseDto;

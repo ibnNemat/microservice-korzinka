@@ -1,12 +1,11 @@
-package com.example.userservice.controller;
+package uz.nt.userservice.controller;
 
-import com.example.userservice.service.AuthorityService;
-import com.example.userservice.service.UserAuthorityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import shared.libs.dto.AuthorityDto;
 import shared.libs.dto.ResponseDto;
 import shared.libs.dto.UserAuthorityDto;
+import uz.nt.userservice.service.AuthorityService;
 
 import java.util.List;
 

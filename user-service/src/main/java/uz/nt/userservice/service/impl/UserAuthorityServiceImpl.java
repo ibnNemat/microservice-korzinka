@@ -1,73 +1,74 @@
-package com.example.userservice.service.impl;
+package uz.nt.userservice.service.impl;
 
-import com.example.userservice.repository.UserRepository;
-import com.example.userservice.service.UserService;
-import com.example.userservice.service.manualMappers.UserMapper;
+import uz.nt.userservice.repository.UserAuthorityRepository;
+import uz.nt.userservice.service.UserAuthorityService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import shared.libs.dto.ResponseDto;
-import shared.libs.dto.UserDto;
+import shared.libs.dto.UserAuthorityDto;
+import uz.nt.userservice.service.manualMappers.UserAuthorityMapper;
 
 import java.util.List;
 
-@RequiredArgsConstructor
 @Service
-public class UserServiceImpl implements UserService {
+@RequiredArgsConstructor
+public class UserAuthorityServiceImpl implements UserAuthorityService {
 
-    private final UserRepository userRepository;
+    private final UserAuthorityRepository authorityRepository;
 
     @Override
-    public ResponseDto<List<UserDto>> getAllUser() {
+    public ResponseDto<List<UserAuthorityDto>> getAllUserAuthority() {
         try {
-            List<UserDto> users = userRepository.findAll().stream().map(UserMapper::toDto).toList();
-            return ResponseDto.<List<UserDto>>builder()
+            List<UserAuthorityDto> authorityDtos = authorityRepository.findAll().stream().map(UserAuthorityMapper::toDto).toList();
+            return ResponseDto.<List<UserAuthorityDto>>builder()
                     .code(0).success(true).message("OK")
-                    .responseData(users)
+                    .responseData(authorityDtos)
                     .build();
         } catch (Exception o){
             o.printStackTrace();
-            return ResponseDto.<List<UserDto>>builder()
+            return ResponseDto.<List<UserAuthorityDto>>builder()
                     .code(-1).success(false).message("NO")
                     .build();
         }
     }
 
     @Override
-    public ResponseDto<UserDto> getUserById(Integer id) {
+    public ResponseDto<UserAuthorityDto> getUserAuthorityById(Integer id) {
         try {
-            UserDto userDto = userRepository.findById(id).map(UserMapper::toDto).orElseThrow();
+            UserAuthorityDto authorityDto = authorityRepository.findById(id).map(UserAuthorityMapper::toDto).orElseThrow();
 
-            return ResponseDto.<UserDto>builder()
+            return ResponseDto.<UserAuthorityDto>builder()
                     .code(0).success(true).message("OK")
-                    .responseData(userDto)
+                    .responseData(authorityDto)
                     .build();
         } catch (Exception i){
             i.printStackTrace();
-            return ResponseDto.<UserDto>builder()
+            return ResponseDto.<UserAuthorityDto>builder()
                     .code(-1).success(false).message("NO")
                     .build();
         }
     }
 
     @Override
-    public ResponseDto deleteUserById(Integer id) {
+    public ResponseDto deleteUserAuthorityById(Integer id) {
         try {
-            userRepository.deleteById(id);
+            authorityRepository.deleteById(id);
             return ResponseDto.builder()
                     .code(0).success(true).message("OK")
                     .build();
         } catch (Exception i){
             i.printStackTrace();
             return ResponseDto.builder()
-                    .code(-1).success(false).message("NO")
+                    .code(-1).success(false).message("Not work")
                     .build();
         }
     }
 
     @Override
-    public ResponseDto updateUser(UserDto userDto) {
+    public ResponseDto updateUserAuthority(UserAuthorityDto userAuthorityDto) {
         try {
-            userRepository.save(UserMapper.toEntity(userDto));
+            authorityRepository.save(UserAuthorityMapper.toEntity(userAuthorityDto));
             return ResponseDto.builder()
                     .code(0).success(true).message("OK")
                     .build();
@@ -80,9 +81,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseDto addUser(UserDto userDto) {
+    public ResponseDto addUserAuthority(UserAuthorityDto userAuthorityDto) {
         try {
-            userRepository.save(UserMapper.toEntity(userDto));
+            authorityRepository.save(UserAuthorityMapper.toEntity(userAuthorityDto));
             return ResponseDto.builder()
                     .code(0).success(true).message("OK")
                     .build();
