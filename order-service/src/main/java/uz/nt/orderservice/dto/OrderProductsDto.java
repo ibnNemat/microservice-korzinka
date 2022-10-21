@@ -11,6 +11,6 @@ import shared.libs.dto.ProductDto;
 public class OrderProductsDto {
     private Integer id;
     private Integer order_id;
-    private ProductDto user;
+    private Integer product_id;
     private Integer amount;
 }

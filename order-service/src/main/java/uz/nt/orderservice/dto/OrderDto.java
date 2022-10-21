@@ -14,7 +14,7 @@ import java.sql.Date;
 @NoArgsConstructor
 public class OrderDto {
     private Integer id;
-    private UserDto user;
+    private Integer user_id;
     private Boolean payed;
     private Date created_at;
 }
