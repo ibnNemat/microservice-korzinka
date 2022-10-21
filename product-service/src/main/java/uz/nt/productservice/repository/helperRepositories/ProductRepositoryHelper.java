@@ -1,4 +1,4 @@
-package uz.nt.orderservice.repository.helperRepository;
+package uz.nt.productservice.repository.helperRepositories;
 import org.springframework.stereotype.Repository;
 import uz.nt.productservice.entity.Product;
 

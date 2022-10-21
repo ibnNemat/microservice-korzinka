@@ -3,11 +3,13 @@ package uz.nt.productservice.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import shared.libs.dto.ProductDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.productservice.entity.Product;
 import uz.nt.productservice.repository.ProductRepository;
+import uz.nt.productservice.repository.helperRepositories.ProductRepositoryHelper;
 import uz.nt.productservice.service.ProductService;
 import uz.nt.productservice.service.mapper.ProductMapper;
 import uz.nt.productservice.service.mapper.impl.ProductMapperImpl;
@@ -24,10 +26,12 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductMapper productMapper;
 
+    private final ProductRepositoryHelper productRepositoryHelper;
+
     public ResponseDto<ProductDto> add(ProductDto productDto){
         if(productRepository.existsByName(productDto.getName())){
             return ResponseDto.<ProductDto>builder()
-                    .code(-1).success(false).message("Product is all ready exists.").build();
+                    .code(-1).success(false).message("Product is already exists.").build();
         }
         Product entity = productMapper.toEntity(productDto);
         productRepository.save(entity);
@@ -93,4 +97,17 @@ public class ProductServiceImpl implements ProductService {
         return false;
     }
 
+    @Scheduled(cron = "30 30 23 * * *")
+    @Override
+    public ResponseDto<List<ProductDto>> getTopProductsThatOrderALot() {
+        List<Product> productList = productRepositoryHelper.getTopOrderedProducts();
+
+        List<ProductDto> productDtoList = productList.stream().map(ProductMapperImpl::toDto).toList();
+        return ResponseDto.<List<ProductDto>>builder()
+                .code(200)
+                .success(true)
+                .message("OK")
+                .responseData(productDtoList)
+                .build();
+    }
 }

@@ -7,6 +7,8 @@ import shared.libs.dto.ProductDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.productservice.service.impl.ProductServiceImpl;
 
+import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -19,12 +21,6 @@ public class ProductController {
     public ResponseDto<ProductDto> add(@RequestBody ProductDto productDto){
         return productService.add(productDto);
     }
-
-//    @GetMapping("/all")
-//    public ResponseDto<List<ProductDto>> all(){
-//        return productService.all();
-//    }
-//
 
     @GetMapping("/pagination")
     public ResponseDto<Page<ProductDto>> pagination(@RequestParam(required = false) Integer page,
@@ -42,4 +38,5 @@ public class ProductController {
     public void delete(@PathVariable Integer id){
         productService.delete(id);
     }
+
 }
