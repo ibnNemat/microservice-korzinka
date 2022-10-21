@@ -9,11 +9,10 @@ import shared.libs.dto.UserAuthorityDto;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user_authority")
+@RequestMapping("/user-authority")
 @RequiredArgsConstructor
 public class UserAuthorityController {
     private final UserAuthorityService authorityService;
-
 
     @GetMapping
     public ResponseDto<List<UserAuthorityDto>> getAll(){
