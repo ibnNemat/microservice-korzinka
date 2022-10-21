@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import java.lang.reflect.Method;
 
 public interface OrderService {
-    ResponseDto addOrderIfNotExistUserOrders(Integer product_id, Integer amount);
+    ResponseDto addOrderIfNotExistUserOrders(Integer user_id, Integer product_id, Integer amount);
     ResponseDto<OrderDto> getById(Integer id);
     ResponseDto<Page<OrderDto>> getAllOrdersByPage(Integer page, Integer size);
     ResponseDto<Page<OrderDto>> responseDtoWithLink(Integer page, Integer size,

@@ -30,8 +30,8 @@ public class OrderServiceImpl implements OrderService {
     private final OrderProductsService orderProductsService;
 
     @Override
-    public ResponseDto addOrderIfNotExistUserOrders(Integer product_id, Integer amount) {
-        Optional<Order> optionalOrder = orderRepository.findUserOrderByUserIdWherePayedIsFalse(1);
+    public ResponseDto addOrderIfNotExistUserOrders(Integer user_id, Integer product_id, Integer amount) {
+        Optional<Order> optionalOrder = orderRepository.findUserOrderByUserIdWherePayedIsFalse(user_id);
         int order_id;
 
         if (optionalOrder.isPresent()){

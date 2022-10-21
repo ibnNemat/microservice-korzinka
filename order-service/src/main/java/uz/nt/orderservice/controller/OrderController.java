@@ -27,8 +27,9 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseDto addOrderIfNotExistUserOrders(@RequestParam Integer productid, @RequestParam Integer amount){
-        return orderService.addOrderIfNotExistUserOrders(productid, amount);
+    public ResponseDto addOrderIfNotExistUserOrders(
+            @RequestParam Integer user_id, @RequestParam Integer product_id, @RequestParam Integer amount){
+        return orderService.addOrderIfNotExistUserOrders(user_id, product_id, amount);
     }
 
     @PutMapping
