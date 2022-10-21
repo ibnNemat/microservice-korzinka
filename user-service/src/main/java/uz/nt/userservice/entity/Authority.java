@@ -12,12 +12,12 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Data
 @Builder
-public class UserAuthority {
+public class Authority {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_authority_id_seq")
-    @SequenceGenerator(name = "user_authority_id_seq", sequenceName = "user_authority_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "authority_seq_id")
+    @SequenceGenerator(name = "authority_seq_id", sequenceName = "authority_seq_id", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private Integer id;
-    private Integer user_id;
-    private Integer authority_id;
+
+    private String permission;
 }

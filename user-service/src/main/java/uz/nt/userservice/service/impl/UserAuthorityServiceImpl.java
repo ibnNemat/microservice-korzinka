@@ -1,55 +1,57 @@
 package uz.nt.userservice.service.impl;
+
+import uz.nt.userservice.repository.UserAuthorityRepository;
+import uz.nt.userservice.service.UserAuthorityService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import shared.libs.dto.AuthorityDto;
 import shared.libs.dto.ResponseDto;
 import shared.libs.dto.UserAuthorityDto;
-import uz.nt.userservice.repository.AuthorityRepository;
-import uz.nt.userservice.service.AuthorityService;
-import uz.nt.userservice.service.manualMappers.AuthorityMapper;
+import uz.nt.userservice.service.manualMappers.UserAuthorityMapper;
 
 import java.util.List;
+
 @Service
 @RequiredArgsConstructor
-public class AuthorityServiceImpl implements AuthorityService {
+public class UserAuthorityServiceImpl implements UserAuthorityService {
 
-    private final AuthorityRepository authorityRepository;
+    private final UserAuthorityRepository authorityRepository;
 
     @Override
-    public ResponseDto<List<AuthorityDto>> getAllAuthority() {
+    public ResponseDto<List<UserAuthorityDto>> getAllUserAuthority() {
         try {
-            List<AuthorityDto> authorityDtos = authorityRepository.findAll().stream().map(AuthorityMapper::toDto).toList();
-            return ResponseDto.<List<AuthorityDto>>builder()
+            List<UserAuthorityDto> authorityDtos = authorityRepository.findAll().stream().map(UserAuthorityMapper::toDto).toList();
+            return ResponseDto.<List<UserAuthorityDto>>builder()
                     .code(0).success(true).message("OK")
                     .responseData(authorityDtos)
                     .build();
         } catch (Exception o){
             o.printStackTrace();
-            return ResponseDto.<List<AuthorityDto>>builder()
+            return ResponseDto.<List<UserAuthorityDto>>builder()
                     .code(-1).success(false).message("NO")
                     .build();
         }
     }
 
     @Override
-    public ResponseDto<AuthorityDto> getAuthorityById(Integer id) {
+    public ResponseDto<UserAuthorityDto> getUserAuthorityById(Integer id) {
         try {
-            AuthorityDto authorityDto = authorityRepository.findById(id).map(AuthorityMapper::toDto).orElseThrow();
+            UserAuthorityDto authorityDto = authorityRepository.findById(id).map(UserAuthorityMapper::toDto).orElseThrow();
 
-            return ResponseDto.<AuthorityDto>builder()
+            return ResponseDto.<UserAuthorityDto>builder()
                     .code(0).success(true).message("OK")
                     .responseData(authorityDto)
                     .build();
         } catch (Exception i){
             i.printStackTrace();
-            return ResponseDto.<AuthorityDto>builder()
+            return ResponseDto.<UserAuthorityDto>builder()
                     .code(-1).success(false).message("NO")
                     .build();
         }
     }
 
     @Override
-    public ResponseDto deleteAuthorityById(Integer id) {
+    public ResponseDto deleteUserAuthorityById(Integer id) {
         try {
             authorityRepository.deleteById(id);
             return ResponseDto.builder()
@@ -64,9 +66,9 @@ public class AuthorityServiceImpl implements AuthorityService {
     }
 
     @Override
-    public ResponseDto updateAuthority(AuthorityDto authorityDto) {
+    public ResponseDto updateUserAuthority(UserAuthorityDto userAuthorityDto) {
         try {
-            authorityRepository.save(AuthorityMapper.toEntity(authorityDto));
+            authorityRepository.save(UserAuthorityMapper.toEntity(userAuthorityDto));
             return ResponseDto.builder()
                     .code(0).success(true).message("OK")
                     .build();
@@ -79,9 +81,9 @@ public class AuthorityServiceImpl implements AuthorityService {
     }
 
     @Override
-    public ResponseDto addAuthority(AuthorityDto authorityDto) {
+    public ResponseDto addUserAuthority(UserAuthorityDto userAuthorityDto) {
         try {
-            authorityRepository.save(AuthorityMapper.toEntity(authorityDto));
+            authorityRepository.save(UserAuthorityMapper.toEntity(userAuthorityDto));
             return ResponseDto.builder()
                     .code(0).success(true).message("OK")
                     .build();
