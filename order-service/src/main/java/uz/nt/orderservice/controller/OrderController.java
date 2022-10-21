@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import shared.libs.dto.ResponseDto;
 import uz.nt.orderservice.dto.OrderDto;
+
 import uz.nt.orderservice.service.OrderService;
 import java.lang.reflect.Method;
 
@@ -12,7 +13,7 @@ import java.lang.reflect.Method;
 @RequestMapping("/orders")
 public class OrderController {
     private final OrderService orderService;
-    @GetMapping("/byPage")
+    @GetMapping("by-page")
     public ResponseDto<Page<OrderDto>> getAllOrdersByPage(@RequestParam Integer page,
                                                           @RequestParam Integer size) throws NoSuchMethodException {
         ResponseDto<Page<OrderDto>> responseDto = orderService.getAllOrdersByPage(page, size);

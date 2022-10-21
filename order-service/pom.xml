@@ -18,6 +18,12 @@
     <dependencies>
         <dependency>
             <groupId>uz_nt-korzinka</groupId>
+            <artifactId>shared-libs</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uz_nt-korzinka</groupId>
             <artifactId>product-service</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>

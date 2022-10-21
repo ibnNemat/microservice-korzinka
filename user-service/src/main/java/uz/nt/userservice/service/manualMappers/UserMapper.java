@@ -1,7 +1,7 @@
 package uz.nt.userservice.service.manualMappers;
 
-import com.example.userservice.entity.User;
 import shared.libs.dto.UserDto;
+import uz.nt.userservice.entity.User;
 
 public class UserMapper {
     public static UserDto toDto(User user){

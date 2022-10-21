@@ -29,4 +29,12 @@
         <java.version>19</java.version>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>uz_nt-korzinka</groupId>
+            <artifactId>shared-libs</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    </dependencies>
+
 </project>

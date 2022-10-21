@@ -10,7 +10,7 @@ import uz.nt.userservice.service.AuthorityService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user_authority")
+@RequestMapping("/authority")
 @RequiredArgsConstructor
 public class AuthorityController {
     private final AuthorityService authorityService;
