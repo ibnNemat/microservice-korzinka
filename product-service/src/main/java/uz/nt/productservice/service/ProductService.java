@@ -17,4 +17,6 @@ public interface ProductService {
     ResponseDto<ProductDto> oneById(Integer id);
 
     void delete(Integer id);
+
+    Boolean updateAmount(Integer product_id, Integer amount);
 }

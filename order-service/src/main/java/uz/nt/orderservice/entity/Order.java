@@ -21,9 +21,8 @@ public class Order {
     @SequenceGenerator(name = "order_id_seq", sequenceName = "order_id_seq", allocationSize = 1)
     @Column(name = "id")
     private Integer id;
-    @ManyToOne
-    private User user;
+    private Integer user_id;
     private Boolean payed;
+    @Column(columnDefinition = "date default current date")
     private Date created_at;
-
 }

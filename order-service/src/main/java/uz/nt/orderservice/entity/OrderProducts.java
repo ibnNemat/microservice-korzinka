@@ -21,8 +21,7 @@ public class OrderProducts {
     @SequenceGenerator(name = "order_products_id_seq", sequenceName = "order_products_id_seq", allocationSize = 1)
     @Column(name = "id")
     private Integer id;
-    @ManyToOne
-    private Order order;
+    private Integer order_id;
     @ManyToOne
     private Product user;
     private Integer amount;

@@ -83,4 +83,14 @@ public class ProductServiceImpl implements ProductService {
         productRepository.deleteById(id);
     }
 
+    @Override
+    public Boolean updateAmount(Integer product_id, Integer amount) {
+        Integer num = productRepository.getByIdAndAmount(product_id, amount);
+        if (num != null){
+            productRepository.subtractProductAmount(product_id, amount);
+            return true;
+        }
+        return false;
+    }
+
 }

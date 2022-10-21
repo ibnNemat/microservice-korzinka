@@ -2,8 +2,8 @@ package uz.nt.orderservice.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import shared.libs.dto.ResponseDto;
 import uz.nt.orderservice.dto.OrderDto;
-import uz.nt.orderservice.dto.ResponseDto;
 import uz.nt.orderservice.service.OrderService;
 import java.lang.reflect.Method;
 
@@ -29,11 +29,6 @@ public class OrderController {
     @PostMapping
     public ResponseDto addOrderIfNotExistUserOrders(@RequestParam Integer productid, @RequestParam Integer amount){
         return orderService.addOrderIfNotExistUserOrders(productid, amount);
-    }
-
-    @PutMapping("/payedOrder")
-    public ResponseDto updateOrderPayed(){
-        return orderService.updateOrderPayed();
     }
 
     @PutMapping
