@@ -145,7 +145,8 @@ public class OrderServiceImpl implements OrderService {
         }
 
         orderRepository.updateOrderPayed(user_id);
-//        UserService.updateUserAccount(user_id, total_price);
+
+//        userService.updateUserAccount(user_id, total_price);
         return ResponseDto.builder()
                 .code(200)
                 .success(true)
