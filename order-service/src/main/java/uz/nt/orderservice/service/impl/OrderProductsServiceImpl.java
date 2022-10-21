@@ -8,7 +8,6 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
 import shared.libs.dto.ResponseDto;
-import uz.nt.orderservice.dto.OrderDto;
 import uz.nt.orderservice.dto.OrderProductsDto;
 import uz.nt.orderservice.dto.OrderedProductsDetail;
 import uz.nt.orderservice.entity.OrderProducts;
@@ -16,7 +15,6 @@ import uz.nt.orderservice.repository.OrderProductsRepository;
 import uz.nt.orderservice.repository.helperRepository.OrderProductRepositoryHelper;
 import uz.nt.orderservice.service.OrderProductsService;
 import uz.nt.orderservice.service.mapper.OrderProductsMapper;
-import uz.nt.productservice.entity.Product;
 import uz.nt.productservice.service.ProductService;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -36,9 +34,7 @@ public class OrderProductsServiceImpl implements OrderProductsService {
         Boolean isProductEnough = productService.updateAmount(product_id, amount);
 
         if(isProductEnough){
-            Product product = new Product();
-            product.setId(product_id);
-            OrderProducts orderProduct = new OrderProducts(null, order_id, product, amount);
+            OrderProducts orderProduct = new OrderProducts(null, order_id, product_id, amount);
             orderProductsRepository.save(orderProduct);
 
             return ResponseDto.builder()

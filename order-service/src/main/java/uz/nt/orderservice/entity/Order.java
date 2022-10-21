@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import shared.libs.dto.UserDto;
-import uz.nt.userservice.entity.User;
+
 
 import javax.persistence.*;
 import java.sql.Date;

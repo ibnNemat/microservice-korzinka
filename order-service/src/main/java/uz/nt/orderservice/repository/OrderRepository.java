@@ -20,7 +20,5 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     @Query("select o.id from Order o where o.payed = false")
     List<Integer> getIdByPayedFalse();
 
-    boolean existsByUser_idAndPayedIsFalse(Integer user_id);
-
     Integer getByUser_idAndPayedIsFalse(Integer user_id);
 }
