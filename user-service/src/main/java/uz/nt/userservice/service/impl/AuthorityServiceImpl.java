@@ -5,7 +5,7 @@ import shared.libs.dto.AuthorityDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.userservice.repository.AuthorityRepository;
 import uz.nt.userservice.service.AuthorityService;
-import uz.nt.userservice.service.manualMappers.AuthorityMapper;
+import uz.nt.userservice.service.mapper.AuthorityMapper;
 
 import java.util.List;
 @Service

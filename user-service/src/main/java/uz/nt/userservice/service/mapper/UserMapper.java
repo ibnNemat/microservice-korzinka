@@ -1,4 +1,4 @@
-package uz.nt.userservice.service.manualMappers;
+package uz.nt.userservice.service.mapper;
 
 import shared.libs.dto.UserDto;
 import uz.nt.userservice.entity.User;

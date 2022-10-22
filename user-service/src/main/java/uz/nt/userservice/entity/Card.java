@@ -22,7 +22,7 @@ public class Card {
     private Integer id;
     @ManyToOne
     private User user;
-    private CardTyp cardType;
+    private CardType cardType;
     private String cardNumber;
     private Date validDate;
     private Double account;
