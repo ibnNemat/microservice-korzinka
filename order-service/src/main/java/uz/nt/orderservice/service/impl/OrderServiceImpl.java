@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import uz.nt.userservice.service.UserService;
+
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
@@ -28,9 +30,12 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
     private final OrderProductsService orderProductsService;
+    private final UserService userService;
 
     @Override
-    public ResponseDto addOrderIfNotExistUserOrders(Integer user_id, Integer product_id, Integer amount) {
+    public ResponseDto addOrderIfNotExistUserOrders(Integer product_id, Integer amount) {
+        Integer user_id = 1;
+
         Optional<Order> optionalOrder = orderRepository.findUserOrderByUserIdWherePayedIsFalse(user_id);
         int order_id;
 
@@ -177,7 +182,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ResponseDto payForOrders(Integer user_id, Double account) {
+    public ResponseDto payForOrders(Integer card_id) {
+        Integer user_id = 1;
+        Double account =
+
+
         Integer orderId = orderRepository.getByUser_idAndPayedIsFalse(user_id);
         if (orderId == null){
             return ResponseDto.builder()

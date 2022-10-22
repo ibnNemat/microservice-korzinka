@@ -2,11 +2,7 @@ package uz.nt.userservice.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import shared.libs.dto.ResponseDto;
 import shared.libs.dto.UserDto;
-import uz.nt.userservice.service.UserService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/user")

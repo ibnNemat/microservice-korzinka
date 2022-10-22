@@ -1,6 +1,5 @@
 package uz.nt.productservice.service;
 
-import org.apache.catalina.LifecycleState;
 import org.springframework.data.domain.Page;
 import shared.libs.dto.ProductTypeDto;
 import shared.libs.dto.ResponseDto;

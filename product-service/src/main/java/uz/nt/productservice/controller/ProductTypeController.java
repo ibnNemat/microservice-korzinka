@@ -7,8 +7,6 @@ import shared.libs.dto.ProductTypeDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.productservice.service.ProductTypeService;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/product-type")

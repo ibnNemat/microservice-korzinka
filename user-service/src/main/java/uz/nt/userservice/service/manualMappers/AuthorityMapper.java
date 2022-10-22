@@ -1,6 +1,5 @@
 package uz.nt.userservice.service.manualMappers;
 
-import org.mapstruct.Mapper;
 import shared.libs.dto.AuthorityDto;
 import uz.nt.userservice.entity.Authority;
 

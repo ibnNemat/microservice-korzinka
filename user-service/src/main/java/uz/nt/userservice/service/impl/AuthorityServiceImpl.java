@@ -3,7 +3,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import shared.libs.dto.AuthorityDto;
 import shared.libs.dto.ResponseDto;
-import shared.libs.dto.UserAuthorityDto;
 import uz.nt.userservice.repository.AuthorityRepository;
 import uz.nt.userservice.service.AuthorityService;
 import uz.nt.userservice.service.manualMappers.AuthorityMapper;

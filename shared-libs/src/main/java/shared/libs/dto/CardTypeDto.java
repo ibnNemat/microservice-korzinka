@@ -1,4 +1,5 @@
-package uz.nt.orderservice.dto;
+package shared.libs.dto;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,9 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderProductsDto {
+public class CardTypeDto {
     private Integer id;
-    private Integer order_id;
-    private Integer product_id;
-    private Integer amount;
+    private String name;
 }

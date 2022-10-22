@@ -1,6 +1,5 @@
 package uz.nt.userservice.service;
 
-import org.springframework.http.ResponseEntity;
 import shared.libs.dto.ResponseDto;
 import shared.libs.dto.UserDto;
 
@@ -16,4 +15,5 @@ public interface UserService {
     ResponseDto updateUser(UserDto userDto);
 
     ResponseDto addUser(UserDto userDto);
+
 }
