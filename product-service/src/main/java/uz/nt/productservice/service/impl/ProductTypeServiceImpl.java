@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import shared.libs.dto.ProductDto;
 import shared.libs.dto.ProductTypeDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.productservice.entity.ProductType;

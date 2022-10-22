@@ -4,9 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import shared.libs.dto.ProductDto;
-import shared.libs.dto.UnitDto;
-
 import javax.persistence.*;
 import java.util.List;
 

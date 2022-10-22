@@ -7,7 +7,6 @@ import uz.nt.productservice.entity.Product;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
-
     boolean existsByName(String name);
 
     @Query("select p.id from Product p where p.id = ?2 and p.amount >= ?1")

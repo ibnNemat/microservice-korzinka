@@ -11,6 +11,7 @@
         <option value="$PROJECT_DIR$/order-service/pom.xml" />
         <option value="$PROJECT_DIR$/delivery-service/pom.xml" />
         <option value="$PROJECT_DIR$/shared-libs/pom.xml" />
+        <option value="$PROJECT_DIR$/cloud-config-server/pom.xml" />
       </list>
     </option>
   </component>

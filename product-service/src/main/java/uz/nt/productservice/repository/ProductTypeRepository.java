@@ -6,6 +6,5 @@ import uz.nt.productservice.entity.ProductType;
 
 @Repository
 public interface ProductTypeRepository extends JpaRepository<ProductType, Integer> {
-
     boolean existsByName(String name);
 }
