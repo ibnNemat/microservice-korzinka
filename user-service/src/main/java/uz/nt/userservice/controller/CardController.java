@@ -2,8 +2,8 @@ package uz.nt.userservice.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import shared.libs.dto.CardDto;
 import shared.libs.dto.ResponseDto;
+import uz.nt.userservice.dto.CardDto;
 import uz.nt.userservice.service.CardService;
 import uz.nt.userservice.service.impl.CardServiceImpl;
 
