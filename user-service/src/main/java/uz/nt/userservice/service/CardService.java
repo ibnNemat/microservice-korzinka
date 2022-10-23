@@ -6,12 +6,12 @@ import java.util.List;
 
 public interface CardService {
     ResponseDto<List<CardDto>> getAllCards();
-
-    ResponseDto<CardDto> getCardById(Integer id);
+    ResponseDto<List<CardDto>> getCardsByUserId(Integer user_id);
+    ResponseDto<CardDto> getCardById(Integer card_id);
 
     ResponseDto deleteCardById(Integer id);
 
-    ResponseDto updateCard(CardTypeDto cardTypeDto);
+    ResponseDto updateCard(CardDto cardDto);
 
     ResponseDto addCard(CardDto cardDto);
 }

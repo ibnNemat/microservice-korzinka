@@ -3,6 +3,7 @@ package uz.nt.orderservice.service;
 import org.springframework.data.domain.Page;
 import shared.libs.dto.ResponseDto;
 import uz.nt.orderservice.dto.OrderDto;
+import uz.nt.orderservice.dto.PaymentDetails;
 
 import java.lang.reflect.Method;
 
@@ -15,5 +16,5 @@ public interface OrderService {
     ResponseDto updateOrder(OrderDto orderDto);
     ResponseDto deleteById(Integer id);
 
-    ResponseDto payForOrders(Integer card_id);
+    ResponseDto payForOrders(PaymentDetails paymentDetails);
 }

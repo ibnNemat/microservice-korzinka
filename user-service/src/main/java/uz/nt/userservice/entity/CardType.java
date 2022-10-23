@@ -4,8 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Data
@@ -19,4 +22,7 @@ public class CardType {
     @SequenceGenerator(name = "card_type_id_seq", sequenceName = "card_type_id_seq", allocationSize = 1)
     private Integer id;
     private String name;
+    @OneToMany(mappedBy = "cardType")
+    @Fetch(FetchMode.SUBSELECT)
+    private List<Card> cards;
 }

@@ -22,12 +22,12 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="cashback-service" options="-parameters" />
-      <module name="cloud-config-server" options="-parameters" />
-      <module name="delivery-service" options="-parameters" />
-      <module name="order-service" options="-parameters" />
-      <module name="product-service" options="-parameters" />
-      <module name="shared-libs" options="-parameters" />
+      <module name="cashback-service" options="" />
+      <module name="cloud-config-server" options="" />
+      <module name="delivery-service" options="" />
+      <module name="order-service" options="" />
+      <module name="product-service" options="" />
+      <module name="shared-libs" options="" />
       <module name="user-service" options="-parameters" />
     </option>
   </component>
