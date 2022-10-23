@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import shared.libs.configuration.Config;
 import shared.libs.dto.JWTResponseDto;
 import shared.libs.dto.ResponseDto;
+import shared.libs.security.JwtService;
 import uz.nt.userservice.dto.LoginDto;
 import uz.nt.userservice.dto.UserDto;
 import shared.libs.utils.DateUtil;
@@ -32,7 +33,7 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
     private final UserMapper userMapper;
     public static Map<Integer, UserDto> usersMap = new HashMap<>();
     private final PasswordEncoder passwordEncoder = Config.passwordEncoder();
-
+    private final JwtService jwtService = JwtService.getInstance();
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
