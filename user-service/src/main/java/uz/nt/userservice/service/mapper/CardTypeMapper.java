@@ -8,6 +8,6 @@ import uz.nt.userservice.entity.CardType;
 
 @Mapper(componentModel = "spring")
 public interface CardTypeMapper {
-    CardType toEntity(CardDto cardDto);
-    CardTypeDto toDto(Card card);
+    CardType toEntity(CardTypeDto cardTypeDto);
+    CardTypeDto toDto(CardType cardType);
 }
