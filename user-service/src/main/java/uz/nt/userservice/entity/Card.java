@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import shared.libs.dto.CardTypeDto;
-import shared.libs.dto.UserDto;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.Date;
+
+
 @Entity
 @Data
 @Builder

@@ -1,13 +1,13 @@
-package uz.nt.cashbackservice;
+package uz.nt.Localbackservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class CashbackServiceApplication {
+public class LocalbackServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(CashbackServiceApplication.class, args);
+        SpringApplication.run(LocalbackServiceApplication.class, args);
     }
 
 }

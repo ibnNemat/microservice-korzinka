@@ -184,7 +184,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ResponseDto payForOrders(Integer card_id) {
         Integer user_id = 1;
-        Double account =
+        Double account = 2.5;
 
 
         Integer orderId = orderRepository.getByUser_idAndPayedIsFalse(user_id);
