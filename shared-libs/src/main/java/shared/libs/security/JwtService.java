@@ -9,8 +9,18 @@ import shared.libs.utils.DateUtil;
 
 import java.util.Date;
 
-@Component
 public class JwtService {
+    private static JwtService jwtService;
+
+    public static JwtService getInstance(){
+        if (jwtService != null){
+            return jwtService;
+        }
+
+        jwtService = new JwtService();
+        return jwtService;
+    }
+
     @Value("${spring.security.key}")
     private String key;
 
