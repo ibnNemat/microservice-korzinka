@@ -12,7 +12,7 @@ import java.sql.Date;
 public class PaymentHistoryDto {
     private Integer id;
     private Integer user_id;
-    private String card_id;
+    private Integer card_id;
     private Double total_price;
     private String status;
     private String description;

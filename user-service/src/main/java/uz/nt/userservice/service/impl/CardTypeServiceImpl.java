@@ -3,7 +3,7 @@ package uz.nt.userservice.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import shared.libs.dto.CardTypeDto;
+import uz.nt.userservice.dto.CardTypeDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.userservice.service.CardTypeService;
 
