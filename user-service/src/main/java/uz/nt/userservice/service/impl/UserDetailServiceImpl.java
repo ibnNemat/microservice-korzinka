@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -112,22 +113,44 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public ResponseDto<List<UserDto>> getAllUser() {
-        return null;
+        List<UserDto> list =userRepository.findAll().stream().map(userMapper::toDto).collect(Collectors.toList());
+        return ResponseDto.<List<UserDto>>builder()
+                .code(0)
+                .success(true)
+                .message("Ok")
+                .responseData(list)
+                .build();
     }
 
     @Override
     public ResponseDto<UserDto> getUserById(Integer id) {
-        return null;
+        User user = userRepository.findById(id).get();
+        return ResponseDto.<UserDto>builder()
+                .code(0)
+                .success(true)
+                .message("Ok")
+                .responseData(userMapper.toDto(user))
+                .build();
     }
 
     @Override
     public ResponseDto deleteUserById(Integer id) {
-        return null;
+        userRepository.deleteById(id);
+        return ResponseDto.builder()
+                .code(0)
+                .success(true)
+                .message("Ok")
+                .build();
     }
 
     @Override
     public ResponseDto updateUser(UserDto userDto) {
-        return null;
+        userRepository.save(userMapper.toEntity(userDto));
+        return ResponseDto.builder()
+                .code(0)
+                .success(true)
+                .message("Ok")
+                .build();
     }
 
 }
