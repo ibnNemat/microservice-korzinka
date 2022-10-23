@@ -1,11 +1,8 @@
 package uz.nt.userservice.entity;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import shared.libs.dto.CardTypeDto;
-import shared.libs.dto.UserDto;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -22,7 +19,9 @@ public class Card {
     private Integer id;
     @ManyToOne
     private User user;
-    private CardTyp cardType;
+    @ManyToOne
+    @JoinColumn(name = "card_type")
+    private CardType cardType;
     private String cardNumber;
     private Date validDate;
     private Double account;
