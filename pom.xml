@@ -11,7 +11,7 @@
   <artifactId>uz_nt-korzinka</artifactId>
   <version>1.0-SNAPSHOT</version>
   <name>Archetype - uz_nt-korzinka</name>
-  <url>http://maven.apache.org</url>
+  <url>https://maven.apache.org</url>
 
   <packaging>pom</packaging>
   <modules>
@@ -35,6 +35,7 @@
       <artifactId>postgresql</artifactId>
       <scope>runtime</scope>
     </dependency>
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-devtools</artifactId>
@@ -89,13 +90,13 @@
     <dependency>
       <groupId>org.mapstruct</groupId>
       <artifactId>mapstruct</artifactId>
-      <version>1.5.2.Final</version>
+      <version>1.5.3.Final</version>
     </dependency>
 
     <dependency>
       <groupId>org.mapstruct</groupId>
       <artifactId>mapstruct-processor</artifactId>
-      <version>1.4.2.Final</version>
+      <version>1.5.3.Final</version>
     </dependency>
 
     <dependency>
