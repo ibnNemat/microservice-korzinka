@@ -1,7 +1,9 @@
 package uz.nt.userservice.service;
 
+import shared.libs.dto.JWTResponseDto;
 import shared.libs.dto.ResponseDto;
-import shared.libs.dto.UserDto;
+import uz.nt.userservice.dto.LoginDto;
+import uz.nt.userservice.dto.UserDto;
 
 import java.util.List;
 
@@ -15,5 +17,6 @@ public interface UserService {
     ResponseDto updateUser(UserDto userDto);
 
     ResponseDto addUser(UserDto userDto);
-
+    ResponseDto<JWTResponseDto> login(LoginDto loginDto);
+    ResponseDto<UserDto> checkToken(String token);
 }

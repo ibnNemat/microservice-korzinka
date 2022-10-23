@@ -1,8 +1,7 @@
 package uz.nt.userservice.service;
 
 import shared.libs.dto.ResponseDto;
-import shared.libs.dto.UserAuthorityDto;
-import shared.libs.dto.UserDto;
+import uz.nt.userservice.dto.UserAuthorityDto;
 
 import java.util.List;
 

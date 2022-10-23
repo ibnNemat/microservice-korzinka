@@ -1,4 +1,4 @@
-package shared.libs.dto;
+package uz.nt.userservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserAuthorityDto {
+public class AuthorityDto {
     private Integer id;
-    private Integer user_id;
-    private Integer authority_id;
+    private String permission;
 }
