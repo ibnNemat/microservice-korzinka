@@ -98,7 +98,7 @@ public class OrderProductsServiceImpl implements OrderProductsService {
 
     @Override
     public List<OrderedProductsDetail> getOrderedProductsToPayFor(Integer order_id) {
-        List<OrderedProductsDetail> orderedProductDetails = orderProductRepositoryHelper.getOrderderedProductDetails(order_id);
+        List<OrderedProductsDetail> orderedProductDetails = orderProductRepositoryHelper.getOrderedProductDetails(order_id);
         return orderedProductDetails;
     }
 
