@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Data
@@ -27,4 +28,22 @@ public class Product {
     private Integer amount;
 
     private Double price;
+
+    @Column(length = 1024)
+    private String caption;
+
+    @Column(name = "photo_path", length = 512)
+    private String photoPath;
+
+    @Column(name = "is_active")
+    private boolean isActive;
+
+    @OneToOne
+    private Discount discount;
+
+    @Column(name = "created_at")
+    private Date createdAt;
+
+    @Column(name = "storage_life")
+    private Date storageLife;
 }

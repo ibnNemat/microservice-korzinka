@@ -16,5 +16,7 @@ public interface ProductTypeService {
 
     ResponseDto<ProductTypeDto> oneById(Integer id);
 
+    ResponseDto<Page<ProductTypeDto>> mainCategories(Integer page, Integer size);
+
     void delete(Integer id);
 }

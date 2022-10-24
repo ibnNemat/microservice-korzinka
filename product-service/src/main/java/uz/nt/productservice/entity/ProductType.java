@@ -28,4 +28,7 @@ public class ProductType {
 
     @ManyToOne
     private Unit unit;
+
+    @Column(name = "parent_id")
+    private Integer parentId;
 }
