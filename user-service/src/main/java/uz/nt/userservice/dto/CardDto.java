@@ -1,8 +1,10 @@
-package shared.libs.dto;
+package uz.nt.userservice.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import shared.libs.dto.UserDto;
+
 import java.sql.Date;
 
 @Builder

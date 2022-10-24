@@ -1,7 +1,7 @@
 package uz.nt.userservice.service;
-import shared.libs.dto.CardDto;
+import uz.nt.userservice.dto.CardDto;
 import shared.libs.dto.ResponseDto;
-import shared.libs.dto.CardTypeDto;
+
 import java.util.List;
 
 public interface CardService {

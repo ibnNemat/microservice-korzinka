@@ -3,11 +3,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
-import shared.libs.dto.CardDto;
+import uz.nt.orderservice.service.PaymentHistoryService;
+import uz.nt.userservice.dto.CardDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.orderservice.dto.OrderDto;
 import uz.nt.orderservice.dto.OrderedProductsDetail;
 import uz.nt.orderservice.entity.Order;
+import uz.nt.orderservice.entity.PaymentHistory;
 import uz.nt.orderservice.repository.OrderRepository;
 import uz.nt.orderservice.service.OrderProductsService;
 import uz.nt.orderservice.service.OrderService;
@@ -32,6 +34,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
     private final OrderProductsService orderProductsService;
     private final CardService cardService;
+    private final PaymentHistoryService paymentHistoryService;
 
     @Override
     public ResponseDto addOrderIfNotExistUserOrders(Integer product_id, Integer amount) {
@@ -251,6 +254,15 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // cashbackService.calculateCashbackForUser(Integer user_id, Double total_price);
+
+        PaymentHistory paymentHistory = PaymentHistory.builder()
+                .card_id(cardDto.getId())
+                .user_id(user_id)
+                .total_price(total_price)
+                .status("OK")
+                .description("Successfully payed")
+                .build();
+        paymentHistoryService.addHistory(paymentHistory);
 
         return ResponseDto.builder()
                 .code(200)
