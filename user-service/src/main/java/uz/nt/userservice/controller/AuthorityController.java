@@ -15,7 +15,7 @@ import java.util.List;
 public class AuthorityController {
     private final AuthorityService authorityService;
 
-    //asdas
+    //asdassda
     @GetMapping
     public ResponseDto<List<AuthorityDto>> getAll(){
         return authorityService.getAllAuthority();
