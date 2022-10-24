@@ -2,7 +2,7 @@ package uz.nt.userservice.service.mapper;
 
 import org.mapstruct.Mapper;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import uz.nt.userservice.dto.UserDto;
+import shared.libs.dto.UserDto;
 import uz.nt.userservice.entity.Authority;
 import uz.nt.userservice.entity.User;
 

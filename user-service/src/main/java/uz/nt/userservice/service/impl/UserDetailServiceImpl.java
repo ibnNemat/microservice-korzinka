@@ -13,7 +13,7 @@ import shared.libs.dto.JWTResponseDto;
 import shared.libs.dto.ResponseDto;
 import shared.libs.security.JwtService;
 import uz.nt.userservice.dto.LoginDto;
-import uz.nt.userservice.dto.UserDto;
+import shared.libs.dto.UserDto;
 import shared.libs.utils.DateUtil;
 import uz.nt.userservice.entity.User;
 import uz.nt.userservice.repository.UserRepository;
@@ -34,7 +34,7 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
     private final UserMapper userMapper;
     public static Map<Integer, UserDto> usersMap = new HashMap<>();
     private final PasswordEncoder passwordEncoder = Config.passwordEncoder();
-    private final JwtService jwtService = JwtService.getInstance();
+    private final JwtService jwtService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

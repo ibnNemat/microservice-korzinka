@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/cards")
 public class CardController implements CardService {
     private final CardServiceImpl cardService;
 
@@ -20,12 +21,12 @@ public class CardController implements CardService {
         return cardService.getAllCards();
     }
 
-    @GetMapping()
+    @GetMapping("by-user-id")
     public ResponseDto<List<CardDto>> getCardsByUserId(Integer user_id) {
         return cardService.getCardsByUserId(user_id);
     }
 
-    @GetMapping()
+    @GetMapping("by-id")
     public ResponseDto<CardDto> getCardById(Integer card_id) {
         return cardService.getCardById(card_id);
     }

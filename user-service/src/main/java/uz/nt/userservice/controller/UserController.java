@@ -2,9 +2,12 @@ package uz.nt.userservice.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import shared.libs.dto.JWTResponseDto;
 import shared.libs.dto.ResponseDto;
-import uz.nt.userservice.dto.UserDto;
+import shared.libs.dto.UserDto;
+import uz.nt.userservice.dto.LoginDto;
 import uz.nt.userservice.service.UserService;
+import uz.nt.userservice.service.impl.UserDetailServiceImpl;
 
 import java.util.List;
 
@@ -13,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final UserDetailServiceImpl userDetailService;
 
     @GetMapping
     public ResponseDto<List<UserDto>> getAll(){
@@ -36,5 +40,10 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseDto deleteUser(@PathVariable Integer id){
         return userService.deleteUserById(id);
+    }
+
+    @PostMapping("login")
+    public ResponseDto<JWTResponseDto> login(@RequestBody LoginDto loginDto){
+        return userDetailService.login(loginDto);
     }
 }

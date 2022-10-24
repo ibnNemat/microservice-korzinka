@@ -2,8 +2,8 @@ package uz.nt.userservice.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import shared.libs.dto.CardTypeDto;
 import shared.libs.dto.ResponseDto;
+import uz.nt.userservice.dto.CardTypeDto;
 import uz.nt.userservice.service.CardTypeService;
 import uz.nt.userservice.service.impl.CardTypeServiceImpl;
 
@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("card-type")
 public class CardTypeController implements CardTypeService {
     private final CardTypeServiceImpl cardTypeService;
 
@@ -20,7 +21,7 @@ public class CardTypeController implements CardTypeService {
         return cardTypeService.getAllCardTypes();
     }
 
-    @GetMapping
+    @GetMapping("by-id")
     public ResponseDto<CardTypeDto> getCardTypeById(Integer id) {
         return cardTypeService.getCardTypeById(id);
     }

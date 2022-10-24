@@ -7,6 +7,6 @@ import java.util.Date;
 @Slf4j
 public class DateUtil {
     public static Date expirationTimeToken(){
-        return new Date(System.currentTimeMillis() * 1000 * 60 * 60 * 72);
+        return new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 72);
     }
 }
