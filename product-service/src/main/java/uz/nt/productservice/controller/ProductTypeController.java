@@ -35,6 +35,12 @@ public class ProductTypeController {
         return productTypeService.oneById(id);
     }
 
+    @GetMapping("/main-categories")
+    public ResponseDto<Page<ProductTypeDto>> mainCategories(@RequestParam(required = false) Integer page,
+                                                            @RequestParam(required = false) Integer size){
+        return productTypeService.mainCategories(page, size);
+    }
+
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id){
         productTypeService.delete(id);

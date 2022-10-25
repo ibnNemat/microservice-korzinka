@@ -15,6 +15,7 @@ public class ProductDto {
     private ProductTypeDto type;
     private Integer amount;
     private Double price;
+    private DiscountDto discount;
 
     public String toString(){
         return String.format("Id: %d\n" +
