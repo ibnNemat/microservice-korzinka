@@ -30,7 +30,7 @@ public class MyFilterChain extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")){
             String token = authHeader.substring(7);
             if (jwtService.validateToken(token)){
-                Integer id = NumberUtil.parseToInteger(jwtService.getClaim(token, "sub"));
+                String id = String.valueOf(jwtService.getClaim(token, "sub"));
                 if (id != null){
                     Optional<UserSession> userSessionOptional = userSessionRepository.findById(id);
                     userSessionOptional.ifPresent(userSession -> {
