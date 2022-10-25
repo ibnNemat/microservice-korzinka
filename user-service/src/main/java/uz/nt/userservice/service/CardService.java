@@ -1,5 +1,5 @@
 package uz.nt.userservice.service;
-import uz.nt.userservice.dto.CardDto;
+import shared.libs.dto.CardDto;
 import shared.libs.dto.ResponseDto;
 
 import java.util.List;
