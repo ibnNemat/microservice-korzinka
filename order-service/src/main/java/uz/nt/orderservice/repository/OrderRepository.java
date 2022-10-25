@@ -3,7 +3,9 @@ package uz.nt.orderservice.repository;
 import org.springframework.data.jpa.repository.Query;
 import uz.nt.orderservice.entity.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
+import uz.nt.orderservice.entity.OrderProducts;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,4 +23,8 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     List<Integer> getIdByPayedFalse();
 
     Integer getByUser_idAndPayedIsFalse(Integer user_id);
+
+    @Query("select o.orderProducts from Order o where o.user_id = :user_id and o.payed = true" +
+            " and o.created_at between :startOfMonth and :endOfMoth")
+    List<List<OrderProducts>> sumAllOfUserOrderProductsMonthly(Integer user_id, Date startOfMonth, Date endOfMonth);
 }

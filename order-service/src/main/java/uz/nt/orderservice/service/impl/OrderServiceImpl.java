@@ -21,10 +21,7 @@ import org.springframework.stereotype.Service;
 import uz.nt.orderservice.dto.PaymentDetails;
 import uz.nt.userservice.service.CardService;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -269,5 +266,9 @@ public class OrderServiceImpl implements OrderService {
                 .success(true)
                 .message("Successfully Payed!")
                 .build();
+    }
+
+    public Double sumAllOfUserOrderedProductsMonthly(){
+        return null;
     }
 }
