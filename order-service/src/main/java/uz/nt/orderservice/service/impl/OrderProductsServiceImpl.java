@@ -8,6 +8,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
 import shared.libs.dto.ResponseDto;
+import uz.nt.orderservice.client.ProductClient;
 import uz.nt.orderservice.dto.OrderProductsDto;
 import uz.nt.orderservice.dto.OrderedProductsDetail;
 import uz.nt.orderservice.entity.OrderProducts;
@@ -15,7 +16,6 @@ import uz.nt.orderservice.repository.OrderProductsRepository;
 import uz.nt.orderservice.repository.helperRepository.OrderProductRepositoryHelper;
 import uz.nt.orderservice.service.OrderProductsService;
 import uz.nt.orderservice.service.mapper.OrderProductsMapper;
-import uz.nt.productservice.service.ProductService;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
@@ -27,24 +27,24 @@ import java.util.Map;
 public class OrderProductsServiceImpl implements OrderProductsService {
     private final OrderProductsRepository orderProductsRepository;
     private final OrderProductsMapper orderProductsMapper;
-    private final ProductService productService;
+    private final ProductClient productClient;
     private final OrderProductRepositoryHelper orderProductRepositoryHelper;
     @Override
-    public ResponseDto addOrderProducts(Integer order_id, Integer product_id, Integer amount) {
-        Boolean isProductEnough = productService.updateAmount(product_id, amount);
+    public ResponseDto<String> addOrderProducts(Integer order_id, Integer product_id, Double amount) {
+        ResponseDto<Boolean> isProductEnough = productClient.update(product_id, amount);
 
-        if(isProductEnough){
+        if(isProductEnough.getSuccess() && isProductEnough.getResponseData()){
             OrderProducts orderProduct = new OrderProducts(null, order_id, product_id, amount);
             orderProductsRepository.save(orderProduct);
 
-            return ResponseDto.builder()
+            return ResponseDto.<String>builder()
                     .code(200)
                     .success(true)
                     .message("Successfully saved")
                     .build();
         }
 
-        return ResponseDto.builder()
+        return ResponseDto.<String>builder()
                 .code(-5)
                 .success(false)
                 .message("We don't have products in that many amounts!")

@@ -23,7 +23,7 @@ public class ProductRepositoryHelper {
 
     public void updateProduct(){
         String sql = "UPDATE product SET is_active = false WHERE amount = 0" +
-                "OR storage_life <= created_at";
+                " OR storage_life <= now() - created_at";
 
         Query query = entityManager.createNativeQuery(sql);
         query.executeUpdate();

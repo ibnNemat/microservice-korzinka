@@ -24,6 +24,6 @@ public class PaymentHistory {
     private Double total_price;
     private String status;
     private String description;
-    @Column(columnDefinition = "date default current date")
+    @Column(columnDefinition = "date default now()")
     private Date created_at;
 }

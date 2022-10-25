@@ -6,10 +6,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import shared.libs.dto.UserDto;
 import shared.libs.entity.UserSession;
 import shared.libs.repository.UserSessionRepository;
-import shared.libs.utils.NumberUtil;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -35,7 +33,7 @@ public class MyFilterChain extends OncePerRequestFilter {
                     Optional<UserSession> userSessionOptional = userSessionRepository.findById(id);
                     userSessionOptional.ifPresent(userSession -> {
                         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                            userSession.getUserDto(), null, userSession.getUserDto().getAuthorities());
+                            userSession.getUserDto(), token, userSession.getUserDto().getAuthorities());
 
                         // This object has requestAddress and sessionId
                         WebAuthenticationDetails details = new WebAuthenticationDetails(request);
