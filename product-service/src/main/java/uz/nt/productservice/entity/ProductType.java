@@ -4,9 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import shared.libs.dto.ProductDto;
-import shared.libs.dto.UnitDto;
-
 import javax.persistence.*;
 import java.util.List;
 
@@ -31,4 +28,7 @@ public class ProductType {
 
     @ManyToOne
     private Unit unit;
+
+    @Column(name = "parent_id")
+    private Integer parentId;
 }

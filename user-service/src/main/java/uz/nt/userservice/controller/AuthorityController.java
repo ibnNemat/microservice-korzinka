@@ -2,9 +2,8 @@ package uz.nt.userservice.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import shared.libs.dto.AuthorityDto;
+import uz.nt.userservice.dto.AuthorityDto;
 import shared.libs.dto.ResponseDto;
-import shared.libs.dto.UserAuthorityDto;
 import uz.nt.userservice.service.AuthorityService;
 
 import java.util.List;

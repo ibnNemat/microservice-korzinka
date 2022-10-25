@@ -1,24 +1,24 @@
 package uz.nt.userservice.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import shared.libs.dto.AuthorityDto;
+import uz.nt.userservice.dto.AuthorityDto;
 import shared.libs.dto.ResponseDto;
-import shared.libs.dto.UserAuthorityDto;
 import uz.nt.userservice.repository.AuthorityRepository;
 import uz.nt.userservice.service.AuthorityService;
-import uz.nt.userservice.service.manualMappers.AuthorityMapper;
+import uz.nt.userservice.service.mapper.AuthorityMapper;
 
 import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AuthorityServiceImpl implements AuthorityService {
-
     private final AuthorityRepository authorityRepository;
+    private final AuthorityMapper authorityMapper;
 
     @Override
     public ResponseDto<List<AuthorityDto>> getAllAuthority() {
         try {
-            List<AuthorityDto> authorityDtos = authorityRepository.findAll().stream().map(AuthorityMapper::toDto).toList();
+            List<AuthorityDto> authorityDtos = authorityRepository.findAll().stream()
+                    .map(authorityMapper::toDto).toList();
             return ResponseDto.<List<AuthorityDto>>builder()
                     .code(0).success(true).message("OK")
                     .responseData(authorityDtos)
@@ -34,7 +34,7 @@ public class AuthorityServiceImpl implements AuthorityService {
     @Override
     public ResponseDto<AuthorityDto> getAuthorityById(Integer id) {
         try {
-            AuthorityDto authorityDto = authorityRepository.findById(id).map(AuthorityMapper::toDto).orElseThrow();
+            AuthorityDto authorityDto = authorityRepository.findById(id).map(authorityMapper::toDto).orElseThrow();
 
             return ResponseDto.<AuthorityDto>builder()
                     .code(0).success(true).message("OK")
@@ -66,7 +66,7 @@ public class AuthorityServiceImpl implements AuthorityService {
     @Override
     public ResponseDto updateAuthority(AuthorityDto authorityDto) {
         try {
-            authorityRepository.save(AuthorityMapper.toEntity(authorityDto));
+            authorityRepository.save(authorityMapper.toEntity(authorityDto));
             return ResponseDto.builder()
                     .code(0).success(true).message("OK")
                     .build();
@@ -81,7 +81,7 @@ public class AuthorityServiceImpl implements AuthorityService {
     @Override
     public ResponseDto addAuthority(AuthorityDto authorityDto) {
         try {
-            authorityRepository.save(AuthorityMapper.toEntity(authorityDto));
+            authorityRepository.save(authorityMapper.toEntity(authorityDto));
             return ResponseDto.builder()
                     .code(0).success(true).message("OK")
                     .build();

@@ -7,8 +7,6 @@ import shared.libs.dto.ProductDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.productservice.service.impl.ProductServiceImpl;
 
-import java.util.List;
-
 
 @RestController
 @RequiredArgsConstructor
