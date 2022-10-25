@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import shared.libs.entity.UserSession;
 
 @Component
-public interface UserSessionRepository extends CrudRepository<UserSession, Integer> {
+public interface UserSessionRepository extends CrudRepository<UserSession, String> {
 }
