@@ -8,6 +8,7 @@ import shared.libs.dto.ProductTypeDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.productservice.entity.ProductType;
 import uz.nt.productservice.repository.ProductTypeRepository;
+import uz.nt.productservice.repository.UnitRepository;
 import uz.nt.productservice.service.ProductTypeService;
 import uz.nt.productservice.service.mapper.ProductTypeMapper;
 import uz.nt.productservice.service.mapper.impl.ProductTypeMapperImpl;
@@ -23,6 +24,7 @@ public class ProductTypeServiceImpl implements ProductTypeService {
     private final ProductTypeRepository productTypeRepository;
 
     private final ProductTypeMapper productTypeMapper;
+    private final UnitRepository unitRepository;
 
     @Override
     public ResponseDto<ProductTypeDto> add(ProductTypeDto dto){
@@ -31,6 +33,9 @@ public class ProductTypeServiceImpl implements ProductTypeService {
                     .code(-1).success(false).message("Product is all ready exists.").build();
         }
         ProductType entity = productTypeMapper.toEntity(dto);
+        if (entity.getUnit() != null && entity.getUnit().getId() == null){
+            unitRepository.save(entity.getUnit());
+        }
         productTypeRepository.save(entity);
 
         return ResponseDto.<ProductTypeDto>builder()
@@ -51,21 +56,32 @@ public class ProductTypeServiceImpl implements ProductTypeService {
 
     @Override
     public ResponseDto<Page<ProductTypeDto>> pagination(Integer p, Integer s){
-        if(p == null || p < 0){
-            return ResponseDto.<Page<ProductTypeDto>>builder()
-                    .code(-3).success(false).message("Page is null or below zero.").build();
-        }
-        if(s == null || s < 1){
-            return ResponseDto.<Page<ProductTypeDto>>builder()
-                    .code(-3).success(false).message("Size is null or below zero.").build();
+        ResponseDto<Page<ProductTypeDto>> result = checkPageAndSize(p, s);
+        if(result != null){
+            return result;
         }
 
         PageRequest pageRequest = PageRequest.of(p, s);
         Page<ProductTypeDto> page =
-                productTypeRepository.findAll(pageRequest).map(ProductTypeMapperImpl::toDtoWithoutProduct);
+                productTypeRepository.findAllByParentIdIsNotNull(pageRequest)
+                        .map(ProductTypeMapperImpl::toDtoWithoutProduct);
 
         return ResponseDto.<Page<ProductTypeDto>>builder()
                 .code(0).success(true).message("OK").responseData(page).build();
+    }
+
+    @Override
+    public ResponseDto<Page<ProductTypeDto>> mainCategories(Integer page, Integer size) {
+        ResponseDto<Page<ProductTypeDto>> result = checkPageAndSize(page, size);
+        if(result != null){
+            return result;
+        }
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<ProductTypeDto> response =
+                productTypeRepository.findByParentIdIsNull(pageRequest)
+                        .map(ProductTypeMapperImpl::toDtoWithoutProduct);
+        return ResponseDto.<Page<ProductTypeDto>>builder()
+                .code(0).success(true).message("OK").responseData(response).build();
     }
 
     @Override
@@ -85,4 +101,16 @@ public class ProductTypeServiceImpl implements ProductTypeService {
         productTypeRepository.deleteById(id);
     }
 
+    private ResponseDto<Page<ProductTypeDto>> checkPageAndSize(Integer page, Integer size){
+        if(page == null || page < 0){
+            return ResponseDto.<Page<ProductTypeDto>>builder()
+                    .code(-3).success(false).message("Page is null or below zero.").build();
+        }
+        if(size == null || size < 1){
+            return ResponseDto.<Page<ProductTypeDto>>builder()
+                    .code(-3).success(false).message("Size is null or below zero.").build();
+        }
+
+        return null;
+    }
 }

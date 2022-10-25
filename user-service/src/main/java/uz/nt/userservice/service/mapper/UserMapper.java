@@ -1,32 +1,17 @@
 package uz.nt.userservice.service.mapper;
 
+import org.mapstruct.Mapper;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import shared.libs.dto.UserDto;
+import uz.nt.userservice.entity.Authority;
 import uz.nt.userservice.entity.User;
 
-public class UserMapper {
-    public static UserDto toDto(User user){
-        return UserDto.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .created_at(user.getCreated_at())
-                .email(user.getEmail())
-                .firstname(user.getFirstname())
-                .lastname(user.getLastname())
-                .phoneNumber(user.getPhoneNumber())
-                .build();
-    }
+@Mapper(componentModel = "spring")
+public interface UserMapper {
+    User toEntity(UserDto userDto);
+    UserDto toDto(User user);
 
-    public static User toEntity(UserDto user){
-        return User.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .created_at(user.getCreated_at())
-                .email(user.getEmail())
-                .firstname(user.getFirstname())
-                .lastname(user.getLastname())
-                .phoneNumber(user.getPhoneNumber())
-                .build();
+    default SimpleGrantedAuthority convert(Authority authority){
+        return new SimpleGrantedAuthority(authority.getPermission());
     }
 }
