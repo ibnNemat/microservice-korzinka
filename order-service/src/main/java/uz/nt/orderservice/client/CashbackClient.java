@@ -7,8 +7,10 @@ import uz.nt.orderservice.config.FeignConfiguration;
 
 @FeignClient(url = "http://localhost:8005/cashback-api", name = "cashback-service", configuration = FeignConfiguration.class)
 public interface CashbackClient {
-    @PutMapping
+    @PutMapping("/substract")
     void subtractCashback(@RequestParam Integer userId, @RequestParam Double cashbackAmount);
+    @PutMapping("/change-percent")
+    void calculateCashbackForEachShopping(@RequestParam Integer userId, @RequestParam Double totalPrice);
 
 
 }
