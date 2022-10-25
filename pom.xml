@@ -22,7 +22,6 @@
     <module>delivery-service</module>
     <module>shared-libs</module>
     <module>cloud-config-server</module>
-    <module>discovery-server</module>
   </modules>
 
   <dependencies>
