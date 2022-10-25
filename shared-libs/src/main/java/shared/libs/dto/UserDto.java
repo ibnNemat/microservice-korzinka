@@ -8,8 +8,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.sql.Date;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Set;
 
 @Data
@@ -25,6 +25,7 @@ public class UserDto implements UserDetails {
     private String email;
     private String phoneNumber;
     private Date created_at;
+    private Integer cashbackCardId;
     private Set<SimpleGrantedAuthority> authorities;
 
     @Override

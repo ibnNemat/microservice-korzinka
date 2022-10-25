@@ -4,14 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import shared.libs.dto.ResponseDto;
-import uz.nt.userservice.dto.CardDto;
+import shared.libs.dto.CardDto;
 import uz.nt.userservice.entity.Card;
 import uz.nt.userservice.repository.CardRepository;
 import uz.nt.userservice.service.CardService;
 import uz.nt.userservice.service.mapper.CardMapper;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

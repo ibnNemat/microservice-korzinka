@@ -32,7 +32,7 @@ public class UserController {
         return userService.addUser(userDto);
     }
 
-    @PutMapping
+    @PutMapping("/sign-in")
     public ResponseDto updateUser(@RequestBody UserDto userDto){
         return userService.updateUser(userDto);
     }
@@ -42,7 +42,7 @@ public class UserController {
         return userService.deleteUserById(id);
     }
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public ResponseDto<JWTResponseDto> login(@RequestBody LoginDto loginDto){
         return userDetailService.login(loginDto);
     }

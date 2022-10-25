@@ -3,7 +3,7 @@ package uz.nt.userservice.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import shared.libs.dto.ResponseDto;
-import uz.nt.userservice.dto.CardTypeDto;
+import shared.libs.dto.CardTypeDto;
 import uz.nt.userservice.service.CardTypeService;
 import uz.nt.userservice.service.impl.CardTypeServiceImpl;
 

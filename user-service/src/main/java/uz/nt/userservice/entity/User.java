@@ -28,5 +28,5 @@ public class User {
     private String email;
     private String phoneNumber;
     private Date created_at;
-
+    private Integer cashbackCardId;
 }
