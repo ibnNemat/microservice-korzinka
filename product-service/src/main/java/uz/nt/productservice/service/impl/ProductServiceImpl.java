@@ -3,7 +3,6 @@ package uz.nt.productservice.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import shared.libs.dto.ProductDto;
 import shared.libs.dto.ResponseDto;
@@ -42,7 +41,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResponseDto<List<ProductDto>> all(){
-        List<ProductDto> list = productRepository.findAllByActiveIsTrue()
+        List<ProductDto> list = productRepository.findAllByActive(true)
                 .stream().map(ProductMapperImpl::toDto).collect(Collectors.toList());
 
         return list.size() == 0?
@@ -72,7 +71,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResponseDto<ProductDto> oneById(Integer id){
-        Optional<Product> optional = productRepository.findByIdAndActiveIsTrue(id);
+        Optional<Product> optional = productRepository.findByIdAndActive(id, true);
         if(optional.isPresent()){
            ProductDto productDto = optional.map(ProductMapperImpl::toDto).get();
            return ResponseDto.<ProductDto>builder()
@@ -87,13 +86,15 @@ public class ProductServiceImpl implements ProductService {
         productRepository.deleteById(id);
     }
 
-    @Override
-    public Boolean updateAmount(Integer product_id, Integer amount) {
-        Integer num = productRepository.getByIdAndAmount(product_id, amount);
-        if (num != null){
-            productRepository.subtractProductAmount(product_id, amount);
-            return true;
+    public ResponseDto<Boolean> updateAmount(Integer product_id, Double amount) {
+        Boolean exists = productRepository.existsByIdAndAmountGreaterThan(product_id, amount);
+        if (exists){
+            productRepository.subtractProductAmount(amount, product_id);
+            return ResponseDto.<Boolean>builder().success(true).message("OK").responseData(true).build();
         }
-        return false;
+        return ResponseDto.<Boolean>builder()
+                .success(false)
+                .message("There is no any product with this id or amount of product is less than required")
+                .responseData(false).build();
     }
 }
