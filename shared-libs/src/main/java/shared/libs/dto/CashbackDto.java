@@ -9,8 +9,10 @@ public class CashbackDto {
 
     private Double amount;
 
-    private Integer userId;
+    private String code;
 
-    private Integer percent;
+//    private Integer userId;
+
+//    private Integer percent;
 
 }

@@ -1,6 +1,7 @@
 package uz.nt.cashbackservice.service.Main;
 
 
+import org.springframework.stereotype.Service;
 import shared.libs.dto.CashbackDto;
 import shared.libs.dto.ResponseDto;
 
@@ -13,4 +14,6 @@ public interface CashbackService {
     ResponseDto<CashbackDto> getCashbackByUserId(Integer userId);
 
     ResponseDto<CashbackDto> addCashback(CashbackDto cashbackDto);
+
+    ResponseDto<CashbackDto> add();
 }

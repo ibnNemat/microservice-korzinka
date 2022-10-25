@@ -1,11 +1,12 @@
-package uz.nt.cashbackservice.Entity;
+package uz.nt.cashbackservice.entity;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import javax.persistence.*;
 
 @Entity
 @Data
+@Builder
 public class Cashback {
 
     @Id
@@ -14,12 +15,9 @@ public class Cashback {
     @Column(name = "id", nullable = false)
     private Integer id;
 
+    @Column(name = "amount", columnDefinition = "double precision default 5000")
     private Double amount;
 
-    @Column(name = "user_id")
-    private Integer userId;
-
-    @Column(name = "percent")
-    private Integer percent = 1;
+    private String barcode;
 
 }
