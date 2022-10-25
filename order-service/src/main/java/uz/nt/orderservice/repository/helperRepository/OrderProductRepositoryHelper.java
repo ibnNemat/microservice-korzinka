@@ -20,7 +20,7 @@ public class OrderProductRepositoryHelper {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
 
-    public List<OrderedProductsDetail> getOrderderedProductDetails(Integer order_id){
+    public List<OrderedProductsDetail> getOrderedProductDetails(Integer order_id){
         Query query = entityManager.createNativeQuery(
                 "select op.product_id as product_id, sum(p.price) as price, sum(op.amount) as amount" +
                         " from order_products op inner join product p on p.id = op.product_id" +
@@ -36,7 +36,7 @@ public class OrderProductRepositoryHelper {
         List<Integer> list = orderRepository.getIdByPayedFalse();
 
         for (Integer order_id: list){
-            List<OrderedProductsDetail> nonOrderedProducts = getOrderderedProductDetails(order_id);
+            List<OrderedProductsDetail> nonOrderedProducts = getOrderedProductDetails(order_id);
             for (OrderedProductsDetail productsDetail: nonOrderedProducts){
                 productRepository.addProductAmount(productsDetail.getAmount(), productsDetail.getProduct_id());
             }
