@@ -10,4 +10,5 @@ public class UserSession {
 
     private Integer id;
     private UserDto userDto;
+
 }

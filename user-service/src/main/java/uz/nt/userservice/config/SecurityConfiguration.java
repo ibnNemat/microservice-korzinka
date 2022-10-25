@@ -1,11 +1,8 @@
 package uz.nt.userservice.config;
 
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -13,25 +10,24 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import shared.libs.security.MyFilterChain;
 
 @EnableWebSecurity
-@RequiredArgsConstructor
-@Configuration
-@EnableGlobalAuthentication
 public class SecurityConfiguration {
 
-    private final MyFilterChain myFilterChain;
-
+    @Autowired
+    private MyFilterChain filterChain;
     @Bean
-    public SecurityFilterChain httpSecurity(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/user/login/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/user/**").permitAll()
                 .anyRequest()
                 .authenticated()
+                .antMatchers("/user/login/**").permitAll()
+                .antMatchers("/user/sign-in/**").permitAll()
                 .and()
-                .addFilterBefore(myFilterChain, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(filterChain, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
 }

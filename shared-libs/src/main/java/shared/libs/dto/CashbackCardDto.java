@@ -2,15 +2,14 @@ package shared.libs.dto;
 
 import javax.persistence.Column;
 import java.util.Date;
+import java.util.UUID;
 
-public class CashbackDto {
+public class CashbackCardDto {
 
     private Integer id;
 
     private Double amount;
 
-    private Integer userId;
-
-    private Integer percent;
+    private String barcode;
 
 }

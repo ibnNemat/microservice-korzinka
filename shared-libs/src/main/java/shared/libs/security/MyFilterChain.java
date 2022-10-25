@@ -32,17 +32,21 @@ public class MyFilterChain extends OncePerRequestFilter {
             if (jwtService.validateToken(token)){
                 Integer id = NumberUtil.parseToInteger(jwtService.getClaim(token, "sub"));
                 if (id != null){
-                    Optional<UserSession> userSessionOptional = userSessionRepository.findById(id);
-                    userSessionOptional.ifPresent(userSession -> {
-                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                            userSession.getUserDto(), null, userSession.getUserDto().getAuthorities());
+                    Optional<UserSession> sessionOptional = userSessionRepository.findById(id);
 
-                        // This object has requestAddress and sessionId
+                    sessionOptional.ifPresent(userSession -> {
+                        UsernamePasswordAuthenticationToken authentication
+                                = new UsernamePasswordAuthenticationToken(
+                                        userSession.getUserDto(),
+                                null,
+                                userSession.getUserDto().getAuthorities()
+                        );
                         WebAuthenticationDetails details = new WebAuthenticationDetails(request);
                         authentication.setDetails(details);
 
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     });
+
                 }
             }
         }
