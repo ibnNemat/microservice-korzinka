@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.List;
 
 @Builder
 @Data
@@ -21,4 +22,6 @@ public class Order {
     private Boolean payed;
     @Column(columnDefinition = "date default current date")
     private Date created_at;
+    @OneToMany(mappedBy = "order_id")
+    private List<OrderProducts> orderProducts;
 }

@@ -7,8 +7,6 @@ import shared.libs.dto.ProductTypeDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.productservice.service.ProductTypeService;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/product-type")
@@ -35,6 +33,12 @@ public class ProductTypeController {
     @GetMapping("/{id}")
     public ResponseDto<ProductTypeDto> oneById(@PathVariable Integer id){
         return productTypeService.oneById(id);
+    }
+
+    @GetMapping("/main-categories")
+    public ResponseDto<Page<ProductTypeDto>> mainCategories(@RequestParam(required = false) Integer page,
+                                                            @RequestParam(required = false) Integer size){
+        return productTypeService.mainCategories(page, size);
     }
 
     @DeleteMapping("/{id}")

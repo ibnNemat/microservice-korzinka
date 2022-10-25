@@ -6,6 +6,8 @@ import shared.libs.dto.ResponseDto;
 import uz.nt.orderservice.dto.OrderDto;
 
 import uz.nt.orderservice.service.OrderService;
+import uz.nt.orderservice.dto.PaymentDetails;
+
 import java.lang.reflect.Method;
 
 @RestController
@@ -13,7 +15,7 @@ import java.lang.reflect.Method;
 @RequestMapping("/orders")
 public class OrderController {
     private final OrderService orderService;
-    @GetMapping("by-page")
+    @GetMapping("/by-page")
     public ResponseDto<Page<OrderDto>> getAllOrdersByPage(@RequestParam Integer page,
                                                           @RequestParam Integer size) throws NoSuchMethodException {
         ResponseDto<Page<OrderDto>> responseDto = orderService.getAllOrdersByPage(page, size);
@@ -28,9 +30,8 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseDto addOrderIfNotExistUserOrders(
-            @RequestParam Integer user_id, @RequestParam Integer product_id, @RequestParam Integer amount){
-        return orderService.addOrderIfNotExistUserOrders(user_id, product_id, amount);
+    public ResponseDto addOrderIfNotExistUserOrders(@RequestParam Integer product_id, @RequestParam Integer amount){
+        return orderService.addOrderIfNotExistUserOrders(product_id, amount);
     }
 
     @PutMapping
@@ -41,6 +42,11 @@ public class OrderController {
     @DeleteMapping("/{id}")
     public ResponseDto deleteById(@PathVariable Integer id){
         return orderService.deleteById(id);
+    }
+
+    @PostMapping("/payment")
+    public ResponseDto payForOrderProducts(@RequestBody PaymentDetails paymentDetails){
+        return orderService.payForOrders(paymentDetails);
     }
 
 }

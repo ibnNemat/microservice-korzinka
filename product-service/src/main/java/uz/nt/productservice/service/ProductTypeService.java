@@ -1,6 +1,5 @@
 package uz.nt.productservice.service;
 
-import org.apache.catalina.LifecycleState;
 import org.springframework.data.domain.Page;
 import shared.libs.dto.ProductTypeDto;
 import shared.libs.dto.ResponseDto;
@@ -16,6 +15,8 @@ public interface ProductTypeService {
     ResponseDto<Page<ProductTypeDto>> pagination(Integer page, Integer size);
 
     ResponseDto<ProductTypeDto> oneById(Integer id);
+
+    ResponseDto<Page<ProductTypeDto>> mainCategories(Integer page, Integer size);
 
     void delete(Integer id);
 }

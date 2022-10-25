@@ -19,5 +19,4 @@ public interface ProductService {
     void delete(Integer id);
 
     Boolean updateAmount(Integer product_id, Integer amount);
-    ResponseDto<List<ProductDto>> getTopProductsThatOrderALot();
 }

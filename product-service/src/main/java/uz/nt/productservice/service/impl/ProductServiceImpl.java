@@ -42,7 +42,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResponseDto<List<ProductDto>> all(){
-        List<ProductDto> list = productRepository.findAll()
+        List<ProductDto> list = productRepository.findAllByActiveIsTrue()
                 .stream().map(ProductMapperImpl::toDto).collect(Collectors.toList());
 
         return list.size() == 0?
@@ -64,7 +64,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         PageRequest pageRequest = PageRequest.of(p, s);
-        Page<ProductDto> page = productRepository.findAll(pageRequest).map(ProductMapperImpl::toDto);
+        Page<ProductDto> page = productRepository.findAllByActiveIsTrue(pageRequest).map(ProductMapperImpl::toDto);
 
         return ResponseDto.<Page<ProductDto>>builder()
                 .code(0).success(true).message("OK").responseData(page).build();
@@ -72,7 +72,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResponseDto<ProductDto> oneById(Integer id){
-        Optional<Product> optional = productRepository.findById(id);
+        Optional<Product> optional = productRepository.findByIdAndActiveIsTrue(id);
         if(optional.isPresent()){
            ProductDto productDto = optional.map(ProductMapperImpl::toDto).get();
            return ResponseDto.<ProductDto>builder()
@@ -95,19 +95,5 @@ public class ProductServiceImpl implements ProductService {
             return true;
         }
         return false;
-    }
-
-    @Scheduled(cron = "30 30 23 * * *")
-    @Override
-    public ResponseDto<List<ProductDto>> getTopProductsThatOrderALot() {
-        List<Product> productList = productRepositoryHelper.getTopOrderedProducts();
-
-        List<ProductDto> productDtoList = productList.stream().map(ProductMapperImpl::toDto).toList();
-        return ResponseDto.<List<ProductDto>>builder()
-                .code(200)
-                .success(true)
-                .message("OK")
-                .responseData(productDtoList)
-                .build();
     }
 }
