@@ -247,10 +247,10 @@ public class OrderServiceImpl implements OrderService {
         cardService.updateCard(cardDto);
 
         if (cashback_money != 0) {
-            // cashbackService.subtractUserCashback(Integer user_id, Double cashback_money);
+//             cashbackService.subtractUserCashback(Integer user_id, Double cashback_money);
         }
 
-        // cashbackService.calculateCashbackForUser(Integer user_id, Double total_price);
+//         cashbackService.calculateCashbackForUser(Integer user_id, Double total_price);
 
         PaymentHistory paymentHistory = PaymentHistory.builder()
                 .card_id(cardDto.getId())
