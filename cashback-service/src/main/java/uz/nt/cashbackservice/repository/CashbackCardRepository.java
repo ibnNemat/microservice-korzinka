@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 import uz.nt.cashbackservice.entity.CashbackCard;
 
 @Repository
-public interface CashbackRepository extends JpaRepository<CashbackCard, Integer> {
+public interface CashbackCardRepository extends JpaRepository<CashbackCard, Integer> {
 
 
 }

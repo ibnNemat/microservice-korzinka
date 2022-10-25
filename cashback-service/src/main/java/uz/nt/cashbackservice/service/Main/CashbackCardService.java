@@ -3,7 +3,6 @@ package uz.nt.cashbackservice.service.Main;
 
 import shared.libs.dto.CashbackCardDto;
 import shared.libs.dto.ResponseDto;
-import uz.nt.cashbackservice.entity.CashbackCard;
 
 public interface CashbackCardService {
 

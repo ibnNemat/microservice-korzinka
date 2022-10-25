@@ -9,7 +9,7 @@ import uz.nt.cashbackservice.service.Main.CashbackCardService;
 @RestController
 @RequestMapping("/cashback")
 @RequiredArgsConstructor
-public class CashbackController {
+public class CashbackCardController {
 
     private final CashbackCardService cashbackCardService;
 

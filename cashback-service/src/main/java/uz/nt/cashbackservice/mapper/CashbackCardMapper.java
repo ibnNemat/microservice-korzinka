@@ -5,7 +5,7 @@ import shared.libs.dto.CashbackCardDto;
 import uz.nt.cashbackservice.entity.CashbackCard;
 
 @Mapper(componentModel = "spring")
-public interface CashbackMapper {
+public interface CashbackCardMapper {
 
     CashbackCardDto toDto(CashbackCard cashback);
     CashbackCard toEntity(CashbackCardDto cashbackDto);
