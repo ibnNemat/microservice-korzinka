@@ -12,15 +12,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Order {
+public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "order_id_seq")
     @SequenceGenerator(name = "order_id_seq", sequenceName = "order_id_seq", allocationSize = 1)
     @Column(name = "id")
     private Integer id;
-    private Integer user_id;
+    private Integer userId;
     private Boolean payed;
-    @Column(columnDefinition = "date default current date")
+    @Column(columnDefinition = "date default current_date")
     private Date created_at;
     @OneToMany(mappedBy = "order_id")
     private List<OrderProducts> orderProducts;

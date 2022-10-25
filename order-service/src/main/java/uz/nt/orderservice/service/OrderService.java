@@ -8,7 +8,7 @@ import uz.nt.orderservice.dto.PaymentDetails;
 import java.lang.reflect.Method;
 
 public interface OrderService {
-    ResponseDto addOrderIfNotExistUserOrders(Integer product_id, Integer amount);
+    ResponseDto addOrderIfNotExistUserOrders(Integer product_id, Double amount);
     ResponseDto<OrderDto> getById(Integer id);
     ResponseDto<Page<OrderDto>> getAllOrdersByPage(Integer page, Integer size);
     ResponseDto<Page<OrderDto>> responseDtoWithLink(Integer page, Integer size,

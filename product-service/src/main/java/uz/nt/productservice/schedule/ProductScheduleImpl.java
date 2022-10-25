@@ -46,7 +46,7 @@ public class ProductScheduleImpl implements ProductSchedule{
                 .build();
     }
 
-    @Scheduled(cron = "0 3 * * *")
+    @Scheduled(cron = "0 3 * * * *")
     @Override
     public void updateProductWhereAmountIsZero() {
         productRepositoryHelper.updateProduct();
@@ -55,7 +55,6 @@ public class ProductScheduleImpl implements ProductSchedule{
                 "Schedule is worked. Thread name: {} Time: {} Work task: Product's \"field is_active\" = false if product's amount is below 0(zero) or storage life is invalid. ",
                 Thread.currentThread().getName(),System.currentTimeMillis());
     }
-
 
 
 }

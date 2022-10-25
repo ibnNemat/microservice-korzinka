@@ -37,4 +37,8 @@ public class ProductController {
         productService.delete(id);
     }
 
+    @PostMapping("/update-amount")
+    public ResponseDto<Boolean> update(@RequestParam Integer productId, @RequestParam Double amount){
+        return productService.updateAmount(productId, amount);
+    }
 }

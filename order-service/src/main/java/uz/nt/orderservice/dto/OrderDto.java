@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 public class OrderDto {
     private Integer id;
-    private Integer user_id;
+    private Integer userId;
     private Boolean payed;
     private List<OrderProductsDto> orderProducts;
     private Date created_at;
