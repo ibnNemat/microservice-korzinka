@@ -35,9 +35,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ResponseDto addOrderIfNotExistUserOrders(Integer product_id, Double amount) {
         try{
-            Integer user_id = 1;
             UserDto userDto = (UserDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            Optional<Orders> optionalOrder = orderRepository.findUserOrderByUserIdWherePayedIsFalse(user_id);
+            Optional<Orders> optionalOrder = orderRepository.findUserOrderByUserIdWherePayedIsFalse(userDto.getId());
             int order_id;
 
             if (optionalOrder.isPresent()){

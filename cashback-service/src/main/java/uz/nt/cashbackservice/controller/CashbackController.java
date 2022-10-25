@@ -25,7 +25,7 @@ public class CashbackController {
     }
 
     @PutMapping("/change-percent")
-    public void changePercent(@RequestParam Integer userId, @RequestParam Double totalPrice){
+    public void calculateCashbackForEachShopping(@RequestParam Integer userId, @RequestParam Double totalPrice){
         cashbackService.calculateCashbackForUser(userId, totalPrice);
     }
 
