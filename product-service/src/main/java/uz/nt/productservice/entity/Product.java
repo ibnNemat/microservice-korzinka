@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import shared.libs.dto.ProductTypeDto;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Data
@@ -25,7 +25,25 @@ public class Product {
     @ManyToOne
     private ProductType type;
 
-    private Integer amount;
+    private Double amount;
 
     private Double price;
+
+    @Column(length = 1024)
+    private String caption;
+
+    @Column(name = "photo_path", length = 512)
+    private String photoPath;
+
+    @Column(name = "is_active")
+    private boolean active;
+
+    @OneToOne
+    private Discount discount;
+
+    @Column(name = "created_at")
+    private Date createdAt;
+
+    @Column(name = "storage_life")
+    private Date storageLife;
 }

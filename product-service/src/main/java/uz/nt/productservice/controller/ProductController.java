@@ -7,8 +7,6 @@ import shared.libs.dto.ProductDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.productservice.service.impl.ProductServiceImpl;
 
-import java.util.List;
-
 
 @RestController
 @RequiredArgsConstructor
@@ -39,4 +37,8 @@ public class ProductController {
         productService.delete(id);
     }
 
+    @PostMapping("/update-amount")
+    public ResponseDto<Boolean> update(@RequestParam Integer productId, @RequestParam Double amount){
+        return productService.updateAmount(productId, amount);
+    }
 }

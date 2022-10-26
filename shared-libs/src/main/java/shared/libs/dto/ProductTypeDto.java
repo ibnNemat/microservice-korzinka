@@ -16,4 +16,5 @@ public class ProductTypeDto {
     private String barcode;
     private List<ProductDto> products;
     private UnitDto unit;
+    private Integer parentId;
 }
