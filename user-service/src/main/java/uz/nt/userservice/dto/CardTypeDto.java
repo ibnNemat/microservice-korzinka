@@ -1,4 +1,4 @@
-package shared.libs.dto;
+package uz.nt.userservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
