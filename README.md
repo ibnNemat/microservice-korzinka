@@ -3,6 +3,6 @@
 #### Service ports
 ###### user-service: 8001
 ###### product-service: 8002
-###### order-service: 8003
+###### orders-service: 8003
 ###### delivery-service: 8004
 ###### cashback-service: 8005

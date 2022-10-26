@@ -13,8 +13,6 @@ import uz.nt.cashbackservice.mapper.CashbackMapper;
 import uz.nt.cashbackservice.repository.CashbackRepository;
 import uz.nt.cashbackservice.service.Main.CashbackService;
 
-import java.util.Random;
-
 @Service
 @RequiredArgsConstructor
 public class CashbackServiceImpl implements CashbackService{
@@ -46,18 +44,23 @@ public class CashbackServiceImpl implements CashbackService{
     @Override
     @Transactional
     public ResponseDto<CashbackDto> add() {
-        int userId = ((UserDto)SecurityContextHolder
+        int userId;
+        if (SecurityContextHolder
                 .getContext()
                 .getAuthentication()
-                .getDetails())
-                .getId();
+                .getDetails() instanceof  UserDto userDto){
+            userId = userDto.getId();
 
-        Cashback cashback = Cashback.builder().amount(5000D).barcode(RandomStringUtils.random(8)).build();
-        cashbackRepository.save(cashback);
+            Cashback cashback = Cashback.builder().amount(5000D).barcode(RandomStringUtils.random(16)).userId(userId).build();
+            cashbackRepository.save(cashback);
 
-        CashbackDto cashbackDto = cashbackMapper.toDto(cashback);
+            CashbackDto cashbackDto = cashbackMapper.toDto(cashback);
 
-        return ResponseDto.<CashbackDto>builder().success(true).message("OK").responseData(cashbackDto).build();
+            return ResponseDto.<CashbackDto>builder().success(true).message("OK").responseData(cashbackDto).build();
+        } else {
+            return ResponseDto.<CashbackDto>builder().success(false).message("NO").build();
+        }
+
     }
 }
 

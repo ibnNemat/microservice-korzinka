@@ -10,6 +10,7 @@ import uz.nt.userservice.dto.UserAuthorityDto;
 import uz.nt.userservice.service.mapper.UserAuthorityMapper;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +23,7 @@ public class UserAuthorityServiceImpl implements UserAuthorityService {
     public ResponseDto<List<UserAuthorityDto>> getAllUserAuthority() {
         try {
             List<UserAuthorityDto> authorityDtos = authorityRepository.findAll()
-                    .stream().map(userAuthorityMapper::toDto).toList();
+                    .stream().map(userAuthorityMapper::toDto).collect(Collectors.toList());
             return ResponseDto.<List<UserAuthorityDto>>builder()
                     .code(0).success(true).message("OK")
                     .responseData(authorityDtos)

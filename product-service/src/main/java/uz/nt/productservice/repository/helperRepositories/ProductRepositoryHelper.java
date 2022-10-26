@@ -20,4 +20,14 @@ public class ProductRepositoryHelper {
                 "group by op.product_id order by amount desc) op on op.product_id = p.id limit 100", Product.class);
         return query.getResultList();
     }
+
+    public void updateProduct(){
+        String sql = "UPDATE product SET is_active = false WHERE amount = 0" +
+                " OR storage_life <= now() - created_at";
+
+        Query query = entityManager.createNativeQuery(sql);
+        query.executeUpdate();
+    }
+
+
 }

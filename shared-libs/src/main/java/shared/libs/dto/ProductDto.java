@@ -13,13 +13,14 @@ public class ProductDto {
     private Integer id;
     private String name;
     private ProductTypeDto type;
-    private Integer amount;
+    private Double amount;
     private Double price;
+    private DiscountDto discount;
 
     public String toString(){
         return String.format("Id: %d\n" +
                 "Name_product: %s\n" +
                 "Price: %.2f\n" +
-                "Amount: %d", getId(), getName(), getPrice(), getAmount());
+                "Amount: %.2f", getId(), getName(), getPrice(), getAmount());
     }
 }

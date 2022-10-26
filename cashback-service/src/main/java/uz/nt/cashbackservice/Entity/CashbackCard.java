@@ -1,13 +1,16 @@
 package uz.nt.cashbackservice.entity;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
-@Entity
+@Entity(name = "cashback_card")
 @Data
-@Builder
-public class Cashback {
+@AllArgsConstructor
+@NoArgsConstructor
+public class CashbackCard {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cashback_gen")
@@ -15,9 +18,10 @@ public class Cashback {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Column(name = "amount", columnDefinition = "double precision default 5000")
+    @Column
     private Double amount;
 
     private String barcode;
 
+    private Integer userId;
 }
