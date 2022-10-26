@@ -25,6 +25,7 @@ public class UserDto implements UserDetails {
     private String email;
     private String phoneNumber;
     private Date created_at;
+    private Integer cashbackCardId;
     private Set<SimpleGrantedAuthority> authorities;
 
     @Override

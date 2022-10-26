@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import shared.libs.dto.ResponseDto;
-import uz.nt.userservice.dto.CardDto;
+import shared.libs.dto.CardDto;
 import uz.nt.userservice.entity.Card;
 import uz.nt.userservice.repository.CardRepository;
 import uz.nt.userservice.service.CardService;
@@ -32,20 +32,28 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public ResponseDto<List<CardDto>> getCardsByUserId(Integer user_id) {
+    public ResponseDto<List<CardDto>> getCardsByUserId(Integer userId) {
 
         return null;
     }
 
     @Override
-    public ResponseDto<CardDto> getCardById(Integer card_id) {
-        Card card = cardRepository.findById(card_id).get();
+    public ResponseDto<CardDto> getCardById(Integer cardId) {
+        Optional<Card> card = cardRepository.findById(cardId);
 
+//        Card card = cardRepository.findById(cardId).get();
+        if (card.isPresent()) {
+            return ResponseDto.<CardDto>builder()
+                    .code(0)
+                    .success(true)
+                    .message("Ok")
+                    .responseData(cardMapper.toDto(card.get()))
+                    .build();
+        }
         return ResponseDto.<CardDto>builder()
                 .code(0)
-                .success(true)
+                .success(false)
                 .message("Ok")
-                .responseData(cardMapper.toDto(card))
                 .build();
     }
 

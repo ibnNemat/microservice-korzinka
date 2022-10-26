@@ -14,4 +14,5 @@ public class UserSession {
 
     private String id;
     private UserDto userDto;
+
 }

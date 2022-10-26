@@ -42,7 +42,7 @@ public class UserController {
         return userService.deleteUserById(id);
     }
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public ResponseDto<JWTResponseDto> login(@RequestBody LoginDto loginDto){
         return userDetailService.login(loginDto);
     }

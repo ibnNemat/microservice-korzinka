@@ -8,6 +8,8 @@ import uz.nt.userservice.service.AuthorityService;
 import uz.nt.userservice.service.mapper.AuthorityMapper;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class AuthorityServiceImpl implements AuthorityService {
@@ -18,7 +20,7 @@ public class AuthorityServiceImpl implements AuthorityService {
     public ResponseDto<List<AuthorityDto>> getAllAuthority() {
         try {
             List<AuthorityDto> authorityDtos = authorityRepository.findAll().stream()
-                    .map(authorityMapper::toDto).toList();
+                    .map(authorityMapper::toDto).collect(Collectors.toList());
             return ResponseDto.<List<AuthorityDto>>builder()
                     .code(0).success(true).message("OK")
                     .responseData(authorityDtos)

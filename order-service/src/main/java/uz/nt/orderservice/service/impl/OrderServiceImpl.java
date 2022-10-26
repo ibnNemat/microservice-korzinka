@@ -4,7 +4,9 @@ import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.security.core.context.SecurityContextHolder;
+import shared.libs.dto.CardDto;
 import shared.libs.dto.UserDto;
+import uz.nt.orderservice.client.UserCardClient;
 import uz.nt.orderservice.entity.Orders;
 import uz.nt.orderservice.service.PaymentHistoryService;
 import shared.libs.dto.ResponseDto;
@@ -20,6 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import uz.nt.orderservice.dto.PaymentDetails;
+
+import javax.transaction.Transactional;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -31,13 +35,13 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
     private final OrderProductsService orderProductsService;
     private final PaymentHistoryService paymentHistoryService;
+    private final UserCardClient userCardClient;
 
     @Override
     public ResponseDto addOrderIfNotExistUserOrders(Integer product_id, Double amount) {
         try{
-            Integer user_id = 1;
             UserDto userDto = (UserDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            Optional<Orders> optionalOrder = orderRepository.findUserOrderByUserIdWherePayedIsFalse(user_id);
+            Optional<Orders> optionalOrder = orderRepository.findUserOrderByUserIdWherePayedIsFalse(userDto.getId());
             int order_id;
 
             if (optionalOrder.isPresent()){
@@ -201,18 +205,26 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public ResponseDto payForOrders(PaymentDetails paymentDetails) {
         try{
-            Integer user_id = 1;
-
-            Integer orderId = orderRepository.getByUserIdAndPayedIsFalse(user_id);
+            Integer user_id;
+            if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserDto user) {
+                 user_id = user.getId();
+            }else {
+                return ResponseDto.builder()
+                        .code(-3)
+                        .message("Authorization expired")
+                        .build();
+            }
+            Orders orderId = orderRepository.getByUserIdAndPayedIsFalse(user_id);
             if (orderId == null) {
                 return ResponseDto.builder()
                         .code(-2343)
                         .message("User is not found!")
                         .build();
             }
-            return finalPayFor(orderId, user_id, paymentDetails);
+            return finalPayFor(orderId.getId(), user_id, paymentDetails);
         }catch (Exception e){
             log.error(e.getMessage());
             return ResponseDto.builder()
@@ -223,43 +235,43 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private ResponseDto finalPayFor(Integer orderId, Integer user_id, PaymentDetails paymentDetails){
-//        List<OrderedProductsDetail> orderedProducts = orderProductsService.getOrderedProductsToPayFor(orderId);
-//        Double cashback_money = paymentDetails.getCashbackMoney();
-//        CardDto cardDto = cardService.getCardById(paymentDetails.getCardId()).getResponseData();
-//        Double account = cardDto.getAccount();
-//        Double total_price = paymentDetails.getForDelivery();
-//
-//        for (OrderedProductsDetail op: orderedProducts){
-//            total_price += op.getPrice()*op.getAmount();
-//        }
-//
-//        if (total_price-cashback_money > account){
-//            return ResponseDto.builder()
-//                    .code(-2)
-//                    .success(false)
-//                    .message("Your balance is not enough!!!")
-//                    .build();
-//        }
-//
-//        orderRepository.updateOrderPayed(user_id);
-//
-//        cardDto.setAccount(cardDto.getAccount()-(total_price-cashback_money));
-//        cardService.updateCard(cardDto);
-//
-//        if (cashback_money != 0) {
-////             cashbackService.subtractUserCashback(Integer user_id, Double cashback_money);
-//        }
-//
-////         cashbackService.calculateCashbackForUser(Integer user_id, Double total_price);
-//
-//        PaymentHistory paymentHistory = PaymentHistory.builder()
-//                .card_id(cardDto.getId())
-//                .user_id(user_id)
-//                .total_price(total_price)
-//                .status("OK")
-//                .description("Successfully payed")
-//                .build();
-//        paymentHistoryService.addHistory(paymentHistory);
+        List<OrderedProductsDetail> orderedProducts = orderProductsService.getOrderedProductsToPayFor(orderId);
+        Double cashback_money = paymentDetails.getCashbackMoney();
+        CardDto cardDto = userCardClient.getCardById(paymentDetails.getCardId()).getResponseData();
+        Double account = cardDto.getAccount();
+        Double total_price = paymentDetails.getForDelivery();
+
+        for (OrderedProductsDetail op: orderedProducts){
+            total_price += op.getPrice() * op.getAmount();
+        }
+
+        if (total_price-cashback_money > account){
+            return ResponseDto.builder()
+                    .code(-2)
+                    .success(false)
+                    .message("Your balance is not enough!!!")
+                    .build();
+        }
+
+        orderRepository.updateOrderPayed(user_id);
+
+        cardDto.setAccount(cardDto.getAccount()-(total_price-cashback_money));
+        userCardClient.updateCard(cardDto);
+
+        if (cashback_money != 0) {
+//             cashbackService.subtractUserCashback(Integer user_id, Double cashback_money);
+        }
+
+//         cashbackService.calculateCashbackForUser(Integer user_id, Double total_price);
+
+        PaymentHistory paymentHistory = PaymentHistory.builder()
+                .card_id(cardDto.getId())
+                .user_id(user_id)
+                .total_price(total_price)
+                .status("OK")
+                .description("Successfully payed")
+                .build();
+        paymentHistoryService.addHistory(paymentHistory);
 
         return ResponseDto.builder()
                 .code(200)
