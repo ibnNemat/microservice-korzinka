@@ -21,9 +21,11 @@ public class PaymentHistory {
     private Integer id;
     private Integer user_id;
     private Integer card_id;
+    private Double cashback_payment;
+    private Double card_payment;
     private Double total_price;
     private String status;
     private String description;
-    @Column(columnDefinition = "date default now()")
+    @Column(columnDefinition = "DATE DEFAULT CURRENT_DATE")
     private Date created_at;
 }

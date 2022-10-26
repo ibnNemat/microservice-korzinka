@@ -85,7 +85,6 @@ public class ProductServiceImpl implements ProductService {
     public void delete(Integer id){
         productRepository.deleteById(id);
     }
-
     public ResponseDto<Boolean> updateAmount(Integer product_id, Double amount) {
         Boolean exists = productRepository.existsByIdAndAmountGreaterThan(product_id, amount);
         if (exists){

@@ -13,6 +13,8 @@ public interface OrderProductsService {
     ResponseDto<Page<OrderProductsDto>> getAllOrderProductsByPage(Integer page, Integer size);
     ResponseDto updateOrderProducts(OrderProductsDto orderProductsDto);
     ResponseDto deleteById(Integer id);
+    ResponseDto deleteByOrderId(Integer orderId);
+    ResponseDto deleteByProductIdAndOrderId(Integer orderId, Integer productId);
 
     List<OrderedProductsDetail> getOrderedProductsToPayFor(Integer order_id);
     ResponseDto<Page<OrderProductsDto>> responseDtoWithLink(Integer page, Integer size, Method method, ResponseDto<Page<OrderProductsDto>> responseDto);

@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,24 +31,42 @@ public class OrderProductsServiceImpl implements OrderProductsService {
     private final ProductClient productClient;
     private final OrderProductRepositoryHelper orderProductRepositoryHelper;
     @Override
-    public ResponseDto<String> addOrderProducts(Integer order_id, Integer product_id, Double amount) {
-        ResponseDto<Boolean> isProductEnough = productClient.update(product_id, amount);
-
-        if(isProductEnough.getSuccess() && isProductEnough.getResponseData()){
-            OrderProducts orderProduct = new OrderProducts(null, order_id, product_id, amount);
-            orderProductsRepository.save(orderProduct);
-
-            return ResponseDto.<String>builder()
-                    .code(200)
-                    .success(true)
-                    .message("Successfully saved")
+    public ResponseDto addOrderProducts(Integer order_id, Integer product_id, Double amount) {
+        try {
+            ResponseDto<Boolean> checkProductAmount = productClient.checkAmountProduct(product_id, amount);
+            if (!checkProductAmount.getSuccess() || !checkProductAmount.getResponseData()){
+                return ResponseDto.builder()
+                        .code(-5)
+                        .message("We don't have products in that many amounts!")
+                        .build();
+            }
+            return saveOrUpdateOrderProduct(product_id, order_id, amount);
+        }catch (Exception e){
+            return ResponseDto.builder()
+                    .code(500)
+                    .message(e.getMessage())
                     .build();
         }
+    }
 
-        return ResponseDto.<String>builder()
-                .code(-5)
-                .success(false)
-                .message("We don't have products in that many amounts!")
+    private ResponseDto saveOrUpdateOrderProduct(Integer product_id, Integer order_id, Double amount) {
+        Optional<OrderProducts> optional = orderProductsRepository
+                .findByOrderIdAndProductId(order_id, product_id);
+
+        OrderProducts orderProduct;
+        if (optional.isPresent() && optional.get().getAmount()!= null){
+            Integer orderedProductId = optional.get().getId();
+            amount += optional.get().getAmount();
+            orderProduct = new OrderProducts(orderedProductId, order_id, product_id, amount);
+        }else {
+            orderProduct = new OrderProducts(null, order_id, product_id, amount);
+        }
+        orderProductsRepository.save(orderProduct);
+
+        return ResponseDto.builder()
+                .code(200)
+                .success(true)
+                .message("Successfully saved")
                 .build();
     }
 
@@ -93,6 +112,16 @@ public class OrderProductsServiceImpl implements OrderProductsService {
 
     @Override
     public ResponseDto deleteById(Integer id) {
+        return null;
+    }
+
+    @Override
+    public ResponseDto deleteByOrderId(Integer orderId) {
+        return null;
+    }
+
+    @Override
+    public ResponseDto deleteByProductIdAndOrderId(Integer orderId, Integer productId) {
         return null;
     }
 
