@@ -9,5 +9,5 @@ import java.util.List;
 public interface ReviewService {
     void saveReview (ReviewDto reviewDto);
     ResponseDto<List<ReviewDto>> getAll();
-    ResponseDto<ReviewDto> getById(Integer id);
+    ResponseDto<Review> getById(Integer id);
  }
