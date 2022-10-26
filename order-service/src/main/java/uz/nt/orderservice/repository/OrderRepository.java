@@ -22,7 +22,7 @@ public interface OrderRepository extends JpaRepository<Orders, Integer> {
     void updateOrderPayed(Integer user_id);
 
     @Query("select o.id from Orders o where o.payed = false")
-    List<Integer> getIdByPayedFalse();
+    List<Integer> getAllOrdersIdIsPayedFalse();
 
     Orders getByUserIdAndPayedIsFalse(Integer user_id);
 
