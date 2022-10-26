@@ -1,8 +1,5 @@
 package shared.libs.dto;
 
-import javax.persistence.Column;
-import java.util.Date;
-
 public class CashbackDto {
 
     private Integer id;
