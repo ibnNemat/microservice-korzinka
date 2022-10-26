@@ -104,7 +104,7 @@ public class CashbackCardServiceImpl implements CashbackCardService {
 
     @Override
     public void increaseCashbackForMoreBought(Integer cardId, Double amount) {
-        amount += amount / 100;
+        amount = amount / 100;
         CashbackCard card = getCashbackById(cardId).getResponseData();
         card.setAmount(card.getAmount() + amount);
 

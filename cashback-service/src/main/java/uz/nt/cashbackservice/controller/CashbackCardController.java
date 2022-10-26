@@ -13,8 +13,7 @@ public class CashbackCardController {
 
     private final CashbackCardService cashbackCardService;
 
-
-    @PostMapping("/add-cashback")
+    @PostMapping
     public ResponseDto<CashbackCardDto> addCashback(@RequestBody CashbackCardDto cashbackDto){
         return cashbackCardService.addCashback(cashbackDto);
     }
@@ -23,7 +22,6 @@ public class CashbackCardController {
     public ResponseDto<Boolean> subtractCashback(@RequestParam Integer userId, @RequestParam Double cashbackAmount){
         return cashbackCardService.subtractUserCashback(userId, cashbackAmount);
     }
-
 
     @PutMapping("/increase")
     public ResponseDto<Boolean> increase(@RequestParam Integer userId, @RequestParam Double cashbackAmount){

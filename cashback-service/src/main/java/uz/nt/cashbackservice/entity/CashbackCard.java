@@ -18,4 +18,5 @@ public class CashbackCard {
 
     private String barcode;
 
+    private Integer userId;
 }
