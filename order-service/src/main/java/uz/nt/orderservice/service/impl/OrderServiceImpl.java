@@ -205,8 +205,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ResponseDto payForOrders(PaymentDetails paymentDetails) {
         try{
-            Integer user_id = 1;
-
+            Integer user_id;
+            if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserDto user) {
+                 user_id = user.getId();
+            }else {
+                return ResponseDto.builder()
+                        .code(-3)
+                        .message("Authorization expired")
+                        .build();
+            }
             Integer orderId = orderRepository.getByUserIdAndPayedIsFalse(user_id);
             if (orderId == null) {
                 return ResponseDto.builder()
@@ -232,7 +239,7 @@ public class OrderServiceImpl implements OrderService {
         Double total_price = paymentDetails.getForDelivery();
 
         for (OrderedProductsDetail op: orderedProducts){
-            total_price += op.getPrice()*op.getAmount();
+            total_price += op.getPrice() * op.getAmount();
         }
 
         if (total_price-cashback_money > account){
