@@ -23,6 +23,12 @@
 			<artifactId>spring-cloud-config-server</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>uz_nt-korzinka</groupId>
+			<artifactId>shared-libs</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

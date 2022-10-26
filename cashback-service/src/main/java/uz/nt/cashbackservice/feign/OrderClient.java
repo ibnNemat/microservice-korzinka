@@ -13,11 +13,11 @@ import java.util.List;
 public interface OrderClient {
 
     @GetMapping("/")
-    ResponseDto<HashMap<Integer, Double>> getUsersBoughtMoreMillion(@RequestParam Date date);
+    ResponseDto<HashMap<Integer, Double>> getUsersBoughtMoreMillion();
 
 
     @GetMapping("/")
-    ResponseDto<HashMap<Integer, Double>> getUsersBoughtMoreThreeMillion(@RequestParam Date date);
+    ResponseDto<HashMap<Integer, Double>> getUsersBoughtMoreThreeMillion();
 
 
 }

@@ -18,5 +18,6 @@ public class CashbackCard {
 
     private String barcode;
 
+    @Column(name = "user_id")
     private Integer userId;
 }
