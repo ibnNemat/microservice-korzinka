@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import shared.libs.dto.ResponseDto;
 
 import java.util.List;
+import java.util.ResourceBundle;
 
 @Service
 @Slf4j
@@ -24,13 +25,15 @@ public class CityServiceImpl implements CityService {
         try {
             List<City> cities = cityRepository.findAllByRegionId(id);
 
+            ResourceBundle bundle = ResourceBundle.getBundle("lang");
+
             if (cities.isEmpty())
-                return ResponseDto.<List<CityDto>>builder().code(404).success(false).message("Not found").build();
+                return ResponseDto.<List<CityDto>>builder().code(404).success(false).message(bundle.getString("res.not_found")).build();
 
             return ResponseDto.<List<CityDto>>builder()
                     .code(200)
                     .success(true)
-                    .message("Found")
+                    .message(bundle.getString("res.found"))
                     .responseData(CityMap.toDtoList(cities))
                     .build();
             

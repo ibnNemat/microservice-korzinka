@@ -12,5 +12,5 @@ public class OrderProductsDto {
     private Integer id;
     private Integer order_id;
     private Integer product_id;
-    private Integer amount;
+    private Double amount;
 }

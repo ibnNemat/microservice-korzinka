@@ -34,6 +34,7 @@ public class ProductTypeMapperImpl {
                         .short_name(entity.getUnit().getShort_name())
                         .build())
                 .products(null)
+                .parentId(entity.getParentId())
                 .build();
     }
 

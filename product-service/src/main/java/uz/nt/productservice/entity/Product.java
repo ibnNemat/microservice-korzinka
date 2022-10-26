@@ -25,7 +25,7 @@ public class Product {
     @ManyToOne
     private ProductType type;
 
-    private Integer amount;
+    private Double amount;
 
     private Double price;
 
@@ -36,7 +36,7 @@ public class Product {
     private String photoPath;
 
     @Column(name = "is_active")
-    private boolean isActive;
+    private boolean active;
 
     @OneToOne
     private Discount discount;

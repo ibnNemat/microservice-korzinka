@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import shared.libs.dto.ResponseDto;
 
 import java.util.List;
+import java.util.ResourceBundle;
 
 @Service
 @Slf4j
@@ -24,13 +25,15 @@ public class LandmarkServiceImpl implements LandmarkService {
         try {
             List<Landmark> landmarks = landmarkRepository.findAllByCityId(id);
 
+            ResourceBundle bundle = ResourceBundle.getBundle("lang");
+
             if (landmarks.isEmpty())
-                return ResponseDto.<List<LandmarkDto>>builder().code(404).success(false).message("Not found").build();
+                return ResponseDto.<List<LandmarkDto>>builder().code(404).success(false).message(bundle.getString("res.not_found")).build();
 
             return ResponseDto.<List<LandmarkDto>>builder()
                     .code(200)
                     .success(true)
-                    .message("Found")
+                    .message(bundle.getString("res.found"))
                     .responseData(LandmarkMap.toDtoList(landmarks))
                     .build();
 

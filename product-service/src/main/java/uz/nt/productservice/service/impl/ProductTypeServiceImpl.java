@@ -8,6 +8,7 @@ import shared.libs.dto.ProductTypeDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.productservice.entity.ProductType;
 import uz.nt.productservice.repository.ProductTypeRepository;
+import uz.nt.productservice.repository.UnitRepository;
 import uz.nt.productservice.service.ProductTypeService;
 import uz.nt.productservice.service.mapper.ProductTypeMapper;
 import uz.nt.productservice.service.mapper.impl.ProductTypeMapperImpl;
@@ -23,6 +24,7 @@ public class ProductTypeServiceImpl implements ProductTypeService {
     private final ProductTypeRepository productTypeRepository;
 
     private final ProductTypeMapper productTypeMapper;
+    private final UnitRepository unitRepository;
 
     @Override
     public ResponseDto<ProductTypeDto> add(ProductTypeDto dto){
@@ -31,6 +33,9 @@ public class ProductTypeServiceImpl implements ProductTypeService {
                     .code(-1).success(false).message("Product is all ready exists.").build();
         }
         ProductType entity = productTypeMapper.toEntity(dto);
+        if (entity.getUnit() != null && entity.getUnit().getId() == null){
+            unitRepository.save(entity.getUnit());
+        }
         productTypeRepository.save(entity);
 
         return ResponseDto.<ProductTypeDto>builder()

@@ -3,12 +3,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.security.core.context.SecurityContextHolder;
+import shared.libs.dto.CardDto;
+import shared.libs.dto.UserDto;
+import uz.nt.orderservice.client.UserCardClient;
+import uz.nt.orderservice.entity.Orders;
 import uz.nt.orderservice.service.PaymentHistoryService;
-import uz.nt.userservice.dto.CardDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.orderservice.dto.OrderDto;
 import uz.nt.orderservice.dto.OrderedProductsDetail;
-import uz.nt.orderservice.entity.Order;
 import uz.nt.orderservice.entity.PaymentHistory;
 import uz.nt.orderservice.repository.OrderRepository;
 import uz.nt.orderservice.service.OrderProductsService;
@@ -19,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import uz.nt.orderservice.dto.PaymentDetails;
-import uz.nt.userservice.service.CardService;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -30,30 +32,30 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
     private final OrderProductsService orderProductsService;
-    private final CardService cardService;
     private final PaymentHistoryService paymentHistoryService;
+    private final UserCardClient userCardClient;
 
     @Override
-    public ResponseDto addOrderIfNotExistUserOrders(Integer product_id, Integer amount) {
+    public ResponseDto addOrderIfNotExistUserOrders(Integer product_id, Double amount) {
         try{
-            Integer user_id = 1;
-
-            Optional<Order> optionalOrder = orderRepository.findUserOrderByUserIdWherePayedIsFalse(user_id);
+            UserDto userDto = (UserDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Optional<Orders> optionalOrder = orderRepository.findUserOrderByUserIdWherePayedIsFalse(userDto.getId());
             int order_id;
 
             if (optionalOrder.isPresent()){
-                Order order = optionalOrder.get();
+                Orders orders = optionalOrder.get();
 
-                order_id = order.getId();
+                order_id = orders.getId();
             }else{
-                Order order1 = new Order();
-                order1.setId(1);
-                orderRepository.save(order1);
+                Orders orders1 = new Orders();
+                orders1.setId(1);
+                orders1.setUserId(userDto.getId());
+                orderRepository.save(orders1);
 
                 order_id = orderRepository.getMax();
             }
 
-            orderProductsService.addOrderProducts(order_id, amount, product_id);
+            orderProductsService.addOrderProducts(order_id, product_id, amount);
 
             return ResponseDto.builder()
                     .code(200)
@@ -73,9 +75,9 @@ public class OrderServiceImpl implements OrderService {
     public ResponseDto<OrderDto> getById(Integer id) {
         try {
             if (orderRepository.existsById(id)) {
-                Order order = orderRepository.findById(id).get();
+                Orders orders = orderRepository.findById(id).get();
 
-                OrderDto orderDto = orderMapper.toDto(order);
+                OrderDto orderDto = orderMapper.toDto(orders);
 
                 return ResponseDto.<OrderDto>builder()
                         .code(200)
@@ -148,9 +150,9 @@ public class OrderServiceImpl implements OrderService {
     public ResponseDto updateOrder(OrderDto orderDto) {
         try{
             if (orderRepository.existsById(orderDto.getId())) {
-                Order order = orderRepository.findById(orderDto.getId()).get();
+                Orders orders = orderRepository.findById(orderDto.getId()).get();
 
-                OrderDto orderDto1 = orderMapper.toDto(order);
+                OrderDto orderDto1 = orderMapper.toDto(orders);
 
                 return ResponseDto.builder()
                         .code(200)
@@ -205,7 +207,7 @@ public class OrderServiceImpl implements OrderService {
         try{
             Integer user_id = 1;
 
-            Integer orderId = orderRepository.getByUser_idAndPayedIsFalse(user_id);
+            Integer orderId = orderRepository.getByUserIdAndPayedIsFalse(user_id);
             if (orderId == null) {
                 return ResponseDto.builder()
                         .code(-2343)
@@ -225,7 +227,7 @@ public class OrderServiceImpl implements OrderService {
     private ResponseDto finalPayFor(Integer orderId, Integer user_id, PaymentDetails paymentDetails){
         List<OrderedProductsDetail> orderedProducts = orderProductsService.getOrderedProductsToPayFor(orderId);
         Double cashback_money = paymentDetails.getCashbackMoney();
-        CardDto cardDto = cardService.getCardById(paymentDetails.getCardId()).getResponseData();
+        CardDto cardDto = userCardClient.getCardById(paymentDetails.getCardId()).getResponseData();
         Double account = cardDto.getAccount();
         Double total_price = paymentDetails.getForDelivery();
 
@@ -244,13 +246,13 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.updateOrderPayed(user_id);
 
         cardDto.setAccount(cardDto.getAccount()-(total_price-cashback_money));
-        cardService.updateCard(cardDto);
+        userCardClient.updateCard(cardDto);
 
         if (cashback_money != 0) {
-            // cashbackService.subtractUserCashback(Integer user_id, Double cashback_money);
+//             cashbackService.subtractUserCashback(Integer user_id, Double cashback_money);
         }
 
-        // cashbackService.calculateCashbackForUser(Integer user_id, Double total_price);
+//         cashbackService.calculateCashbackForUser(Integer user_id, Double total_price);
 
         PaymentHistory paymentHistory = PaymentHistory.builder()
                 .card_id(cardDto.getId())

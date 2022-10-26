@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 public interface OrderProductsService {
-    ResponseDto addOrderProducts(Integer order_id, Integer product_id, Integer amount);
+    ResponseDto addOrderProducts(Integer order_id, Integer product_id, Double amount);
     ResponseDto<OrderProductsDto> getById(Integer id);
     ResponseDto<Page<OrderProductsDto>> getAllOrderProductsByPage(Integer page, Integer size);
     ResponseDto updateOrderProducts(OrderProductsDto orderProductsDto);
