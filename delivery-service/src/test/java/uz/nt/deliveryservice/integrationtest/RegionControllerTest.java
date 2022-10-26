@@ -10,10 +10,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.annotation.Order;
 import org.springframework.test.web.servlet.MockMvc;
 import shared.libs.dto.JWTResponseDto;
+import shared.libs.dto.LoginDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.deliveryservice.client.UserClient;
 import uz.nt.deliveryservice.dto.RegionDto;
-import uz.nt.userservice.dto.LoginDto;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
