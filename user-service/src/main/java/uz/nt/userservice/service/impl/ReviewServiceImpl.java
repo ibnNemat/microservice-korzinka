@@ -10,6 +10,7 @@ import uz.nt.userservice.service.ReviewService;
 import uz.nt.userservice.service.mapper.ReviewMapper;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,7 +44,20 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public ResponseDto<Review> getById(Integer id) {
-        return null;
+    public ResponseDto<ReviewDto> getById(Integer id) {
+        Optional<Review> optionalReview =  repository.findById(id);
+        if(optionalReview.isPresent()) {
+            return ResponseDto.<ReviewDto>builder()
+                    .code(0)
+                    .message("Success")
+                    .success(true)
+                    .responseData(mapper.toDto(optionalReview.get()))
+                    .build();
+        }
+        return ResponseDto.<ReviewDto>builder()
+                .code(-100)
+                .message("Failed")
+                .success(false)
+                .build();
     }
 }
