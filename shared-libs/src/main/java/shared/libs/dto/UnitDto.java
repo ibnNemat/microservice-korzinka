@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class UnitDto {
     private Integer id;
     private String name;
-    private String short_name;
+    private String shortName;
 }
