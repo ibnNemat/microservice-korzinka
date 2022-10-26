@@ -22,6 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import uz.nt.orderservice.dto.PaymentDetails;
+
+import javax.transaction.Transactional;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -203,6 +205,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public ResponseDto payForOrders(PaymentDetails paymentDetails) {
         try{
             Integer user_id;
@@ -214,14 +217,14 @@ public class OrderServiceImpl implements OrderService {
                         .message("Authorization expired")
                         .build();
             }
-            Integer orderId = orderRepository.getByUserIdAndPayedIsFalse(user_id);
+            Orders orderId = orderRepository.getByUserIdAndPayedIsFalse(user_id);
             if (orderId == null) {
                 return ResponseDto.builder()
                         .code(-2343)
                         .message("User is not found!")
                         .build();
             }
-            return finalPayFor(orderId, user_id, paymentDetails);
+            return finalPayFor(orderId.getId(), user_id, paymentDetails);
         }catch (Exception e){
             log.error(e.getMessage());
             return ResponseDto.builder()
