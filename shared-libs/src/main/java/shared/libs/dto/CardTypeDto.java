@@ -5,11 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @Builder
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
-public class LoginDto {
-    private String username;
-    private String password;
+@AllArgsConstructor
+public class CardTypeDto {
+    private Integer id;
+    private String name;
 }

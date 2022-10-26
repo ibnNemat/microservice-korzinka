@@ -14,7 +14,7 @@ import shared.libs.dto.ResponseDto;
 import shared.libs.entity.UserSession;
 import shared.libs.repository.UserSessionRepository;
 import shared.libs.security.JwtService;
-import shared.libs.dto.LoginDto;
+import uz.nt.userservice.dto.LoginDto;
 import shared.libs.dto.UserDto;
 import shared.libs.utils.DateUtil;
 import uz.nt.userservice.entity.User;

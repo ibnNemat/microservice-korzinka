@@ -14,10 +14,10 @@ import javax.persistence.*;
 @Builder
 public class UserAuthority {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_authority_id_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "user_authority_id_seq")
     @SequenceGenerator(name = "user_authority_id_seq", sequenceName = "user_authority_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private Integer id;
-    private Integer user_id;
-    private Integer authority_id;
+    private Integer userId;
+    private Integer authorityId;
 }
