@@ -20,12 +20,12 @@ public class CardController implements CardService {
         return cardService.getAllCards();
     }
 
-    @GetMapping("by-user-id")
+    @GetMapping("by-user-id/{user_id}")
     public ResponseDto<List<CardDto>> getCardsByUserId(@PathVariable Integer user_id) {
         return cardService.getCardsByUserId(user_id);
     }
 
-    @GetMapping("/by-id/{card_id}")
+    @GetMapping("/by-id/{cardId}")
     public ResponseDto<CardDto> getCardById(@PathVariable Integer cardId) {
         return cardService.getCardById(cardId);
     }

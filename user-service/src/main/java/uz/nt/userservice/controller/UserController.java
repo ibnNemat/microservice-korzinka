@@ -32,7 +32,7 @@ public class UserController {
         return userService.addUser(userDto);
     }
 
-    @PutMapping("/sign-in")
+    @PutMapping
     public ResponseDto updateUser(@RequestBody UserDto userDto){
         return userService.updateUser(userDto);
     }
