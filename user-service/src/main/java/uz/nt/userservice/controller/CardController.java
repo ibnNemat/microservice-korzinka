@@ -21,8 +21,8 @@ public class CardController implements CardService {
     }
 
     @GetMapping("by-user-id/{user_id}")
-    public ResponseDto<List<CardDto>> getCardsByUserId(@PathVariable Integer user_id) {
-        return cardService.getCardsByUserId(user_id);
+    public ResponseDto<List<CardDto>> getCardsByUserId(@PathVariable Integer userId) {
+        return cardService.getCardsByUserId(userId);
     }
 
     @GetMapping("/by-id/{cardId}")
@@ -30,7 +30,7 @@ public class CardController implements CardService {
         return cardService.getCardById(cardId);
     }
 
-    @DeleteMapping()
+    @DeleteMapping("{id}")
     public ResponseDto deleteCardById(@PathVariable Integer id) {
         return cardService.deleteCardById(id);
     }
