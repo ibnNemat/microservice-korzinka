@@ -10,34 +10,31 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="orders-service" />
         <module name="delivery-service" />
-        <module name="orders-service" />
         <module name="discovery-server" />
         <module name="cloud-config-server" />
-        <module name="cashback-service" />
         <module name="product-service" />
-        <module name="order-service" />
+        <module name="cashback-service" />
         <module name="user-service" />
+        <module name="order-service" />
         <module name="shared-libs" />
-        <module name="gmail-service" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="discovery-server" target="19" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="KorzinkaProject" options="" />
       <module name="cashback-service" options="-parameters" />
       <module name="cloud-config-server" options="-parameters" />
       <module name="delivery-service" options="-parameters" />
       <module name="discovery-server" options="-parameters" />
-      <module name="gmail-service" options="-parameters" />
       <module name="order-service" options="-parameters" />
-      <module name="orders-service" options="-parameters" />
       <module name="product-service" options="-parameters" />
       <module name="shared-libs" options="-parameters" />
       <module name="user-service" options="-parameters" />
-      <module name="uz_nt-korzinka" options="-parameters" />
+      <module name="uz_nt-korzinka" options="" />
     </option>
   </component>
 </project>

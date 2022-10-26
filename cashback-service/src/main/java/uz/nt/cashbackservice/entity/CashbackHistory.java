@@ -16,7 +16,7 @@ import java.util.Date;
 public class CashbackHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cashback_history_gen")
-    @SequenceGenerator(name = "cashback_history_gen", sequenceName = "cashback_history_seq", allocationSize = 1)
+    @SequenceGenerator(name = "cashback_history_gen", sequenceName = "cashback_history_seq", allocationSize = 5)
     @Column(name = "id", nullable = false)
     private Integer id;
 

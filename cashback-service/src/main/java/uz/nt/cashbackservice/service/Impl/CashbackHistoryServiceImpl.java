@@ -25,34 +25,13 @@ public class CashbackHistoryServiceImpl implements CashbackHistoryService {
     private final MessageSource messageSource;
 
     @Override
-    public CashbackHistory addCashbackHistory(CashbackHistory cashbackHistory) {
-        return cashbackHistoryRepository.save(cashbackHistory);
+    public void addCashbackHistory(CashbackHistory cashbackHistory) {
+        cashbackHistoryRepository.save(cashbackHistory);
     }
 
-
     @Override
-    public ResponseDto<Boolean> deleteCashbackHistoryByCardId(Integer cashbackCardId, HttpServletRequest request) {
-        Locale locale = request.getLocale();
-        String message;
-        if(cashbackCardId != null){
-            cashbackHistoryRepository.deleteCashbackHistoryByCardId(cashbackCardId);
-
-            message = messageSource.getMessage("operation.success", new String[]{} , locale);
-
-            return ResponseDto.<Boolean>builder()
-                    .code(200)
-                    .responseData(true)
-                    .success(true)
-                    .message(message)
-                    .build();
-        }
-        message = messageSource.getMessage("error", new String[]{} , locale);
-        return ResponseDto.<Boolean>builder()
-                .code(-1)
-                .responseData(false)
-                .success(false)
-                .message(message)
-                .build();
+    public void deleteCashbackHistoryByCardId(Integer cashbackCardId) {
+        cashbackHistoryRepository.deleteCashbackHistoryByCardId(cashbackCardId);
     }
 
     @Override
@@ -71,7 +50,7 @@ public class CashbackHistoryServiceImpl implements CashbackHistoryService {
                         .message(message)
                         .build();
         }
-        message = messageSource.getMessage("error", new String[]{} , locale);
+        message = messageSource.getMessage("not.found", new String[]{} , locale);
 
         return ResponseDto.<List<CashbackHistoryDto>>builder()
                 .code(-1)
@@ -81,12 +60,11 @@ public class CashbackHistoryServiceImpl implements CashbackHistoryService {
     }
 
     @Override
-    public ResponseDto<List<CashbackHistoryDto>> getCashbackHistoryBetween(Integer cardId, Date date, HttpServletRequest request) {
+    public ResponseDto<List<CashbackHistoryDto>> getCashbackHistoryBetween(Date date, HttpServletRequest request) {
         Locale locale = request.getLocale();
         String message;
         if(date != null) {
-            List<CashbackHistoryDto> list = cashbackHistoryRepository.
-                    findAllByCardIdAndTransactionDateBetween(cardId, date, new Date())
+            List<CashbackHistoryDto> list = cashbackHistoryRepository.findAllByTransactionDateBetween(date, new Date())
                     .stream().map(cashbackHistoryMapper::toDto).toList();
             message = messageSource.getMessage("get.success", new String[]{} , locale);
 
@@ -97,7 +75,7 @@ public class CashbackHistoryServiceImpl implements CashbackHistoryService {
                     .message(message)
                     .build();
         }
-        message = messageSource.getMessage("error", new String[]{} , locale);
+        message = messageSource.getMessage("not.found", new String[]{} , locale);
 
         return ResponseDto.<List<CashbackHistoryDto>>builder()
                 .code(-1)
