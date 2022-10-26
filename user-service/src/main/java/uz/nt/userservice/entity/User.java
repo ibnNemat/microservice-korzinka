@@ -28,6 +28,5 @@ public class User {
     private String phoneNumber;
     private Date created_at;
     private String location;
-//    @Column(columnDefinition = "false")
     private Boolean isActive;
 }

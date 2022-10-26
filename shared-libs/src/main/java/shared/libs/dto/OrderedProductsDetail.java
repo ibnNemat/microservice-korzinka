@@ -1,4 +1,4 @@
-package shared.libs.dto;
+package uz.nt.orderservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +17,7 @@ import javax.persistence.Id;
 @Subselect("select * from orders")
 public class OrderedProductsDetail {
     @Id
-    private Integer productId;
+    private Integer product_id;
     private Double price;
     private Double amount;
 }

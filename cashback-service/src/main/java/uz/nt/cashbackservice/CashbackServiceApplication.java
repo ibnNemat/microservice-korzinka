@@ -15,7 +15,7 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 @EnableRedisRepositories({"shared.libs.*", "uz.nt.cashbackservice.*"})
 public class CashbackCardServiceApplication {
     public static void main(String[] args) {
-        SpringApplication.run(CashbackCardServiceApplication.class, args);
+        SpringApplication.run(CashbackServiceApplication.class, args);
     }
 
 }
