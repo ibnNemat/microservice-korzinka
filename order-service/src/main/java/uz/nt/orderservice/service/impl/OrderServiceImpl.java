@@ -6,6 +6,8 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import shared.libs.dto.CardDto;
 import shared.libs.dto.UserDto;
+import uz.nt.orderservice.client.CashbackClient;
+import uz.nt.orderservice.client.ProductClient;
 import uz.nt.orderservice.client.UserCardClient;
 import uz.nt.orderservice.entity.Orders;
 import uz.nt.orderservice.service.PaymentHistoryService;
@@ -22,6 +24,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import uz.nt.orderservice.dto.PaymentDetails;
+
+import javax.transaction.Transactional;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -34,12 +38,19 @@ public class OrderServiceImpl implements OrderService {
     private final OrderProductsService orderProductsService;
     private final PaymentHistoryService paymentHistoryService;
     private final UserCardClient userCardClient;
+    private final CashbackClient cashbackClient;
+    private final ProductClient productClient;
 
     @Override
+    @Transactional
     public ResponseDto addOrderIfNotExistUserOrders(Integer product_id, Double amount) {
         try{
-            UserDto userDto = (UserDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            Optional<Orders> optionalOrder = orderRepository.findUserOrderByUserIdWherePayedIsFalse(userDto.getId());
+            UserDto userDto = (UserDto) SecurityContextHolder.getContext()
+                            .getAuthentication()
+                            .getPrincipal();
+
+            Optional<Orders> optionalOrder = orderRepository
+                    .findUserOrderByUserIdWherePayedIsFalse(userDto.getId());
             int order_id;
 
             if (optionalOrder.isPresent()){
@@ -74,8 +85,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ResponseDto<OrderDto> getById(Integer id) {
         try {
-            if (orderRepository.existsById(id)) {
-                Orders orders = orderRepository.findById(id).get();
+            Optional<Orders> optionalOrders = orderRepository.findById(id);
+             if (optionalOrders.isPresent()) {
+                Orders orders = optionalOrders.get();
 
                 OrderDto orderDto = orderMapper.toDto(orders);
 
@@ -149,8 +161,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ResponseDto updateOrder(OrderDto orderDto) {
         try{
-            if (orderRepository.existsById(orderDto.getId())) {
-                Orders orders = orderRepository.findById(orderDto.getId()).get();
+            Optional<Orders> optionalOrders = orderRepository.findById(orderDto.getId());
+            if (optionalOrders.isPresent()) {
+                Orders orders = optionalOrders.get();
 
                 OrderDto orderDto1 = orderMapper.toDto(orders);
 
@@ -203,18 +216,26 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public ResponseDto payForOrders(PaymentDetails paymentDetails) {
         try{
-            Integer user_id = 1;
-
-            Integer orderId = orderRepository.getByUserIdAndPayedIsFalse(user_id);
+            Integer user_id;
+            if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserDto user) {
+                 user_id = user.getId();
+            }else {
+                return ResponseDto.builder()
+                        .code(-3)
+                        .message("Authorization expired")
+                        .build();
+            }
+            Orders orderId = orderRepository.getByUserIdAndPayedIsFalse(user_id);
             if (orderId == null) {
                 return ResponseDto.builder()
                         .code(-2343)
                         .message("User is not found!")
                         .build();
             }
-            return finalPayFor(orderId, user_id, paymentDetails);
+            return finalPayFor(orderId.getId(), user_id, paymentDetails);
         }catch (Exception e){
             log.error(e.getMessage());
             return ResponseDto.builder()
@@ -232,7 +253,7 @@ public class OrderServiceImpl implements OrderService {
         Double total_price = paymentDetails.getForDelivery();
 
         for (OrderedProductsDetail op: orderedProducts){
-            total_price += op.getPrice()*op.getAmount();
+            total_price += op.getPrice() * op.getAmount();
         }
 
         if (total_price-cashback_money > account){
@@ -245,29 +266,48 @@ public class OrderServiceImpl implements OrderService {
 
         orderRepository.updateOrderPayed(user_id);
 
-        cardDto.setAccount(cardDto.getAccount()-(total_price-cashback_money));
+        Double card_payment = cardDto.getAccount()-(total_price-cashback_money);
+        cardDto.setAccount(card_payment);
         userCardClient.updateCard(cardDto);
 
+//        ResponseDto<Boolean> responseDto = productClient.update(product_id, amount);
+//        return ResponseDto.builder()
+//                .code(-5)
+//                .message("We don't have products in that many amounts!")
+//                .build();
+
         if (cashback_money != 0) {
-//             cashbackService.subtractUserCashback(Integer user_id, Double cashback_money);
+             cashbackClient.subtractCashback(user_id, cashback_money);
         }
 
-//         cashbackService.calculateCashbackForUser(Integer user_id, Double total_price);
+        cashbackClient.calculateCashbackForEachShopping(user_id, cashback_money);
+        return savePaymentHistory(cardDto, card_payment, cashback_money, total_price, user_id);
+    }
 
-        PaymentHistory paymentHistory = PaymentHistory.builder()
-                .card_id(cardDto.getId())
-                .user_id(user_id)
-                .total_price(total_price)
-                .status("OK")
-                .description("Successfully payed")
-                .build();
-        paymentHistoryService.addHistory(paymentHistory);
+    public ResponseDto savePaymentHistory(CardDto cardDto, Double card_payment, Double cashback_payment, Double total_price, Integer user_id){
+        try {
+            PaymentHistory paymentHistory = PaymentHistory.builder()
+                    .card_id(cardDto.getId())
+                    .user_id(user_id)
+                    .card_payment(card_payment)
+                    .cashback_payment(cashback_payment)
+                    .total_price(total_price)
+                    .status("OK")
+                    .description("Successfully payed")
+                    .build();
+            paymentHistoryService.addHistory(paymentHistory);
 
-        return ResponseDto.builder()
-                .code(200)
-                .success(true)
-                .message("Successfully Payed!")
-                .build();
+            return ResponseDto.builder()
+                    .code(200)
+                    .success(true)
+                    .message("Successfully Payed!")
+                    .build();
+        }catch (Exception e){
+            return ResponseDto.builder()
+                    .code(500)
+                    .message(e.getMessage())
+                    .build();
+        }
     }
 
     public Double sumAllOfUserOrderedProductsMonthly(){

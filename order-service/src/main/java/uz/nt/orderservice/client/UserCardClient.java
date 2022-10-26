@@ -7,9 +7,9 @@ import org.springframework.cloud.openfeign.FeignClient;
 
 @FeignClient(url = "http://localhost:8001/user-api", name = "user-service", configuration = FeignConfiguration.class)
 public interface UserCardClient {
-    @GetMapping("/by-id/{card_id}")
-    ResponseDto<CardDto> getCardById(@RequestParam Integer card_id);
+    @GetMapping("/cards/by-id/{card_id}")
+    ResponseDto<CardDto> getCardById(@PathVariable Integer card_id);
 
-    @PutMapping
+    @PutMapping("/cards")
     ResponseDto updateCard(@RequestBody CardDto cardDto);
 }
