@@ -17,10 +17,7 @@ import uz.nt.orderservice.repository.helperRepository.OrderProductRepositoryHelp
 import uz.nt.orderservice.service.OrderProductsService;
 import uz.nt.orderservice.service.mapper.OrderProductsMapper;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -122,6 +119,16 @@ public class OrderProductsServiceImpl implements OrderProductsService {
 
     @Override
     public ResponseDto deleteByProductIdAndOrderId(Integer orderId, Integer productId) {
+        return null;
+    }
+
+    @Override
+    public ResponseDto<HashMap<Integer, Double>> quantityOrderedProductsPerMonth(Date date) {
+        return null;
+    }
+
+    @Override
+    public ResponseDto<HashMap<Integer, Double>> quantityOrderedProductsPerQuarter(Date date) {
         return null;
     }
 
