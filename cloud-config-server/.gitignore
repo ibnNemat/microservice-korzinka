@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+C:\MyProjects\KorzinkaProject\cloud-config-server\src\main\resources\application.properties
+
+cloud-config-server/src/main/resources/application.properties
