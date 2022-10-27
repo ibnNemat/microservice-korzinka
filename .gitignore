@@ -24,4 +24,4 @@ hs_err_pid*
 
 .idea/
 
-cloud-config-server/src/main/resources/application.properties
+/cloud-config-server/src/main/resources/application.properties
