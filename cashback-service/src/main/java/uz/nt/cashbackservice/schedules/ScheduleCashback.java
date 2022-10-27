@@ -15,11 +15,13 @@ import java.util.List;
 
 @EnableScheduling
 @Configuration
+
+
+
 @RequiredArgsConstructor
 public class ScheduleCashback {
 
     private final OrderClient orderClient;
-
     private final CashbackCardService cashbackCardService;
 
     @Scheduled(cron = "0 0 4 1 * *")
