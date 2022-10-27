@@ -6,7 +6,7 @@ import uz.nt.orderservice.entity.PaymentHistory;
 import java.util.List;
 
 public interface PaymentHistoryService {
-    ResponseDto addHistory(PaymentHistory paymentHistory);
+    ResponseDto addHistory(PaymentHistoryDto paymentHistoryDto);
     ResponseDto<PaymentHistoryDto> getById(Integer id);
     ResponseDto<List<PaymentHistoryDto>> getAllHistories();
     ResponseDto deleteById(Integer id);

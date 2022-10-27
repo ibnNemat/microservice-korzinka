@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface OrderProductsService {
-    ResponseDto addOrderProducts(Integer order_id, Integer product_id, Double amount);
+    ResponseDto addOrderProducts(Integer orderId, Integer productId, Double amount);
     ResponseDto<OrderProductsDto> getById(Integer id);
     ResponseDto<Page<OrderProductsDto>> getAllOrderProductsByPage(Integer page, Integer size);
     ResponseDto updateOrderProducts(OrderProductsDto orderProductsDto);
@@ -18,8 +18,8 @@ public interface OrderProductsService {
     ResponseDto deleteByOrderId(Integer orderId);
     ResponseDto deleteByProductIdAndOrderId(Integer orderId, Integer productId);
 
-    ResponseDto<HashMap<Integer, Double>> quantityOrderedProductsPerMonth(Date date);
-    ResponseDto<HashMap<Integer, Double>> quantityOrderedProductsPerQuarter(Date date);
-    List<OrderedProductsDetail> getOrderedProductsToPayFor(Integer order_id);
+    ResponseDto<HashMap<Integer, Double>> quantityOrderedProductsPerMonth();
+    ResponseDto<HashMap<Integer, Double>> quantityOrderedProductsPerQuarter();
+    List<OrderedProductsDetail> getOrderedProductsToPayFor(Integer orderId);
     ResponseDto<Page<OrderProductsDto>> responseDtoWithLink(Integer page, Integer size, Method method, ResponseDto<Page<OrderProductsDto>> responseDto);
 }

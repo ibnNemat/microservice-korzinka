@@ -2,16 +2,18 @@ package uz.nt.orderservice.repository;
 
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import uz.nt.orderservice.entity.OrderProducts;
 import uz.nt.orderservice.entity.Orders;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.transaction.Transactional;
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Orders, Integer> {
     @Query("select o from Orders o where o.userId = ?1 and o.payed = false")
-    Optional<Orders> findUserOrderByUserIdWherePayedIsFalse(Integer user_id);
+    Optional<Orders> findUserOrderByUserIdWherePayedIsFalse(Integer userId);
 
     @Query("select max(o.id) from Orders o")
     Integer getMax();
@@ -19,14 +21,18 @@ public interface OrderRepository extends JpaRepository<Orders, Integer> {
     @Transactional
     @Modifying
     @Query("update Orders o set o.payed = true where o.userId = ?1 and o.payed = false")
-    void updateOrderPayed(Integer user_id);
+    void updateOrderPayed(Integer userId);
 
     @Query("select o.id from Orders o where o.payed = false")
     List<Integer> getAllOrdersIdIsPayedFalse();
 
-    Orders getByUserIdAndPayedIsFalse(Integer user_id);
+    Orders getByUserIdAndPayedIsFalse(Integer userId);
 
-//    @Query("select o.orderProducts from Order o where o.userId = :user_id and o.payed = true" +
-//            " and o.created_at between :startOfMonth and :endOfMoth")
-//    List<List<OrderProducts>> sumAllOfUserOrderProductsMonthly(Integer user_id, Date startOfMonth, Date endOfMonth);
+    @Modifying
+    @Query("update Orders o set o.totalPrice = :price where o.id = :orderId")
+    void updateOrderTotalPrice(Integer orderId, Double price);
+
+    @Query("select o from Orders o where o.payed = true" +
+            " and o.createdAt between :startOfMonth and :endOfMoth")
+    List<Orders> userPayedOrderedProducts(Date startOfMonth, Date endOfMonth);
 }

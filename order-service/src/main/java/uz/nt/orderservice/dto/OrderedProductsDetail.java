@@ -17,7 +17,7 @@ import javax.persistence.Id;
 @Subselect("select * from orders")
 public class OrderedProductsDetail {
     @Id
-    private Integer product_id;
+    private Integer productId;
     private Double price;
     private Double amount;
 }

@@ -4,18 +4,12 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.bootstrap.BootstrapConfiguration;
-import org.springframework.cloud.bootstrap.config.BootstrapPropertySource;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import shared.libs.utils.DateUtil;
+import shared.libs.utils.MyDateUtil;
 
-import java.io.IOException;
 import java.util.Date;
-import java.util.Properties;
 
 @Component
 @RequiredArgsConstructor
@@ -39,7 +33,7 @@ public class JwtService {
     public String generateToken(String user_id){
         return Jwts.builder()
                 .claim("sub", user_id)
-                .claim("exp", DateUtil.expirationTimeToken())
+                .claim("exp", MyDateUtil.expirationTimeToken())
                 .claim("iat", new Date())
                 .signWith(SignatureAlgorithm.HS256, environment.getProperty("spring.security.key"))
                 .compact();
