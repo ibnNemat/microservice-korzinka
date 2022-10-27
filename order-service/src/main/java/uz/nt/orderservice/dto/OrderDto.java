@@ -17,6 +17,7 @@ public class OrderDto {
     private Integer id;
     private Integer userId;
     private Boolean payed;
+    private Double total_price;
     private List<OrderProductsDto> orderProducts;
     private Date created_at;
 }

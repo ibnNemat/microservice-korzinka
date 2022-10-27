@@ -39,7 +39,7 @@ public class OrderServiceImpl implements OrderService {
     private final PaymentHistoryService paymentHistoryService;
     private final UserCardClient userCardClient;
     private final CashbackClient cashbackClient;
-    private final ProductClient productClient;
+
 
     @Override
     @Transactional
@@ -216,6 +216,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Boolean updateOrderTotalPrice(Integer order_id, Double total_price) {
+        try{
+            orderRepository.updateOrderTotalPrice(order_id, total_price);
+            return true;
+
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
     @Transactional
     public ResponseDto payForOrders(PaymentDetails paymentDetails) {
         try{
@@ -269,6 +281,13 @@ public class OrderServiceImpl implements OrderService {
         Double card_payment = cardDto.getAccount()-(total_price-cashback_money);
         cardDto.setAccount(card_payment);
         userCardClient.updateCard(cardDto);
+
+        if(!updateOrderTotalPrice(orderId, total_price)){
+            return ResponseDto.builder()
+                    .code(500)
+                    .message("Error while updating total_price of order")
+                    .build();
+        }
 
 //        ResponseDto<Boolean> responseDto = productClient.update(product_id, amount);
 //        return ResponseDto.builder()

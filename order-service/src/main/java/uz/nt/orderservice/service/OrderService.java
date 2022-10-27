@@ -15,6 +15,7 @@ public interface OrderService {
                                                     Method method, ResponseDto<Page<OrderDto>> responseDto);
     ResponseDto updateOrder(OrderDto orderDto);
     ResponseDto deleteById(Integer id);
+    Boolean updateOrderTotalPrice(Integer order_id, Double total_price);
 
     ResponseDto payForOrders(PaymentDetails paymentDetails);
 }
