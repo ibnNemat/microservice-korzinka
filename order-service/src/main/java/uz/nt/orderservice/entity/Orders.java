@@ -21,9 +21,9 @@ public class Orders {
     @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean payed;
     @Column(columnDefinition = "DATE DEFAULT CURRENT_DATE")
-    private Date created_at;
+    private Date createdAt;
     @Column(columnDefinition = "DOUBLE PRECISION DEFAULT 0")
-    private Double total_price;
+    private Double totalPrice;
     @OneToMany(mappedBy = "orderId")
     private List<OrderProducts> orderProducts;
 }

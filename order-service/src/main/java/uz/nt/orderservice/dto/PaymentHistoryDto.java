@@ -13,12 +13,12 @@ import java.sql.Date;
 @NoArgsConstructor
 public class PaymentHistoryDto {
     private Integer id;
-    private Integer user_id;
-    private Integer card_id;
-    private Double cashback_payment;
-    private Double card_payment;
-    private Double total_price;
+    private Integer userId;
+    private Integer cardId;
+    private Double cashbackPayment;
+    private Double cardPayment;
+    private Double totalPrice;
     private String status;
     private String description;
-    private Date created_at;
+    private Date createdAt;
 }

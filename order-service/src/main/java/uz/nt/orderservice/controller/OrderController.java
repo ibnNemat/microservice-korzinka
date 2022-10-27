@@ -33,8 +33,8 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseDto addOrderIfNotExistUserOrders(@RequestParam Integer product_id, @RequestParam Double amount){
-        return orderService.addOrderIfNotExistUserOrders(product_id, amount);
+    public ResponseDto addOrderIfNotExistUserOrders(@RequestParam Integer productId, @RequestParam Double amount){
+        return orderService.addOrderIfNotExistUserOrders(productId, amount);
     }
 
     @PutMapping
