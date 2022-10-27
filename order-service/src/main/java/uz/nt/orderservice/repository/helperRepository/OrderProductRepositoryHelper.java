@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
+import uz.nt.orderservice.client.ProductClient;
 import uz.nt.orderservice.dto.OrderedProductsDetail;
 import uz.nt.orderservice.repository.OrderRepository;
 
@@ -18,6 +19,8 @@ import java.util.List;
 public class OrderProductRepositoryHelper {
     private final EntityManager entityManager;
     private final OrderRepository orderRepository;
+
+    private final ProductClient productClient;
 
     public List<OrderedProductsDetail> getOrderedProductDetails(Integer order_id){
         Query query = entityManager.createNativeQuery(
@@ -38,7 +41,7 @@ public class OrderProductRepositoryHelper {
         for (Integer order_id: orderIdList){
             List<OrderedProductsDetail> unpaidOrderedProducts = getOrderedProductDetails(order_id);
             for (OrderedProductsDetail productsDetail: unpaidOrderedProducts){
-                productRepository.addProductAmount(productsDetail.getAmount(), productsDetail.getProduct_id());
+                productClient.setProductAmount(productsDetail.getAmount(), productsDetail.getProduct_id());
             }
             String stringQuery = "delete from OrderProducts op where op.orderId = " + order_id;
             Query query = entityManager.createQuery(stringQuery);
