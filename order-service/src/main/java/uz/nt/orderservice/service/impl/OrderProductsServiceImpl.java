@@ -1,6 +1,7 @@
 package uz.nt.orderservice.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -36,7 +37,6 @@ public class OrderProductsServiceImpl implements OrderProductsService {
     private final ProductClient productClient;
     private final OrderProductRepositoryHelper orderProductRepositoryHelper;
     private final OrderRepository orderRepository;
-    private final OrderService orderService;
     @Override
     public ResponseDto addOrderProducts(Integer order_id, Integer product_id, Double amount) {
         try {

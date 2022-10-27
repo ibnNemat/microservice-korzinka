@@ -17,4 +17,6 @@ public interface ProductClient {
     ResponseDto<Boolean> checkAmountProduct(@RequestParam Integer product_id, @RequestParam Double amount);
     @PostMapping("product/set-amount")
     ResponseDto setProductAmount(Double amount, Integer product_id);
+
+
 }

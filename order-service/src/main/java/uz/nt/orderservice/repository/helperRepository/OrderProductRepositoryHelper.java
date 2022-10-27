@@ -18,7 +18,6 @@ import java.util.List;
 public class OrderProductRepositoryHelper {
     private final EntityManager entityManager;
     private final OrderRepository orderRepository;
-
     public List<OrderedProductsDetail> getOrderedProductDetails(Integer order_id){
         Query query = entityManager.createNativeQuery(
                 "select op.product_id as product_id, price, amount" +
@@ -27,6 +26,7 @@ public class OrderProductRepositoryHelper {
         query.setParameter("orderId", order_id);
 
         List<OrderedProductsDetail> productsDetailList = query.getResultList();
+
         return productsDetailList;
     }
 

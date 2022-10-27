@@ -7,7 +7,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import shared.libs.dto.CardDto;
 import shared.libs.dto.UserDto;
 import uz.nt.orderservice.client.CashbackClient;
-import uz.nt.orderservice.client.ProductClient;
 import uz.nt.orderservice.client.UserCardClient;
 import uz.nt.orderservice.entity.Orders;
 import uz.nt.orderservice.service.PaymentHistoryService;
@@ -288,12 +287,6 @@ public class OrderServiceImpl implements OrderService {
                     .message("Error while updating total_price of order")
                     .build();
         }
-
-//        ResponseDto<Boolean> responseDto = productClient.update(product_id, amount);
-//        return ResponseDto.builder()
-//                .code(-5)
-//                .message("We don't have products in that many amounts!")
-//                .build();
 
         if (cashback_money != 0) {
              cashbackClient.subtractCashback(user_id, cashback_money);
