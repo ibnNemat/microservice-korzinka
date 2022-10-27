@@ -8,6 +8,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
 import shared.libs.dto.ResponseDto;
+import shared.libs.utils.MyDateUtil;
 import uz.nt.orderservice.client.ProductClient;
 import uz.nt.orderservice.dto.OrderProductsDto;
 import uz.nt.orderservice.dto.OrderedProductsDetail;
@@ -17,6 +18,10 @@ import uz.nt.orderservice.repository.helperRepository.OrderProductRepositoryHelp
 import uz.nt.orderservice.service.OrderProductsService;
 import uz.nt.orderservice.service.mapper.OrderProductsMapper;
 import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.*;
 
 @Service
@@ -122,13 +127,67 @@ public class OrderProductsServiceImpl implements OrderProductsService {
         return null;
     }
 
-    @Override
-    public ResponseDto<HashMap<Integer, Double>> quantityOrderedProductsPerMonth(Date date) {
-        return null;
+    public String buildStringDate(Integer monthlyOrQuarterly) throws Exception {
+        Date date = new Date();
+        LocalDate localDate = LocalDate.parse(new SimpleDateFormat("yyyy-MM-dd").format(date));
+        Integer day = localDate.getDayOfMonth();
+        Integer month = localDate.getMonth().getValue();
+        Integer year = localDate.getYear();
+
+        String stringDate;
+        if (monthlyOrQuarterly == 1){
+            if (month == 1){
+                year -= year;
+                month = 12;
+            }else {
+                month -= 1;
+            }
+        }else{
+            if (month < 4){
+                month += 9;
+                year -=year;
+            }
+        }
+        stringDate = year + "-" + month + "-" + day;
+
+        Date date1 = MyDateUtil.parseToDate(stringDate);
+
+        java.sql.Date lastMonth = new java.sql.Date(date1.getTime());
+        java.sql.Date currentDate = new java.sql.Date(date.getTime());
+
     }
 
     @Override
-    public ResponseDto<HashMap<Integer, Double>> quantityOrderedProductsPerQuarter(Date date) {
+    public ResponseDto<HashMap<Integer, Double>> quantityOrderedProductsPerMonth() {
+        try{
+            Date date = new Date();
+            String stringDate = MyDateUtil.parseToString(date);
+            if (stringDate == null){
+                return ResponseDto.<HashMap<Integer, Double>>builder()
+                        .code(500)
+                        .message("Error while parsingDate")
+                        .build();
+            }
+
+
+            if (stringDate.charAt(5) == '0' && stringDate.charAt(5) == '1'){
+                Month month = Month.OCTOBER;
+                month.getValue();
+            }
+
+            return null;
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return ResponseDto.<HashMap<Integer, Double>>builder()
+                    .code(500)
+                    .message(e.getMessage())
+                    .build();
+        }
+    }
+
+    @Override
+    public ResponseDto<HashMap<Integer, Double>> quantityOrderedProductsPerQuarter() {
+        Date date = new Date();
         return null;
     }
 

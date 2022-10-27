@@ -30,7 +30,7 @@
       <module name="cloud-config-server" options="-parameters" />
       <module name="delivery-service" options="-parameters" />
       <module name="discovery-server" options="-parameters" />
-      <module name="order-service" options="-parameters" />
+      <module name="order-service" options="-parameters --add-modules java.sql" />
       <module name="product-service" options="-parameters" />
       <module name="shared-libs" options="-parameters" />
       <module name="user-service" options="-parameters" />

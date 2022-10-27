@@ -22,6 +22,6 @@ public class Orders {
     private Boolean payed;
     @Column(columnDefinition = "DATE DEFAULT CURRENT_DATE")
     private Date created_at;
-    @OneToMany(mappedBy = "order_id")
+    @OneToMany(mappedBy = "orderId")
     private List<OrderProducts> orderProducts;
 }
