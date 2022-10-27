@@ -8,15 +8,23 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
 import shared.libs.dto.ResponseDto;
+import shared.libs.utils.MyDateUtil;
 import uz.nt.orderservice.client.ProductClient;
 import uz.nt.orderservice.dto.OrderProductsDto;
 import uz.nt.orderservice.dto.OrderedProductsDetail;
 import uz.nt.orderservice.entity.OrderProducts;
+import uz.nt.orderservice.entity.Orders;
 import uz.nt.orderservice.repository.OrderProductsRepository;
+import uz.nt.orderservice.repository.OrderRepository;
 import uz.nt.orderservice.repository.helperRepository.OrderProductRepositoryHelper;
 import uz.nt.orderservice.service.OrderProductsService;
+import uz.nt.orderservice.service.OrderService;
 import uz.nt.orderservice.service.mapper.OrderProductsMapper;
 import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.*;
 
 @Service
@@ -27,6 +35,8 @@ public class OrderProductsServiceImpl implements OrderProductsService {
     private final OrderProductsMapper orderProductsMapper;
     private final ProductClient productClient;
     private final OrderProductRepositoryHelper orderProductRepositoryHelper;
+    private final OrderRepository orderRepository;
+    private final OrderService orderService;
     @Override
     public ResponseDto addOrderProducts(Integer order_id, Integer product_id, Double amount) {
         try {
@@ -37,6 +47,7 @@ public class OrderProductsServiceImpl implements OrderProductsService {
                         .message("We don't have products in that many amounts!")
                         .build();
             }
+
             return saveOrUpdateOrderProduct(product_id, order_id, amount);
         }catch (Exception e){
             return ResponseDto.builder()
@@ -209,15 +220,89 @@ public class OrderProductsServiceImpl implements OrderProductsService {
         }
     }
 
-    @Override
-    public ResponseDto<HashMap<Integer, Double>> quantityOrderedProductsPerMonth(Date date) {
+    public HashMap<Integer, Double> hashMapResponse(Integer monthlyOrQuarterly) throws Exception {
+        Date date = new Date();
+        LocalDate localDate = LocalDate.parse(new SimpleDateFormat("yyyy-MM-dd").format(date));
+        int day = localDate.getDayOfMonth();
+        int month = localDate.getMonth().getValue();
+        int year = localDate.getYear();
 
-        return null;
+        if (monthlyOrQuarterly == 1){
+            if (month == 1){
+                year -= year;
+                month = 12;
+            }else {
+                month -= 1;
+            }
+        }else{
+            if (month < 4){
+                month += 9;
+                year -=year;
+            }
+        }
+        String stringDate = year + "-" + month + "-" + day;
+        Date date1 = MyDateUtil.parseToDate(stringDate);
+
+        java.sql.Date fromDate = new java.sql.Date(date1.getTime());
+        java.sql.Date currentDate = new java.sql.Date(date.getTime());
+
+        List<Orders> ordersList = orderRepository.userPayedOrderedProducts(fromDate, currentDate);
+
+        return sumAllOrderedProductUsers(ordersList);
+    }
+
+    public HashMap<Integer, Double> sumAllOrderedProductUsers(List<Orders> ordersList){
+        HashMap<Integer, Double> userOrders = new HashMap<>();
+        for (Orders order: ordersList){
+            Integer user_id = order.getUserId();
+            Double total_price = order.getTotal_price();
+
+            if (userOrders.containsKey(user_id)){
+                userOrders.put(user_id, userOrders.get(user_id) +total_price);
+            }else{
+                userOrders.put(user_id, total_price);
+            }
+        }
+
+        return userOrders;
     }
 
     @Override
-    public ResponseDto<HashMap<Integer, Double>> quantityOrderedProductsPerQuarter(Date date) {
-        return null;
+    public ResponseDto<HashMap<Integer, Double>> quantityOrderedProductsPerMonth() {
+        try{
+            HashMap<Integer, Double> map = hashMapResponse(1);
+            return ResponseDto.<HashMap<Integer, Double>>builder()
+                    .code(500)
+                    .success(true)
+                    .responseData(map)
+                    .message("OK")
+                    .build();
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return ResponseDto.<HashMap<Integer, Double>>builder()
+                    .code(500)
+                    .message(e.getMessage())
+                    .build();
+        }
+    }
+
+    @Override
+    public ResponseDto<HashMap<Integer, Double>> quantityOrderedProductsPerQuarter() {
+        try{
+            HashMap<Integer, Double> map = hashMapResponse(3);
+            return ResponseDto.<HashMap<Integer, Double>>builder()
+                    .code(500)
+                    .success(true)
+                    .responseData(map)
+                    .message("OK")
+                    .build();
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return ResponseDto.<HashMap<Integer, Double>>builder()
+                    .code(500)
+                    .message(e.getMessage())
+                    .build();
+        }
     }
 
     @Override

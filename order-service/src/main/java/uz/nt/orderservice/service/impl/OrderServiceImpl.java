@@ -39,11 +39,11 @@ public class OrderServiceImpl implements OrderService {
     private final PaymentHistoryService paymentHistoryService;
     private final UserCardClient userCardClient;
     private final CashbackClient cashbackClient;
-    private final ProductClient productClient;
+
 
     @Override
     @Transactional
-    public ResponseDto addOrderIfNotExistUserOrders(Integer product_id, Double amount) {
+    public ResponseDto<OrderDto> addOrderIfNotExistUserOrders(Integer product_id, Double amount) {
         try{
             UserDto userDto = (UserDto) SecurityContextHolder.getContext()
                             .getAuthentication()
@@ -68,7 +68,7 @@ public class OrderServiceImpl implements OrderService {
 
             orderProductsService.addOrderProducts(order_id, product_id, amount);
 
-            return ResponseDto.builder()
+            return ResponseDto.<OrderDto>builder()
                     .code(200)
                     .success(true)
                     .message("Successfully saved")
@@ -159,7 +159,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ResponseDto updateOrder(OrderDto orderDto) {
+    public ResponseDto<OrderDto> updateOrder(OrderDto orderDto) {
         try{
             Optional<Orders> optionalOrders = orderRepository.findById(orderDto.getId());
             if (optionalOrders.isPresent()) {
@@ -167,7 +167,7 @@ public class OrderServiceImpl implements OrderService {
 
                 OrderDto orderDto1 = orderMapper.toDto(orders);
 
-                return ResponseDto.builder()
+                return ResponseDto.<OrderDto>builder()
                         .code(200)
                         .success(true)
                         .message("Successfully updated")
@@ -175,14 +175,14 @@ public class OrderServiceImpl implements OrderService {
                         .build();
             }
 
-            return ResponseDto.builder()
+            return ResponseDto.<OrderDto>builder()
                     .code(-4)
                     .message("Not found")
                     .build();
 
         }catch (Exception e){
             log.error(e.getMessage());
-            return ResponseDto.builder()
+            return ResponseDto.<OrderDto>builder()
                     .code(500)
                     .message(e.getMessage())
                     .build();
@@ -190,25 +190,25 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ResponseDto deleteById(Integer id) {
+    public ResponseDto<OrderDto> deleteById(Integer id) {
         try{
             if (orderRepository.existsById(id)) {
                 orderRepository.deleteById(id);
 
-                return ResponseDto.builder()
+                return ResponseDto.<OrderDto>builder()
                         .code(200)
                         .success(true)
                         .message("Successfully deleted")
                         .build();
             }
 
-            return ResponseDto.builder()
+            return ResponseDto.<OrderDto>builder()
                     .code(-4)
                     .message("Not found")
                     .build();
         }catch (Exception e){
             log.error(e.getMessage());
-            return ResponseDto.builder()
+            return ResponseDto.<OrderDto>builder()
                     .code(500)
                     .message(e.getMessage())
                     .build();
@@ -216,21 +216,33 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Boolean updateOrderTotalPrice(Integer order_id, Double total_price) {
+        try{
+            orderRepository.updateOrderTotalPrice(order_id, total_price);
+            return true;
+
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
     @Transactional
-    public ResponseDto payForOrders(PaymentDetails paymentDetails) {
+    public ResponseDto<OrderDto> payForOrders(PaymentDetails paymentDetails) {
         try{
             Integer user_id;
             if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserDto user) {
                  user_id = user.getId();
             }else {
-                return ResponseDto.builder()
+                return ResponseDto.<OrderDto>builder()
                         .code(-3)
                         .message("Authorization expired")
                         .build();
             }
             Orders orderId = orderRepository.getByUserIdAndPayedIsFalse(user_id);
             if (orderId == null) {
-                return ResponseDto.builder()
+                return ResponseDto.<OrderDto>builder()
                         .code(-2343)
                         .message("User is not found!")
                         .build();
@@ -238,7 +250,7 @@ public class OrderServiceImpl implements OrderService {
             return finalPayFor(orderId.getId(), user_id, paymentDetails);
         }catch (Exception e){
             log.error(e.getMessage());
-            return ResponseDto.builder()
+            return ResponseDto.<OrderDto>builder()
                     .code(500)
                     .message(e.getMessage())
                     .build();
@@ -269,6 +281,13 @@ public class OrderServiceImpl implements OrderService {
         Double card_payment = cardDto.getAccount()-(total_price-cashback_money);
         cardDto.setAccount(card_payment);
         userCardClient.updateCard(cardDto);
+
+        if(!updateOrderTotalPrice(orderId, total_price)){
+            return ResponseDto.builder()
+                    .code(500)
+                    .message("Error while updating total_price of order")
+                    .build();
+        }
 
 //        ResponseDto<Boolean> responseDto = productClient.update(product_id, amount);
 //        return ResponseDto.builder()

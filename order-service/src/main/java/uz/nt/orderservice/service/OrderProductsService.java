@@ -18,8 +18,8 @@ public interface OrderProductsService {
     ResponseDto deleteByOrderId(Integer orderId);
     ResponseDto deleteByProductIdAndOrderId(Integer orderId, Integer productId);
 
-    ResponseDto<HashMap<Integer, Double>> quantityOrderedProductsPerMonth(Date date);
-    ResponseDto<HashMap<Integer, Double>> quantityOrderedProductsPerQuarter(Date date);
+    ResponseDto<HashMap<Integer, Double>> quantityOrderedProductsPerMonth();
+    ResponseDto<HashMap<Integer, Double>> quantityOrderedProductsPerQuarter();
     List<OrderedProductsDetail> getOrderedProductsToPayFor(Integer order_id);
     ResponseDto<Page<OrderProductsDto>> responseDtoWithLink(Integer page, Integer size, Method method, ResponseDto<Page<OrderProductsDto>> responseDto);
 }

@@ -16,7 +16,7 @@ import shared.libs.repository.UserSessionRepository;
 import shared.libs.security.JwtService;
 import uz.nt.userservice.dto.LoginDto;
 import shared.libs.dto.UserDto;
-import shared.libs.utils.DateUtil;
+import shared.libs.utils.MyDateUtil;
 import uz.nt.userservice.entity.User;
 import uz.nt.userservice.repository.UserRepository;
 import uz.nt.userservice.service.UserService;
@@ -90,7 +90,7 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
                     .code(200)
                     .success(true)
                     .message("OK")
-                    .responseData(new JWTResponseDto(token, DateUtil.expirationTimeToken(), null))
+                    .responseData(new JWTResponseDto(token, MyDateUtil.expirationTimeToken(), null))
                     .build();
 
         }catch (Exception e){
