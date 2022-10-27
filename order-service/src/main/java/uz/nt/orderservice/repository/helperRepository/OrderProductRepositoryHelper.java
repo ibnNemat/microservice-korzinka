@@ -38,7 +38,7 @@ public class OrderProductRepositoryHelper {
         for (Integer order_id: orderIdList){
             List<OrderedProductsDetail> unpaidOrderedProducts = getOrderedProductDetails(order_id);
             for (OrderedProductsDetail productsDetail: unpaidOrderedProducts){
-                productRepository.addProductAmount(productsDetail.getAmount(), productsDetail.getProduct_id());
+//                productRepository.addProductAmount(productsDetail.getAmount(), productsDetail.getProduct_id());
             }
             String stringQuery = "delete from OrderProducts op where op.orderId = " + order_id;
             Query query = entityManager.createQuery(stringQuery);

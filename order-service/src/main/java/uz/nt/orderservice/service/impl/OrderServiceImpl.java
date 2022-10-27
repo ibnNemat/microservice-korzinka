@@ -9,6 +9,7 @@ import shared.libs.dto.UserDto;
 import uz.nt.orderservice.client.CashbackClient;
 import uz.nt.orderservice.client.ProductClient;
 import uz.nt.orderservice.client.UserCardClient;
+import uz.nt.orderservice.dto.PaymentHistoryDto;
 import uz.nt.orderservice.entity.Orders;
 import uz.nt.orderservice.service.PaymentHistoryService;
 import shared.libs.dto.ResponseDto;
@@ -305,7 +306,7 @@ public class OrderServiceImpl implements OrderService {
 
     public ResponseDto savePaymentHistory(CardDto cardDto, Double card_payment, Double cashback_payment, Double total_price, Integer user_id){
         try {
-            PaymentHistory paymentHistory = PaymentHistory.builder()
+            PaymentHistoryDto paymentHistory = PaymentHistoryDto.builder()
                     .card_id(cardDto.getId())
                     .user_id(user_id)
                     .card_payment(card_payment)

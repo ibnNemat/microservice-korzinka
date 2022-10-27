@@ -80,7 +80,33 @@ public class OrderProductsServiceImpl implements OrderProductsService {
 
     @Override
     public ResponseDto<OrderProductsDto> getById(Integer id) {
-        return null;
+        try {
+            Optional<OrderProducts> orderProducts = orderProductsRepository.findById(id);
+
+            if (orderProducts.isEmpty()){
+                return ResponseDto.<OrderProductsDto>builder()
+                        .code(-4)
+                        .message("Order Product not found")
+                        .success(false)
+                        .build();
+            }
+            OrderProductsDto orderProductsDto = orderProductsMapper.toDto(orderProducts.get());
+
+            return ResponseDto.<OrderProductsDto>builder()
+                    .code(0)
+                    .responseData(orderProductsDto)
+                    .message("Successfully get")
+                    .success(true)
+                    .build();
+        }catch (Exception e){
+            log.error(e.getMessage());
+
+            return ResponseDto.<OrderProductsDto>builder()
+                    .code(-1)
+                    .message(e.getMessage())
+                    .success(false)
+                    .build();
+        }
     }
 
     @Override
