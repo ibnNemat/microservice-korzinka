@@ -5,15 +5,15 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import shared.libs.dto.CardDto;
+import shared.libs.dto.ProductDto;
 import shared.libs.dto.UserDto;
 import uz.nt.orderservice.client.CashbackClient;
 import uz.nt.orderservice.client.ProductClient;
 import uz.nt.orderservice.client.UserCardClient;
+import uz.nt.orderservice.dto.*;
 import uz.nt.orderservice.entity.Orders;
 import uz.nt.orderservice.service.PaymentHistoryService;
 import shared.libs.dto.ResponseDto;
-import uz.nt.orderservice.dto.OrderDto;
-import uz.nt.orderservice.dto.OrderedProductsDetail;
 import uz.nt.orderservice.entity.PaymentHistory;
 import uz.nt.orderservice.repository.OrderRepository;
 import uz.nt.orderservice.service.OrderProductsService;
@@ -23,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-import uz.nt.orderservice.dto.PaymentDetails;
 
 import javax.transaction.Transactional;
 import java.lang.reflect.Method;
@@ -39,6 +38,8 @@ public class OrderServiceImpl implements OrderService {
     private final PaymentHistoryService paymentHistoryService;
     private final UserCardClient userCardClient;
     private final CashbackClient cashbackClient;
+
+    private final ProductClient productClient;
 
 
     @Override
@@ -332,4 +333,74 @@ public class OrderServiceImpl implements OrderService {
     public Double sumAllOfUserOrderedProductsMonthly(){
         return null;
     }
+
+    @Override
+    public ResponseDto<List<UserOrderedProducts>> getAllUsersOrderProductsIsPayedFalse() {
+        try {
+            ArrayList<Integer> list = new ArrayList<>();
+            if(SecurityContextHolder.getContext().getAuthentication().getPrincipal() == null) {
+                return ResponseDto.<List<UserOrderedProducts>>builder()
+                        .code(-4)
+                        .success(false)
+                        .message("SecurityContextHolder getPrincipal isNull")
+                        .build();
+            }
+            UserDto userDto = (UserDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            Orders orders = orderRepository.getByUserIdAndPayedIsFalse(userDto.getId());
+            if(orders == null){
+                return ResponseDto.<List<UserOrderedProducts>>builder()
+                        .code(-4)
+                        .success(false)
+                        .message("Orders isNull")
+                        .build();
+            }
+
+            OrderDto orderDto = orderMapper.toDto(orders);
+
+            for (OrderProductsDto op : orderDto.getOrderProducts()) {
+                list.add(op.getOrder_id());
+            }
+            return addToListUserOrderedProducts(list, orderDto);
+
+        } catch (Exception i){
+            log.error("GetAllUsersOrderProducts: " + i);
+            return ResponseDto.<List<UserOrderedProducts>>builder()
+                    .code(-1)
+                    .message(i.getMessage())
+                    .success(false)
+                    .build();
+        }
+    }
+    private ResponseDto<List<UserOrderedProducts>> addToListUserOrderedProducts(ArrayList<Integer> list, OrderDto orderDto) {
+        Map<Integer, ProductDto> map = productClient.getShownDtoList(list).getResponseData();
+        UserOrderedProducts orderedProducts = new UserOrderedProducts();
+        ArrayList<UserOrderedProducts> userOrderedProducts = new ArrayList<>();
+
+        if (map == null){
+            return ResponseDto.<List<UserOrderedProducts>>builder()
+                    .code(-1)
+                    .message("userOrderProduct is not found")
+                    .success(false)
+                    .build();
+        }
+
+        for (OrderProductsDto dto : orderDto.getOrderProducts()) {
+            orderedProducts.setOrderId(dto.getOrder_id());
+            orderedProducts.setAmountOrder(dto.getAmount());
+            orderedProducts.setNameProduct(map.get(dto.getProduct_id()).getName());
+            orderedProducts.setType(map.get(dto.getProduct_id()).getType().getName());
+
+            userOrderedProducts.add(orderedProducts);
+        }
+
+        return ResponseDto.<List<UserOrderedProducts>>builder()
+                .code(0)
+                .success(true)
+                .message("OK")
+                .responseData(userOrderedProducts)
+                .build();
+    }
+
+
 }
