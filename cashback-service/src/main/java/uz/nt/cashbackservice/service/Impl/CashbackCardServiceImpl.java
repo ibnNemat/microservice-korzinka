@@ -170,7 +170,7 @@ public class CashbackCardServiceImpl implements CashbackCardService {
                     .message(message)
                     .build();
         }
-        message = messageSource.getMessage("error", new String[]{}, locale);
+        message = messageSource.getMessage("not.found", new String[]{}, locale);
         return ResponseDto.<Boolean>builder()
                 .code(-1)
                 .success(false)
@@ -195,7 +195,7 @@ public class CashbackCardServiceImpl implements CashbackCardService {
                     .build();
         }
 
-        message = messageSource.getMessage("error", new String[]{}, locale);
+        message = messageSource.getMessage("not.found", new String[]{}, locale);
         return ResponseDto.<Boolean>builder()
                 .code(-1)
                 .success(false)
@@ -212,6 +212,8 @@ public class CashbackCardServiceImpl implements CashbackCardService {
             Double updatedAmount = (amount / 100) + card.getAmount();
             card.setAmount(updatedAmount);
             cashbackCardRepository.save(card);
+
+            addCashbackHistory(card.getId(), updatedAmount - (amount / 100), amount / 100, updatedAmount, new Date());
         }
     }
 
