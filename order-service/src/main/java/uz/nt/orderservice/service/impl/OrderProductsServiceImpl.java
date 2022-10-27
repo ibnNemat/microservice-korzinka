@@ -13,9 +13,12 @@ import uz.nt.orderservice.client.ProductClient;
 import uz.nt.orderservice.dto.OrderProductsDto;
 import uz.nt.orderservice.dto.OrderedProductsDetail;
 import uz.nt.orderservice.entity.OrderProducts;
+import uz.nt.orderservice.entity.Orders;
 import uz.nt.orderservice.repository.OrderProductsRepository;
+import uz.nt.orderservice.repository.OrderRepository;
 import uz.nt.orderservice.repository.helperRepository.OrderProductRepositoryHelper;
 import uz.nt.orderservice.service.OrderProductsService;
+import uz.nt.orderservice.service.OrderService;
 import uz.nt.orderservice.service.mapper.OrderProductsMapper;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
@@ -32,6 +35,8 @@ public class OrderProductsServiceImpl implements OrderProductsService {
     private final OrderProductsMapper orderProductsMapper;
     private final ProductClient productClient;
     private final OrderProductRepositoryHelper orderProductRepositoryHelper;
+    private final OrderRepository orderRepository;
+    private final OrderService orderService;
     @Override
     public ResponseDto addOrderProducts(Integer order_id, Integer product_id, Double amount) {
         try {
@@ -127,14 +132,13 @@ public class OrderProductsServiceImpl implements OrderProductsService {
         return null;
     }
 
-    public String buildStringDate(Integer monthlyOrQuarterly) throws Exception {
+    public HashMap<Integer, Double> hashMapResponse(Integer monthlyOrQuarterly) throws Exception {
         Date date = new Date();
         LocalDate localDate = LocalDate.parse(new SimpleDateFormat("yyyy-MM-dd").format(date));
-        Integer day = localDate.getDayOfMonth();
-        Integer month = localDate.getMonth().getValue();
-        Integer year = localDate.getYear();
+        int day = localDate.getDayOfMonth();
+        int month = localDate.getMonth().getValue();
+        int year = localDate.getYear();
 
-        String stringDate;
         if (monthlyOrQuarterly == 1){
             if (month == 1){
                 year -= year;
@@ -148,34 +152,25 @@ public class OrderProductsServiceImpl implements OrderProductsService {
                 year -=year;
             }
         }
-        stringDate = year + "-" + month + "-" + day;
-
+        String stringDate = year + "-" + month + "-" + day;
         Date date1 = MyDateUtil.parseToDate(stringDate);
 
-        java.sql.Date lastMonth = new java.sql.Date(date1.getTime());
+        java.sql.Date fromDate = new java.sql.Date(date1.getTime());
         java.sql.Date currentDate = new java.sql.Date(date.getTime());
+
+        List<Orders> ordersList = orderRepository.userPayedOrderedProducts(fromDate, currentDate);
 
     }
 
     @Override
     public ResponseDto<HashMap<Integer, Double>> quantityOrderedProductsPerMonth() {
         try{
-            Date date = new Date();
-            String stringDate = MyDateUtil.parseToString(date);
-            if (stringDate == null){
-                return ResponseDto.<HashMap<Integer, Double>>builder()
-                        .code(500)
-                        .message("Error while parsingDate")
-                        .build();
-            }
+            HashMap<Integer, Double> sumAllOrderedProductUsers = hashMapResponse(1);
 
-
-            if (stringDate.charAt(5) == '0' && stringDate.charAt(5) == '1'){
-                Month month = Month.OCTOBER;
-                month.getValue();
-            }
-
-            return null;
+            return ResponseDto.<HashMap<Integer, Double>>builder()
+                    .code(500)
+                    .message("OK")
+                    .build();
         }catch (Exception e){
             log.error(e.getMessage());
             return ResponseDto.<HashMap<Integer, Double>>builder()
@@ -187,8 +182,17 @@ public class OrderProductsServiceImpl implements OrderProductsService {
 
     @Override
     public ResponseDto<HashMap<Integer, Double>> quantityOrderedProductsPerQuarter() {
-        Date date = new Date();
-        return null;
+        try{
+            HashMap<Integer, Double> sumAllOrderedProductUsers = hashMapResponse(3);
+
+            return null;
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return ResponseDto.<HashMap<Integer, Double>>builder()
+                    .code(500)
+                    .message(e.getMessage())
+                    .build();
+        }
     }
 
     @Override

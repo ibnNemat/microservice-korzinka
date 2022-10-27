@@ -1,5 +1,6 @@
 package uz.nt.orderservice.repository;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import uz.nt.orderservice.entity.OrderProducts;
 import org.springframework.data.jpa.repository.JpaRepository;
 
