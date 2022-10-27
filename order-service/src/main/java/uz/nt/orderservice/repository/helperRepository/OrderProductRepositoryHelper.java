@@ -9,6 +9,7 @@ import uz.nt.orderservice.repository.OrderRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
@@ -18,29 +19,30 @@ public class OrderProductRepositoryHelper {
     private final EntityManager entityManager;
     private final OrderRepository orderRepository;
 
-    public List<OrderedProductsDetail> getOrderedProductDetails(Integer order_id){
+    public List<OrderedProductsDetail> getOrderedProductDetails(Integer orderId){
         Query query = entityManager.createNativeQuery(
-                "select op.product_id as product_id, sum(p.price) as price, sum(op.amount) as amount" +
-                        " from order_products op inner join product p on p.id = op.product_id" +
-                        " where op.order_id =:orderId group by op.product_id", OrderedProductsDetail.class);
-        query.setParameter("orderId", order_id);
+                "select op.productId as productId, price, amount" +
+                        " from orderProducts op inner join product p on p.id = op.productId" +
+                        " where op.orderId =:orderId", OrderedProductsDetail.class);
+        query.setParameter("orderId", orderId);
 
         List<OrderedProductsDetail> productsDetailList = query.getResultList();
         return productsDetailList;
     }
 
+    @Transactional
     @Scheduled(cron = "30 45 23 * * *")
     public void removeAllNonOrderedProducts(){
-        List<Integer> list = orderRepository.getIdByPayedFalse();
+        List<Integer> orderIdList = orderRepository.getAllOrdersIdIsPayedFalse();
 
-//        for (Integer order_id: list){
-//            List<OrderedProductsDetail> nonOrderedProducts = getOrderedProductDetails(order_id);
-//            for (OrderedProductsDetail productsDetail: nonOrderedProducts){
+        for (Integer orderId: orderIdList){
+            List<OrderedProductsDetail> unpaidOrderedProducts = getOrderedProductDetails(orderId);
+            for (OrderedProductsDetail productsDetail: unpaidOrderedProducts){
 //                productRepository.addProductAmount(productsDetail.getAmount(), productsDetail.getProduct_id());
-//            }
-//            String hql = "delete from OrderProducts op where op.order_id = " + order_id;
-//            Query query = entityManager.createQuery(hql);
-//            query.executeUpdate();
-//        }
+            }
+            String stringQuery = "delete from OrderProducts op where op.orderId = " + orderId;
+            Query query = entityManager.createQuery(stringQuery);
+            query.executeUpdate();
+        }
     }
 }

@@ -36,4 +36,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @Query("update Product p set p.amount = p.amount + ?1 where p.id = ?2")
     void addProductAmount(Double amount, Integer product_id);
+
+    List<Product> findByIdIn(List<Integer> ids);
 }

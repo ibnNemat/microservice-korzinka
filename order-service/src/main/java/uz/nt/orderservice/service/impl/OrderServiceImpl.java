@@ -1,12 +1,18 @@
 package uz.nt.orderservice.service.impl;
+import org.springframework.context.i18n.LocaleContext;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import shared.libs.dto.CardDto;
+import shared.libs.dto.ProductDto;
 import shared.libs.dto.UserDto;
+import uz.nt.orderservice.client.CashbackClient;
+import uz.nt.orderservice.client.ProductClient;
 import uz.nt.orderservice.client.UserCardClient;
+import uz.nt.orderservice.dto.*;
 import uz.nt.orderservice.entity.Orders;
 import uz.nt.orderservice.service.PaymentHistoryService;
 import shared.libs.dto.ResponseDto;
@@ -36,39 +42,49 @@ public class OrderServiceImpl implements OrderService {
     private final OrderProductsService orderProductsService;
     private final PaymentHistoryService paymentHistoryService;
     private final UserCardClient userCardClient;
+    private final CashbackClient cashbackClient;
+    private final ProductClient productClient;
+    private static ResourceBundle bundle;
+
 
     @Override
-    public ResponseDto addOrderIfNotExistUserOrders(Integer product_id, Double amount) {
+    @Transactional
+    public ResponseDto<OrderDto> addOrderIfNotExistUserOrders(Integer productId, Double amount) {
         try{
-            UserDto userDto = (UserDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            Optional<Orders> optionalOrder = orderRepository.findUserOrderByUserIdWherePayedIsFalse(userDto.getId());
-            int order_id;
+            bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
+            UserDto userDto = (UserDto) SecurityContextHolder.getContext()
+                            .getAuthentication()
+                            .getPrincipal();
+
+            Optional<Orders> optionalOrder = orderRepository
+                    .findUserOrderByUserIdWherePayedIsFalse(userDto.getId());
+            int orderId;
 
             if (optionalOrder.isPresent()){
                 Orders orders = optionalOrder.get();
 
-                order_id = orders.getId();
+                orderId = orders.getId();
             }else{
                 Orders orders1 = new Orders();
                 orders1.setId(1);
                 orders1.setUserId(userDto.getId());
                 orderRepository.save(orders1);
 
-                order_id = orderRepository.getMax();
+                orderId = orderRepository.getMax();
             }
 
-            orderProductsService.addOrderProducts(order_id, product_id, amount);
+            orderProductsService.addOrderProducts(orderId, productId, amount);
 
-            return ResponseDto.builder()
-                    .code(200)
+            return ResponseDto.<OrderDto>builder()
+                    .code(0)
                     .success(true)
-                    .message("Successfully saved")
+                    .message(bundle.getString("response.success"))
                     .build();
         }catch (Exception e){
             log.error(e.getMessage());
             return ResponseDto.<OrderDto>builder()
-                    .code(500)
-                    .message(e.getMessage())
+                    .code(-1)
+                    .message(bundle.getString("response.failed") + " : " + e.getMessage())
                     .build();
         }
     }
@@ -76,27 +92,30 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ResponseDto<OrderDto> getById(Integer id) {
         try {
-            if (orderRepository.existsById(id)) {
-                Orders orders = orderRepository.findById(id).get();
+            bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
+
+            Optional<Orders> optionalOrders = orderRepository.findById(id);
+             if (optionalOrders.isPresent()) {
+                Orders orders = optionalOrders.get();
 
                 OrderDto orderDto = orderMapper.toDto(orders);
 
                 return ResponseDto.<OrderDto>builder()
-                        .code(200)
+                        .code(0)
                         .success(true)
-                        .message("OK")
+                        .message(bundle.getString("response.success"))
                         .responseData(orderDto)
                         .build();
             }
             return ResponseDto.<OrderDto>builder()
                     .code(-4)
-                    .message("Not found")
+                    .message(bundle.getString("response.not_found"))
                     .build();
         }catch (Exception e){
             log.error(e.getMessage());
             return ResponseDto.<OrderDto>builder()
-                    .code(500)
-                    .message(e.getMessage())
+                    .code(-1)
+                    .message(bundle.getString("response.failed") + " : " + e.getMessage())
                     .build();
         }
     }
@@ -104,25 +123,30 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ResponseDto<Page<OrderDto>> getAllOrdersByPage(Integer page, Integer size) {
         try {
+            bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
+
             if (page == null || size == null) {
                 return ResponseDto.<Page<OrderDto>>builder()
-                        .code(-100)
+                        .code(-4)
                         .message("Page or size is null")
+                        .success(false)
                         .build();
             }
             PageRequest pageRequest = PageRequest.of(page, size);
             Page<OrderDto> productDtoList = orderRepository.findAll(pageRequest).map(orderMapper::toDto);
             return ResponseDto.<Page<OrderDto>>builder()
-                    .code(200)
+                    .code(0)
                     .success(true)
-                    .message("OK")
+                    .message(bundle.getString("response.success"))
                     .responseData(productDtoList)
                     .build();
         }catch (Exception e){
             log.error(e.getMessage());
+
             return ResponseDto.<Page<OrderDto>>builder()
-                    .code(500)
-                    .message(e.getMessage())
+                    .code(-1)
+                    .message(bundle.getString("response.failed") + " : " + e.getMessage())
+                    .success(false)
                     .build();
         }
     }
@@ -130,6 +154,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ResponseDto<Page<OrderDto>> responseDtoWithLink(Integer page, Integer size, Method method, ResponseDto<Page<OrderDto>> responseDto) {
         try {
+            bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
+
             Map<String, Integer> mapParams = new HashMap<>();
             mapParams.put("page", page+1);
             mapParams.put("size", size);
@@ -141,111 +167,142 @@ public class OrderServiceImpl implements OrderService {
 
         }catch (Exception e){
             log.error(e.getMessage());
+
             return ResponseDto.<Page<OrderDto>>builder()
-                    .code(500)
-                    .message(e.getMessage())
+                    .code(-1)
+                    .message(bundle.getString("response.failed") + " : " + e.getMessage())
+                    .success(false)
                     .build();
         }
     }
 
     @Override
-    public ResponseDto updateOrder(OrderDto orderDto) {
+    public ResponseDto<OrderDto> updateOrder(OrderDto orderDto) {
         try{
-            if (orderRepository.existsById(orderDto.getId())) {
-                Orders orders = orderRepository.findById(orderDto.getId()).get();
+            bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
+
+            Optional<Orders> optionalOrders = orderRepository.findById(orderDto.getId());
+            if (optionalOrders.isPresent()) {
+                Orders orders = optionalOrders.get();
 
                 OrderDto orderDto1 = orderMapper.toDto(orders);
 
-                return ResponseDto.builder()
-                        .code(200)
+                return ResponseDto.<OrderDto>builder()
+                        .code(0)
                         .success(true)
-                        .message("Successfully updated")
+                        .message(bundle.getString("response.success"))
                         .responseData(orderDto1)
                         .build();
             }
 
-            return ResponseDto.builder()
+            return ResponseDto.<OrderDto>builder()
                     .code(-4)
-                    .message("Not found")
+                    .message(bundle.getString("response.not_found"))
+                    .success(false)
                     .build();
 
         }catch (Exception e){
             log.error(e.getMessage());
-            return ResponseDto.builder()
-                    .code(500)
-                    .message(e.getMessage())
+
+            return ResponseDto.<OrderDto>builder()
+                    .code(-1)
+                    .message(bundle.getString("response.failed") + " : " + e.getMessage())
+                    .success(false)
                     .build();
         }
     }
 
     @Override
-    public ResponseDto deleteById(Integer id) {
+    public ResponseDto<OrderDto> deleteById(Integer id) {
         try{
+            bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
+
             if (orderRepository.existsById(id)) {
                 orderRepository.deleteById(id);
 
-                return ResponseDto.builder()
-                        .code(200)
+                return ResponseDto.<OrderDto>builder()
+                        .code(0)
                         .success(true)
-                        .message("Successfully deleted")
+                        .message(bundle.getString("response.success"))
                         .build();
             }
 
-            return ResponseDto.builder()
+            return ResponseDto.<OrderDto>builder()
                     .code(-4)
-                    .message("Not found")
+                    .message(bundle.getString("response.not_found"))
+                    .success(false)
                     .build();
         }catch (Exception e){
             log.error(e.getMessage());
-            return ResponseDto.builder()
-                    .code(500)
-                    .message(e.getMessage())
+            return ResponseDto.<OrderDto>builder()
+                    .code(-1)
+                    .message(bundle.getString("response.failed") + " : " + e.getMessage())
+                    .success(false)
                     .build();
+        }
+    }
+
+    @Override
+    public Boolean updateOrderTotalPrice(Integer orderId, Double totalPrice) {
+        try{
+            orderRepository.updateOrderTotalPrice(orderId, totalPrice);
+            return true;
+
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return false;
         }
     }
 
     @Override
     @Transactional
-    public ResponseDto payForOrders(PaymentDetails paymentDetails) {
+    public ResponseDto<OrderDto> payForOrders(PaymentDetails paymentDetails) {
         try{
-            Integer user_id;
+            bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
+
+            Integer userId;
             if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserDto user) {
-                 user_id = user.getId();
+                 userId = user.getId();
             }else {
-                return ResponseDto.builder()
+                return ResponseDto.<OrderDto>builder()
                         .code(-3)
                         .message("Authorization expired")
+                        .success(false)
                         .build();
             }
-            Orders orderId = orderRepository.getByUserIdAndPayedIsFalse(user_id);
-            if (orderId == null) {
-                return ResponseDto.builder()
-                        .code(-2343)
+            Orders order = orderRepository.getByUserIdAndPayedIsFalse(userId);
+            if (order == null) {
+                return ResponseDto.<OrderDto>builder()
+                        .code(-4)
                         .message("User is not found!")
+                        .success(false)
                         .build();
             }
-            return finalPayFor(orderId.getId(), user_id, paymentDetails);
+            return finalPayFor(order.getId(), userId, paymentDetails);
         }catch (Exception e){
             log.error(e.getMessage());
-            return ResponseDto.builder()
-                    .code(500)
-                    .message(e.getMessage())
+            return ResponseDto.<OrderDto>builder()
+                    .code(-1)
+                    .message(bundle.getString("response.failed") + " " + e.getMessage())
+                    .success(false)
                     .build();
         }
     }
 
-    private ResponseDto finalPayFor(Integer orderId, Integer user_id, PaymentDetails paymentDetails){
+    private ResponseDto finalPayFor(Integer orderId, Integer userId, PaymentDetails paymentDetails){
+        bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
+
         List<OrderedProductsDetail> orderedProducts = orderProductsService.getOrderedProductsToPayFor(orderId);
-        Double cashback_money = paymentDetails.getCashbackMoney();
+        Double cashbackMoney = paymentDetails.getCashbackMoney();
         CardDto cardDto = userCardClient.getCardById(paymentDetails.getCardId()).getResponseData();
         Double account = cardDto.getAccount();
-        Double total_price = paymentDetails.getForDelivery();
+        Double totalPrice = paymentDetails.getForDelivery();
 
         for (OrderedProductsDetail op: orderedProducts){
-            total_price += op.getPrice() * op.getAmount();
+            totalPrice += op.getPrice() * op.getAmount();
         }
 
-        if (total_price-cashback_money > account){
+        if (totalPrice - cashbackMoney > account){
             return ResponseDto.builder()
                     .code(-2)
                     .success(false)
@@ -253,34 +310,140 @@ public class OrderServiceImpl implements OrderService {
                     .build();
         }
 
-        orderRepository.updateOrderPayed(user_id);
+        orderRepository.updateOrderPayed(userId);
 
-        cardDto.setAccount(cardDto.getAccount()-(total_price-cashback_money));
+        Double cardPayment = cardDto.getAccount()-(totalPrice-cashbackMoney);
+        cardDto.setAccount(cardPayment);
         userCardClient.updateCard(cardDto);
 
-        if (cashback_money != 0) {
-//             cashbackService.subtractUserCashback(Integer user_id, Double cashback_money);
+        if(!updateOrderTotalPrice(orderId, totalPrice)){
+            return ResponseDto.builder()
+                    .code(-1)
+                    .message("Error while updating total_price of order")
+                    .success(false)
+                    .build();
         }
 
-//         cashbackService.calculateCashbackForUser(Integer user_id, Double total_price);
+//        ResponseDto<Boolean> responseDto = productClient.update(product_id, amount);
+//        return ResponseDto.builder()
+//                .code(-5)
+//                .message("We don't have products in that many amounts!")
+//                .build();
 
-        PaymentHistory paymentHistory = PaymentHistory.builder()
-                .card_id(cardDto.getId())
-                .user_id(user_id)
-                .total_price(total_price)
-                .status("OK")
-                .description("Successfully payed")
-                .build();
-        paymentHistoryService.addHistory(paymentHistory);
+        if (cashbackMoney != 0) {
+             cashbackClient.subtractCashback(userId, cashbackMoney);
+        }
 
-        return ResponseDto.builder()
-                .code(200)
-                .success(true)
-                .message("Successfully Payed!")
-                .build();
+        cashbackClient.calculateCashbackForEachShopping(userId, cashbackMoney);
+        return savePaymentHistory(cardDto, cardPayment, cashbackMoney, totalPrice, userId);
+    }
+
+    public ResponseDto savePaymentHistory(CardDto cardDto, Double cardPayment, Double cashbackPayment, Double totalPrice, Integer userId){
+        try {
+            bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
+
+            PaymentHistoryDto paymentHistory = PaymentHistoryDto.builder()
+                    .cardId(cardDto.getId())
+                    .userId(userId)
+                    .cardPayment(cardPayment)
+                    .cashbackPayment(cashbackPayment)
+                    .totalPrice(totalPrice)
+                    .status("OK")
+                    .description("Successfully payed")
+                    .build();
+            paymentHistoryService.addHistory(paymentHistory);
+
+            return ResponseDto.builder()
+                    .code(0)
+                    .success(true)
+                    .message("Successfully Payed!")
+                    .build();
+        }catch (Exception e){
+            log.error(e.getMessage());
+
+            return ResponseDto.builder()
+                    .code(-1)
+                    .message(bundle.getString("response.failed") + " : " + e.getMessage())
+                    .success(false)
+                    .build();
+        }
     }
 
     public Double sumAllOfUserOrderedProductsMonthly(){
         return null;
     }
+
+    @Override
+    public ResponseDto<List<UserOrderedProducts>> getAllUsersOrderProductsIsPayedFalse() {
+        try {
+            bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
+
+            ArrayList<Integer> list = new ArrayList<>();
+            if(SecurityContextHolder.getContext().getAuthentication().getPrincipal() == null) {
+                return ResponseDto.<List<UserOrderedProducts>>builder()
+                        .code(-4)
+                        .success(false)
+                        .message("SecurityContextHolder getPrincipal isNull")
+                        .build();
+            }
+            UserDto userDto = (UserDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            Orders orders = orderRepository.getByUserIdAndPayedIsFalse(userDto.getId());
+            if(orders == null){
+                return ResponseDto.<List<UserOrderedProducts>>builder()
+                        .code(-4)
+                        .success(false)
+                        .message("Orders isNull")
+                        .build();
+            }
+
+            OrderDto orderDto = orderMapper.toDto(orders);
+
+            for (OrderProductsDto op : orderDto.getOrderProducts()) {
+                list.add(op.getOrderId());
+            }
+            return addToListUserOrderedProducts(list, orderDto);
+
+        } catch (Exception i){
+            log.error("GetAllUsersOrderProducts: " + i.getMessage());
+            return ResponseDto.<List<UserOrderedProducts>>builder()
+                    .code(-1)
+                    .message(bundle.getString("response.failed")+ " : " + i.getMessage())
+                    .success(false)
+                    .build();
+        }
+    }
+    private ResponseDto<List<UserOrderedProducts>> addToListUserOrderedProducts(ArrayList<Integer> list, OrderDto orderDto) {
+        bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
+
+        Map<Integer, ProductDto> map = productClient.getShownDtoList(list).getResponseData();
+        UserOrderedProducts orderedProducts = new UserOrderedProducts();
+        ArrayList<UserOrderedProducts> userOrderedProducts = new ArrayList<>();
+
+        if (map == null){
+            return ResponseDto.<List<UserOrderedProducts>>builder()
+                    .code(-4)
+                    .message("userOrderProduct is not found")
+                    .success(false)
+                    .build();
+        }
+
+        for (OrderProductsDto dto : orderDto.getOrderProducts()) {
+            orderedProducts.setOrderId(dto.getOrderId());
+            orderedProducts.setAmountOrder(dto.getAmount());
+            orderedProducts.setNameProduct(map.get(dto.getProductId()).getName());
+            orderedProducts.setType(map.get(dto.getProductId()).getType().getName());
+
+            userOrderedProducts.add(orderedProducts);
+        }
+
+        return ResponseDto.<List<UserOrderedProducts>>builder()
+                .code(0)
+                .success(true)
+                .message(bundle.getString("response.success"))
+                .responseData(userOrderedProducts)
+                .build();
+    }
+
+
 }

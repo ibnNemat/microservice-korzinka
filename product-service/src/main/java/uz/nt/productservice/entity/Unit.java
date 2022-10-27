@@ -19,5 +19,5 @@ public class Unit {
 
     private String name;
 
-    private String short_name;
+    private String shortName;
 }

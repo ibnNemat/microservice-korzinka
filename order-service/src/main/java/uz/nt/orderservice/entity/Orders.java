@@ -16,12 +16,14 @@ public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "order_id_seq")
     @SequenceGenerator(name = "order_id_seq", sequenceName = "order_id_seq", allocationSize = 1)
-    @Column(name = "id")
     private Integer id;
     private Integer userId;
+    @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean payed;
-    @Column(columnDefinition = "date default current_date")
-    private Date created_at;
-    @OneToMany(mappedBy = "order_id")
+    @Column(columnDefinition = "DATE DEFAULT CURRENT_DATE")
+    private Date createdAt;
+    @Column(columnDefinition = "DOUBLE PRECISION DEFAULT 0")
+    private Double totalPrice;
+    @OneToMany(mappedBy = "orderId")
     private List<OrderProducts> orderProducts;
 }
