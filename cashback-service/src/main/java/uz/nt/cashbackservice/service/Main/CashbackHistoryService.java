@@ -12,7 +12,7 @@ public interface CashbackHistoryService {
 
     void addCashbackHistory(CashbackHistory cashbackHistory);
 
-    void deleteCashbackHistoryByCardId(Integer cashbackCardId);
+    ResponseDto<Boolean> deleteCashbackHistoryByCardId(Integer cashbackCardId, HttpServletRequest request);
 
     ResponseDto<List<CashbackHistoryDto>> getCashbackHistoryByCardId(Integer cashbackCardId, HttpServletRequest request);
 

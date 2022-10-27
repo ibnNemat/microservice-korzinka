@@ -30,8 +30,28 @@ public class CashbackHistoryServiceImpl implements CashbackHistoryService {
     }
 
     @Override
-    public void deleteCashbackHistoryByCardId(Integer cashbackCardId) {
-        cashbackHistoryRepository.deleteCashbackHistoryByCardId(cashbackCardId);
+    public ResponseDto<Boolean> deleteCashbackHistoryByCardId(Integer cashbackCardId, HttpServletRequest request) {
+        Locale locale = request.getLocale();
+        String message;
+        if(cashbackCardId != null){
+            cashbackHistoryRepository.deleteCashbackHistoryByCardId(cashbackCardId);
+
+            message = messageSource.getMessage("delete.success", new String[]{} , locale);
+
+            return ResponseDto.<Boolean>builder()
+                    .code(200)
+                    .responseData(true)
+                    .success(true)
+                    .message(message)
+                    .build();
+        }
+        message = messageSource.getMessage("delete.success", new String[]{} , locale);
+        return ResponseDto.<Boolean>builder()
+                .code(-1)
+                .responseData(false)
+                .success(false)
+                .message(message)
+                .build();
     }
 
     @Override
