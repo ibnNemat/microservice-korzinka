@@ -11,19 +11,24 @@ import org.springframework.stereotype.Service;
 import shared.libs.configuration.Config;
 import shared.libs.dto.JWTResponseDto;
 import shared.libs.dto.ResponseDto;
+import shared.libs.dto.UserDto;
 import shared.libs.entity.UserSession;
 import shared.libs.repository.UserSessionRepository;
 import shared.libs.security.JwtService;
-import uz.nt.userservice.dto.LoginDto;
-import shared.libs.dto.UserDto;
 import shared.libs.utils.DateUtil;
+import uz.nt.userservice.dto.LoginDto;
 import uz.nt.userservice.entity.User;
 import uz.nt.userservice.repository.UserRepository;
+import uz.nt.userservice.service.ExcelService;
 import uz.nt.userservice.service.UserService;
 import uz.nt.userservice.service.mapper.UserMapper;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Service
@@ -34,7 +39,7 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
     public static Map<Integer, UserDto> usersMap = new HashMap<>();
     private final PasswordEncoder passwordEncoder = Config.passwordEncoder();
     private final JwtService jwtService;
-
+    private final ExcelService excelService;
     private final UserSessionRepository userSessionRepository;
 
     @Override
@@ -153,6 +158,17 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
                 .success(true)
                 .message("Ok")
                 .build();
+    }
+
+    public void export (HttpServletRequest request, HttpServletResponse response){
+        Stream<User> users = userRepository.findAllByIdLessThan(1_000_000);
+        Stream<UserDto> userDtos = users.map(userMapper::toDto);
+
+        try {
+            excelService.export(userDtos, request, response);
+        } catch (IOException e) {
+            log.error("Excel exprot error " + e.getMessage());
+        }
     }
 
     private String sysGuid(){
