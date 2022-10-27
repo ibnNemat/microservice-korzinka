@@ -21,5 +21,7 @@ public class DiscountDto {
 
     private Date finish;
 
-    private boolean isActive;
+    private Boolean status;
+
+    private ProductDto product;
 }

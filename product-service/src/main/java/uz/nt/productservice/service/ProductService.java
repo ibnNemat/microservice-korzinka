@@ -28,4 +28,8 @@ public interface ProductService {
     ResponseDto<Boolean> checkAmount(Integer productId, Double amount);
 
     ResponseDto<Map<Integer, ProductDto>> getProductsByList(List<Integer> ids);
+
+    ResponseDto<Page<ProductDto>> discountProducts(Integer page, Integer size);
+
+    ResponseDto<Object> setAmount(Double amount, Integer productId);
 }

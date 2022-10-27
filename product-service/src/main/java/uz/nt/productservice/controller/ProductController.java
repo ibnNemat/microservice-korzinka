@@ -64,4 +64,16 @@ public class ProductController {
     public ResponseDto<Map<Integer, ProductDto>> getShownDtoList(@RequestBody List<Integer> ids){
         return productService.getProductsByList(ids);
     }
+
+    @GetMapping("/discounted-products")
+    public ResponseDto<Page<ProductDto>> discountProducts(@RequestParam(required = false) Integer page,
+                                                          @RequestParam(required = false) Integer size){
+        return productService.discountProducts(page, size);
+    }
+
+    @PostMapping("/set-amount")
+    public ResponseDto setAmount(@RequestParam(required = false) Double amount,
+                                 @RequestParam(required = false) Integer productId){
+        return productService.setAmount(amount, productId);
+    }
 }
