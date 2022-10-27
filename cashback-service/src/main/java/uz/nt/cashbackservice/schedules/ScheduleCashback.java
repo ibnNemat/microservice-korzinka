@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import shared.libs.dto.ResponseDto;
 import uz.nt.cashbackservice.feign.OrderClient;
 import uz.nt.cashbackservice.feign.UserClient;
-import uz.nt.cashbackservice.service.Main.CashbackCardService;
+//import uz.nt.cashbackservice.service.Main.CashbackCardService;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -22,7 +22,7 @@ public class ScheduleCashback {
     private final OrderClient orderClient;
     private final UserClient userClient;
 
-    private final CashbackCardService cashbackCardService;
+//    private final CashbackCardService cashbackCardService;
 
     @Scheduled(cron = "0 0 4 1 * *")
     public void increaseCashbackMoreThanMillion(){
@@ -37,7 +37,7 @@ public class ScheduleCashback {
          cardsAndUsersId.forEach((k, v) -> {
              Double money = usersAndMoneys.get(v);
              Integer cardId = k;
-             cashbackCardService.increaseCashbackForMoreBought(cardId, money);
+//             cashbackCardService.increaseCashbackForMoreBought(cardId, money);
          });
 
     }
@@ -56,7 +56,7 @@ public class ScheduleCashback {
         cardsAndUsersId.forEach((k, v) -> {
             Double money = usersAndMoneys.get(v);
             Integer cardId = k;
-            cashbackCardService.increaseCashbackForMoreBought(cardId, money);
+//            cashbackCardService.increaseCashbackForMoreBought(cardId, money);
         });
     }
 

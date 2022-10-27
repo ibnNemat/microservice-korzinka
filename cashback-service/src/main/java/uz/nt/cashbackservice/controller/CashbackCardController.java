@@ -15,8 +15,8 @@ public class CashbackCardController {
 
 
     @PostMapping("/add-cashback")
-    public ResponseDto<CashbackCardDto> addCashback(@RequestBody CashbackCardDto cashbackDto){
-        return cashbackCardService.addCashback(cashbackDto);
+    public ResponseDto<CashbackCardDto> addCashback(){
+        return cashbackCardService.add();
     }
 
     @PutMapping("/subtract")

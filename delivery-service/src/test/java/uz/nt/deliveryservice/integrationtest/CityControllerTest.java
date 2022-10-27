@@ -22,32 +22,32 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CityControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private UserClient userClient;
-
-    private static String token;
-
-    @Test
-    @Order(0)
-    public void getToken() {
-        LoginDto loginDto = LoginDto.builder().username("nematovsr").password("nematovsr").build();
-
-        ResponseDto<JWTResponseDto> responseDto = userClient.getToken(loginDto);
-
-        token = responseDto.getResponseData().getToken();
-    }
-
-    @Test
-    @Order(1)
-    public void getAllByRegionId() throws Exception {
-        int id = 1;
-
-        mockMvc.perform(get("/city/{id}", id)
-                        .header("Authorization", "Bearer "+token))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
+//    @Autowired
+//    private MockMvc mockMvc;
+//
+//    @Autowired
+//    private UserClient userClient;
+//
+//    private static String token;
+//
+//    @Test
+//    @Order(0)
+//    public void getToken() {
+//        LoginDto loginDto = LoginDto.builder().username("nematovsr").password("nematovsr").build();
+//
+//        ResponseDto<JWTResponseDto> responseDto = userClient.getToken(loginDto);
+//
+//        token = responseDto.getResponseData().getToken();
+//    }
+//
+//    @Test
+//    @Order(1)
+//    public void getAllByRegionId() throws Exception {
+//        int id = 1;
+//
+//        mockMvc.perform(get("/city/{id}", id)
+//                        .header("Authorization", "Bearer "+token))
+//                .andDo(print())
+//                .andExpect(status().isOk());
+//    }
 }

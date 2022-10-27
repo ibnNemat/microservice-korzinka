@@ -1,9 +1,14 @@
 package uz.nt.cashbackservice.service.Impl;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import shared.libs.dto.CashbackCardDto;
+import shared.libs.dto.CashbackDto;
 import shared.libs.dto.ResponseDto;
+import shared.libs.dto.UserDto;
 import uz.nt.cashbackservice.entity.CashbackCard;
 import uz.nt.cashbackservice.feign.UserClient;
 import uz.nt.cashbackservice.mapper.CashbackCardMapper;
@@ -87,9 +92,37 @@ public class CashbackCardServiceImpl implements CashbackCardService {
     }
 
     @Override
-    public ResponseDto<CashbackCardDto> addCashback(CashbackCardDto cashbackDto) {
-        return null;
+    @Transactional
+    public ResponseDto<CashbackCardDto> add() {
+        int userId;
+        if (SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal() instanceof UserDto userDto){
+            userId = userDto.getId();
+
+            CashbackCard cashback = CashbackCard.builder().amount(5000D).barcode(RandomStringUtils.random(16)).userId(userId).build();
+
+            cashbackCardRepository.save(cashback);
+
+            CashbackCardDto cashbackCardDto = cashbackMapper.toDto(cashback);
+
+            return ResponseDto.<CashbackCardDto>builder()
+                    .success(true)
+                    .message("OK").
+                    responseData(cashbackCardDto).
+                    build();
+        } else {
+            return ResponseDto.<CashbackCardDto>builder()
+                    .success(false)
+                    .message("NO")
+                    .build();
+        }
+
     }
+
+
+
 
     @Override
     public ResponseDto<Boolean> deleteCashBack(Integer cashbackCardId) {
@@ -104,7 +137,7 @@ public class CashbackCardServiceImpl implements CashbackCardService {
 
     @Override
     public void increaseCashbackForMoreBought(Integer cardId, Double amount) {
-        amount += amount / 100;
+        amount = amount / 100;
         CashbackCard card = getCashbackById(cardId).getResponseData();
         card.setAmount(card.getAmount() + amount);
 

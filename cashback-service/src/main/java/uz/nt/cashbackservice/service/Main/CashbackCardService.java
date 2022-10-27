@@ -2,6 +2,7 @@ package uz.nt.cashbackservice.service.Main;
 
 
 import shared.libs.dto.CashbackCardDto;
+import shared.libs.dto.CashbackDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.cashbackservice.entity.CashbackCard;
 
@@ -13,8 +14,7 @@ public interface CashbackCardService {
 
     ResponseDto<Boolean>  increaseCashbackForUser(Integer userId, Double totalPrice);
 
-
-    ResponseDto<CashbackCardDto> addCashback(CashbackCardDto cashbackDto);
+    ResponseDto<CashbackCardDto> add();
 
     ResponseDto<Boolean> deleteCashBack(Integer cashbackCardId);
 

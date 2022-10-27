@@ -4,15 +4,11 @@ import javax.persistence.Column;
 import java.util.Date;
 
 public class CashbackDto {
-
     private Integer id;
 
     private Double amount;
 
     private String code;
 
-//    private Integer userId;
-
-//    private Integer percent;
-
+    private Integer userId;
 }
