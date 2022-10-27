@@ -104,26 +104,114 @@ public class OrderProductsServiceImpl implements OrderProductsService {
 
     @Override
     public ResponseDto updateOrderProducts(OrderProductsDto orderProductsDto) {
-        return null;
+        try {
+            OrderProducts orderProducts = orderProductsMapper.toEntity(orderProductsDto);
+            if (orderProductsRepository.existsById(orderProducts.getId())){
+
+                orderProductsRepository.save(orderProducts);
+
+                return ResponseDto.builder()
+                        .code(200)
+                        .message("Successfully updated")
+                        .success(true)
+                        .build();
+            }
+            return ResponseDto.builder()
+                    .code(-4)
+                    .message("Not found")
+                    .success(false)
+                    .build();
+        }catch (Exception e) {
+            log.error(e.getMessage());
+
+            return ResponseDto.builder()
+                    .code(500)
+                    .message(e.getMessage())
+                    .success(false)
+                    .build();
+        }
     }
 
     @Override
     public ResponseDto deleteById(Integer id) {
-        return null;
+        try {
+            if (orderProductsRepository.existsById(id)){
+                orderProductsRepository.deleteById(id);
+
+                return ResponseDto.builder()
+                        .code(200)
+                        .message("Successfully deleted")
+                        .success(true)
+                        .build();
+            }
+
+            return ResponseDto.builder()
+                    .code(-4)
+                    .message("Not found")
+                    .success(false)
+                    .build();
+        } catch (Exception e){
+            log.error("Error deleting 'Order Product' by id: " + e.getMessage());
+
+            return ResponseDto.builder()
+                    .code(500)
+                    .message(e.getMessage())
+                    .success(false)
+                    .build();
+        }
     }
 
     @Override
     public ResponseDto deleteByOrderId(Integer orderId) {
-        return null;
+        try {
+            if (orderProductsRepository.existsByOrderId(orderId)) {
+                orderProductsRepository.deleteByOrderId(orderId);
+
+                return ResponseDto.builder()
+                        .code(200)
+                        .message("Successfully deleted")
+                        .success(true)
+                        .build();
+            }
+            return ResponseDto.builder()
+                    .code(-4)
+                    .message("Not found")
+                    .success(false)
+                    .build();
+        }catch (Exception e){
+            log.error(e.getMessage());
+
+            return ResponseDto.builder()
+                    .code(500)
+                    .message(e.getMessage())
+                    .success(false)
+                    .build();
+        }
     }
 
     @Override
     public ResponseDto deleteByProductIdAndOrderId(Integer orderId, Integer productId) {
-        return null;
+        try {
+            orderProductsRepository.deleteByProductIdAndOrderId(productId, orderId);
+
+            return ResponseDto.builder()
+                    .code(200)
+                    .message("Successfully deleted")
+                    .success(true)
+                    .build();
+        }catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseDto.builder()
+                    .code(500)
+                    .message(e.getMessage())
+                    .success(false)
+                    .build();
+        }
     }
 
     @Override
     public ResponseDto<HashMap<Integer, Double>> quantityOrderedProductsPerMonth(Date date) {
+
         return null;
     }
 

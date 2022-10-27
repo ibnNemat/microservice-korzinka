@@ -34,6 +34,7 @@
       <module name="product-service" options="-parameters" />
       <module name="shared-libs" options="-parameters" />
       <module name="user-service" options="-parameters" />
+      <module name="uz_nt-korzinka" options="-parameters" />
     </option>
   </component>
 </project>

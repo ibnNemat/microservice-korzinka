@@ -12,4 +12,10 @@ public interface OrderProductsRepository extends JpaRepository<OrderProducts, In
     @Transactional
     @Modifying
     void deleteByProductIdAndOrderId(Integer productId, Integer orderId);
+
+    @Modifying
+    void deleteByOrderId(Integer id);
+
+    @Modifying
+    boolean existsByOrderId(Integer orderId);
 }
