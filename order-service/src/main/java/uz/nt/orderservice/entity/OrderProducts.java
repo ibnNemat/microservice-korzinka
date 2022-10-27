@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @Data
@@ -19,4 +21,5 @@ public class OrderProducts {
     private Integer order_id;
     private Integer product_id;
     private Double amount;
+
 }
