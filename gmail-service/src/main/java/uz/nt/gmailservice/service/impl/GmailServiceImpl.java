@@ -1,27 +1,34 @@
 package uz.nt.gmailservice.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import shared.libs.dto.ProductDto;
 import shared.libs.dto.ResponseDto;
 import shared.libs.dto.UserDto;
 import uz.nt.gmailservice.entity.GmailRedis;
+import uz.nt.gmailservice.feign.ProductFeign;
 import uz.nt.gmailservice.repository.GmailRepository;
 import uz.nt.gmailservice.service.GmailService;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 
 @Service
+@RequiredArgsConstructor
 public class GmailServiceImpl implements GmailService {
-    @Autowired
-    private JavaMailSender mailSender;
+
+    private final JavaMailSender mailSender;
 
     @Autowired
     private GmailRepository gmailRepository;
+
+    private final ProductFeign productFeign;
 
     @Override
     public ResponseDto sentToGmail(String gmail) {
@@ -81,5 +88,23 @@ public class GmailServiceImpl implements GmailService {
                 .message("error")
                 .success(false)
                 .build();
+    }
+
+    @Override
+    public void SendDiscountProductToUser() {
+       List<ProductDto> prList = productFeign.getLiked();
+
+       SimpleMailMessage message = new SimpleMailMessage();
+
+
+       message.setSubject("Discount products Here ");
+       message.setFrom("faxadev@gmail.com");
+       prList.stream()
+               .forEach(pr ->
+                       message.setText(String.format("Product name - > %s\n" +
+                               "Sell price - > %s",pr.getName(),pr.getPrice()))
+               );
+       message.setTo(); // todo zdes nujna UserId tamu sazdat gmail entity
+
     }
 }

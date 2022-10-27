@@ -7,4 +7,5 @@ public interface GmailService {
 
     ResponseDto checkGmailCode(String gmail,Integer code);
 
+    void SendDiscountProductToUser();
 }
