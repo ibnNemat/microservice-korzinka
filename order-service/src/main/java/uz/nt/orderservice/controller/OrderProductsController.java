@@ -42,4 +42,26 @@ public class OrderProductsController {
         return orderProductsService.quantityOrderedProductsPerQuarter();
     }
 
+    @PutMapping("/update-order")
+    public ResponseDto updateOrderProducts(@RequestBody OrderProductsDto orderProductsDto){
+        return orderProductsService.updateOrderProducts(orderProductsDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseDto deleteById(@PathVariable Integer id){
+        return orderProductsService.deleteById(id);
+    }
+
+    @DeleteMapping("/delete-order/{orderId}")
+    public ResponseDto deleteByOrderId(@PathVariable Integer orderId){
+        return orderProductsService.deleteByOrderId(orderId);
+    }
+
+    @DeleteMapping("/delete-product-and-order")
+    private ResponseDto deleteByProductIdAndOrderId(
+            @RequestParam Integer orderId,
+            @RequestParam Integer productId){
+        return orderProductsService.deleteByProductIdAndOrderId(orderId, productId);
+    }
+
 }

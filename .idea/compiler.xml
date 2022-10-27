@@ -18,6 +18,7 @@
         <module name="user-service" />
         <module name="order-service" />
         <module name="shared-libs" />
+        <module name="gmail-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -30,10 +31,12 @@
       <module name="cloud-config-server" options="-parameters" />
       <module name="delivery-service" options="-parameters" />
       <module name="discovery-server" options="-parameters" />
-      <module name="order-service" options="-parameters --add-modules java.sql" />
+      <module name="gmail-service" options="-parameters" />
+      <module name="order-service" options="-parameters" />
       <module name="product-service" options="-parameters" />
       <module name="shared-libs" options="-parameters" />
       <module name="user-service" options="-parameters" />
+      <module name="uz_nt-korzinka" options="" />
     </option>
   </component>
 </project>
