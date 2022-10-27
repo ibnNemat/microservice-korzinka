@@ -1,5 +1,4 @@
 package uz.nt.orderservice.service.impl;
-import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -9,6 +8,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import shared.libs.dto.CardDto;
 import shared.libs.dto.ProductDto;
 import shared.libs.dto.UserDto;
+import uz.nt.orderservice.entity.OrderedProductsRedis;
+import uz.nt.orderservice.repository.OrderedProductsRedisRepository;
 import uz.nt.orderservice.client.CashbackClient;
 import uz.nt.orderservice.client.ProductClient;
 import uz.nt.orderservice.client.UserCardClient;
@@ -18,7 +19,6 @@ import uz.nt.orderservice.service.PaymentHistoryService;
 import shared.libs.dto.ResponseDto;
 import uz.nt.orderservice.dto.OrderDto;
 import uz.nt.orderservice.dto.OrderedProductsDetail;
-import uz.nt.orderservice.entity.PaymentHistory;
 import uz.nt.orderservice.repository.OrderRepository;
 import uz.nt.orderservice.service.OrderProductsService;
 import uz.nt.orderservice.service.OrderService;
@@ -45,6 +45,70 @@ public class OrderServiceImpl implements OrderService {
     private final CashbackClient cashbackClient;
     private final ProductClient productClient;
     private static ResourceBundle bundle;
+    private final OrderedProductsRedisRepository redisRepository;
+
+    public ResponseDto<List<OrderedProductsDetail>> addOrderIfProductAmountIsEnough(List<OrderedProductsDetail> list){
+        try{
+            if (list == null){
+                return ResponseDto.<List<OrderedProductsDetail>>builder()
+                        .code(-1)
+                        .message("OrderProducts list is null")
+                        .build();
+            }
+            List<Integer> productIdList = new ArrayList<>();
+            for (OrderedProductsDetail op : list) {
+                productIdList.add(op.getProductId());
+            }
+            Map<Integer, ProductDto> map = productClient.getProductDtoList(productIdList)
+                    .getResponseData();
+            if (map == null){
+                return ResponseDto.<List<OrderedProductsDetail>>builder()
+                        .code(-1)
+                        .message("OrderProducts list is null")
+                        .build();
+            }
+
+            List<OrderedProductsDetail> productsNotEnoughAmount= checkProductAmount(list,map);
+            if (productsNotEnoughAmount.size() > 0){
+                return ResponseDto.<List<OrderedProductsDetail>>builder()
+                        .code(-10)
+                        .message("some products are not enough in the database")
+                        .responseData(productsNotEnoughAmount)
+                        .build();
+            }
+
+            List<OrderedProductsDetail> orderedProductsList = new ArrayList<>();
+            for (OrderedProductsDetail op: list){
+                orderedProductsList.add(new OrderedProductsDetail(
+                        op.getProductId(), op.getPrice(),op.getAmount())
+                );
+            }
+
+            OrderedProductsRedis orderedProductsRedis = new OrderedProductsRedis();
+            return null;
+
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return ResponseDto.<List<OrderedProductsDetail>>builder()
+                    .code(-1)
+                    .message(e.getMessage())
+                    .build();
+        }
+    }
+
+    public List<OrderedProductsDetail> checkProductAmount(List<OrderedProductsDetail> list, Map<Integer, ProductDto> map){
+        List<OrderedProductsDetail> productsNotEnoughAmount = new ArrayList<>();
+        for (OrderedProductsDetail op : list) {
+            ProductDto productInDateBase = map.get(op.getProductId());
+            if (productInDateBase.getAmount() < op.getAmount()){
+                productsNotEnoughAmount.add(
+                        new OrderedProductsDetail(op.getProductId(), null, productInDateBase.getAmount())
+                );
+            }
+        }
+
+        return productsNotEnoughAmount;
+    }
 
 
     @Override
@@ -324,12 +388,6 @@ public class OrderServiceImpl implements OrderService {
                     .build();
         }
 
-//        ResponseDto<Boolean> responseDto = productClient.update(product_id, amount);
-//        return ResponseDto.builder()
-//                .code(-5)
-//                .message("We don't have products in that many amounts!")
-//                .build();
-
         if (cashbackMoney != 0) {
              cashbackClient.subtractCashback(userId, cashbackMoney);
         }
@@ -369,31 +427,28 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    public Double sumAllOfUserOrderedProductsMonthly(){
-        return null;
-    }
-
     @Override
     public ResponseDto<List<UserOrderedProducts>> getAllUsersOrderProductsIsPayedFalse() {
         try {
             bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
 
             ArrayList<Integer> list = new ArrayList<>();
-            if(SecurityContextHolder.getContext().getAuthentication().getPrincipal() == null) {
+            UserDto userDto = (UserDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            if(userDto == null) {
                 return ResponseDto.<List<UserOrderedProducts>>builder()
                         .code(-4)
                         .success(false)
-                        .message("SecurityContextHolder getPrincipal isNull")
+                        .message("UserDto is null")
                         .build();
             }
-            UserDto userDto = (UserDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
             Orders orders = orderRepository.getByUserIdAndPayedIsFalse(userDto.getId());
             if(orders == null){
                 return ResponseDto.<List<UserOrderedProducts>>builder()
                         .code(-4)
                         .success(false)
-                        .message("Orders isNull")
+                        .message("Order is null")
                         .build();
             }
 
@@ -416,7 +471,7 @@ public class OrderServiceImpl implements OrderService {
     private ResponseDto<List<UserOrderedProducts>> addToListUserOrderedProducts(ArrayList<Integer> list, OrderDto orderDto) {
         bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
 
-        Map<Integer, ProductDto> map = productClient.getShownDtoList(list).getResponseData();
+        Map<Integer, ProductDto> map = productClient.getProductDtoList(list).getResponseData();
         UserOrderedProducts orderedProducts = new UserOrderedProducts();
         ArrayList<UserOrderedProducts> userOrderedProducts = new ArrayList<>();
 
@@ -444,6 +499,4 @@ public class OrderServiceImpl implements OrderService {
                 .responseData(userOrderedProducts)
                 .build();
     }
-
-
 }

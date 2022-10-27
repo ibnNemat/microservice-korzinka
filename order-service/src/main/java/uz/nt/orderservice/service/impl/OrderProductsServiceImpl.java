@@ -39,7 +39,6 @@ public class OrderProductsServiceImpl implements OrderProductsService {
     private final ProductClient productClient;
     private final OrderProductRepositoryHelper orderProductRepositoryHelper;
     private final OrderRepository orderRepository;
-    private final OrderService orderService;
     private static ResourceBundle bundle;
 
     @Transactional
@@ -53,7 +52,6 @@ public class OrderProductsServiceImpl implements OrderProductsService {
                 return ResponseDto.builder()
                         .code(-5)
                         .message("We don't have products in that many amounts!")
-                        .success(false)
                         .build();
             }
 
@@ -274,7 +272,6 @@ public class OrderProductsServiceImpl implements OrderProductsService {
     }
 
     public HashMap<Integer, Double> hashMapResponse(Integer monthlyOrQuarterly) throws Exception {
-
         Date date = new Date();
         LocalDate localDate = LocalDate.parse(new SimpleDateFormat("yyyy-MM-dd").format(date));
         int day = localDate.getDayOfMonth();

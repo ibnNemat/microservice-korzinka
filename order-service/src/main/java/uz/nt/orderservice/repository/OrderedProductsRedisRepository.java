@@ -1,8 +1,8 @@
-package shared.libs.repository;
+package uz.nt.orderservice.repository;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
-import shared.libs.entity.OrderedProductsRedis;
+import uz.nt.orderservice.entity.OrderedProductsRedis;
 @Component
 public interface OrderedProductsRedisRepository extends CrudRepository<OrderedProductsRedis, Long> {
 }
