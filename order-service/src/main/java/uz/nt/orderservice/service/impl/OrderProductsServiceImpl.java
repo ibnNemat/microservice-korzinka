@@ -47,6 +47,7 @@ public class OrderProductsServiceImpl implements OrderProductsService {
                         .message("We don't have products in that many amounts!")
                         .build();
             }
+
             return saveOrUpdateOrderProduct(product_id, order_id, amount);
         }catch (Exception e){
             return ResponseDto.builder()
@@ -160,15 +161,33 @@ public class OrderProductsServiceImpl implements OrderProductsService {
 
         List<Orders> ordersList = orderRepository.userPayedOrderedProducts(fromDate, currentDate);
 
+        return sumAllOrderedProductUsers(ordersList);
+    }
+
+    public HashMap<Integer, Double> sumAllOrderedProductUsers(List<Orders> ordersList){
+        HashMap<Integer, Double> userOrders = new HashMap<>();
+        for (Orders order: ordersList){
+            Integer user_id = order.getUserId();
+            Double total_price = order.getTotal_price();
+
+            if (userOrders.containsKey(user_id)){
+                userOrders.put(user_id, userOrders.get(user_id) +total_price);
+            }else{
+                userOrders.put(user_id, total_price);
+            }
+        }
+
+        return userOrders;
     }
 
     @Override
     public ResponseDto<HashMap<Integer, Double>> quantityOrderedProductsPerMonth() {
         try{
-            HashMap<Integer, Double> sumAllOrderedProductUsers = hashMapResponse(1);
-
+            HashMap<Integer, Double> map = hashMapResponse(1);
             return ResponseDto.<HashMap<Integer, Double>>builder()
                     .code(500)
+                    .success(true)
+                    .responseData(map)
                     .message("OK")
                     .build();
         }catch (Exception e){
@@ -183,9 +202,13 @@ public class OrderProductsServiceImpl implements OrderProductsService {
     @Override
     public ResponseDto<HashMap<Integer, Double>> quantityOrderedProductsPerQuarter() {
         try{
-            HashMap<Integer, Double> sumAllOrderedProductUsers = hashMapResponse(3);
-
-            return null;
+            HashMap<Integer, Double> map = hashMapResponse(3);
+            return ResponseDto.<HashMap<Integer, Double>>builder()
+                    .code(500)
+                    .success(true)
+                    .responseData(map)
+                    .message("OK")
+                    .build();
         }catch (Exception e){
             log.error(e.getMessage());
             return ResponseDto.<HashMap<Integer, Double>>builder()
