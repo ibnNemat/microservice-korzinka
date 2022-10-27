@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import shared.libs.dto.CashbackDto;
 import shared.libs.dto.ResponseDto;
 import shared.libs.dto.UserDto;
-import uz.nt.cashbackservice.entity.Cashback;
+import uz.nt.cashbackservice.Entity.Cashback;
 import uz.nt.cashbackservice.mapper.CashbackMapper;
 import uz.nt.cashbackservice.repository.CashbackRepository;
 import uz.nt.cashbackservice.service.Main.CashbackService;
@@ -51,7 +51,9 @@ public class CashbackServiceImpl implements CashbackService{
                 .getDetails() instanceof  UserDto userDto){
             userId = userDto.getId();
 
-            Cashback cashback = Cashback.builder().amount(5000D).barcode(RandomStringUtils.random(16)).userId(userId).build();
+            Cashback cashback = Cashback.builder().amount(5000D)
+//                    .barcode(RandomStringUtils.random(16))
+                    .userId(userId).build();
             cashbackRepository.save(cashback);
 
             CashbackDto cashbackDto = cashbackMapper.toDto(cashback);
