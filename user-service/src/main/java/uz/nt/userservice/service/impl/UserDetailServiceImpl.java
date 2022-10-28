@@ -2,12 +2,14 @@ package uz.nt.userservice.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import shared.libs.configuration.Config;
 import shared.libs.dto.JWTResponseDto;
 import shared.libs.dto.ResponseDto;
@@ -16,14 +18,16 @@ import shared.libs.repository.UserSessionRepository;
 import shared.libs.security.JwtService;
 import uz.nt.userservice.dto.LoginDto;
 import shared.libs.dto.UserDto;
-import shared.libs.utils.DateUtil;
 import uz.nt.userservice.entity.User;
 import uz.nt.userservice.repository.UserRepository;
 import uz.nt.userservice.service.UserService;
 import uz.nt.userservice.service.mapper.UserMapper;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Service

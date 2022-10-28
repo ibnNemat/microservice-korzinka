@@ -23,7 +23,7 @@ public class CashbackCard {
     @Column
     private Double amount;
 
-    private String barcode;
+    private Long barcode;
 
     @Column(name = "user_id")
     private Integer userId;
