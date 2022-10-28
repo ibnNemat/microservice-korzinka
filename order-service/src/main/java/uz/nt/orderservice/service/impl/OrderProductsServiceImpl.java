@@ -62,16 +62,27 @@ public class OrderProductsServiceImpl implements OrderProductsService {
 
     private ResponseDto saveOrUpdateOrderProduct(Integer orderId, List<OrderedProductsDetail> orderedProductsDetails) {
         bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
-        List<Integer> productIdList = new ArrayList<>();
-        for (OrderedProductsDetail op: orderedProductsDetails){
-            productIdList.add(op.getProductId());
+        Orders order = orderRepository.findById(orderId).get();
+        List<OrderProducts> orderProductsInDateBase = order.getOrderProducts();
+
+        Map<Integer, OrderProducts> orderProductMap = new HashMap<>();
+        for (OrderProducts op: orderProductsInDateBase){
+            orderProductMap.put(op.getProductId(), op);
         }
 
-        List<OrderProducts> orderProductsById = orderProductsRepository
-                .findAllByOrderIdAndProductIdIn(orderId, productIdList);
-        Integer productId, amount;
+        OrderProducts orderProducts;
+        for (OrderedProductsDetail op: orderedProductsDetails){
+            if (orderProductMap.containsKey(op.getProductId())){
+                orderProducts = orderProductMap.get(op.getProductId());
+                orderProducts.setAmount(orderProducts.getAmount()+op.getAmount());
+            }else{
+                orderProducts = new OrderProducts(null, orderId, op.getProductId(), op.getAmount());
+            }
+            orderProductsRepository.save(orderProducts);
 
-
+            // TODO: Map<productId, amount> yasab parametriga shu mapni qaytaradigan qilish kerak
+            productClient.subtractAmount(op.getProductId(), op.getAmount());
+        }
 
         return ResponseDto.builder()
                 .code(0)

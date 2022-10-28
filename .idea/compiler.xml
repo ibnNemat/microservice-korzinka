@@ -12,7 +12,6 @@
         <outputRelativeToContentRoot value="true" />
         <module name="orders-service" />
         <module name="delivery-service" />
-        <module name="discovery-server" />
         <module name="cloud-config-server" />
         <module name="cashback-service" />
         <module name="product-service" />
