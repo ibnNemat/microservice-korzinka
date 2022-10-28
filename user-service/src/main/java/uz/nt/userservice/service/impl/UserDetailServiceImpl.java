@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import shared.libs.configuration.Config;
 import shared.libs.dto.JWTResponseDto;
 import shared.libs.dto.ResponseDto;
@@ -160,6 +161,8 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
                 .build();
     }
 
+    @Transactional
+    @Override
     public void export (HttpServletRequest request, HttpServletResponse response){
         Stream<User> users = userRepository.findAllByIdLessThan(1_000_000);
         Stream<UserDto> userDtos = users.map(userMapper::toDto);

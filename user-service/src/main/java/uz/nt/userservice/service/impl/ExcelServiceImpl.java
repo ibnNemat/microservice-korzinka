@@ -4,22 +4,25 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.stereotype.Service;
 import shared.libs.dto.UserDto;
 import uz.nt.userservice.service.ExcelService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-
+@Service
 public class ExcelServiceImpl implements ExcelService {
     @Override
     public void export(Stream<UserDto> userDtos, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        XSSFWorkbook xssfWorkbook =new XSSFWorkbook(getClass().getClassLoader().getResource("templates/UserKorinzka.xlsx").getPath());
+        XSSFWorkbook xssfWorkbook =new XSSFWorkbook(new FileInputStream("user-service/src/main/resources/templates/UsersKorzinka.xlsx"));
 
         SXSSFWorkbook workbook = new SXSSFWorkbook(xssfWorkbook, 1000);
+
 
         Sheet sheet = workbook.getSheetAt(0);
 
@@ -40,7 +43,7 @@ public class ExcelServiceImpl implements ExcelService {
         });
 
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader("Content-Disposition", "attachment; filename=\"products.xlsx\"");
+        response.setHeader("Content-Disposition", "attachment; filename=\"users.xlsx\"");
 
         workbook.write(response.getOutputStream());
         workbook.close();
