@@ -48,21 +48,22 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public ResponseDto addUser(UserDto userDto) {
+    public ResponseDto<UserDto> addUser(UserDto userDto) {
         try{
             User user = userMapper.toEntity(userDto);
             user.setPassword(passwordEncoder.encode(user.getPassword()));
 
             userRepository.save(user);
 
-            return ResponseDto.builder()
+            return ResponseDto.<UserDto>builder()
                     .code(200)
                     .success(true)
+                    .responseData(userMapper.toDto(user))
                     .message("Successfully saved")
                     .build();
         }catch (Exception e){
             log.error(e.getMessage());
-            return ResponseDto.builder()
+            return ResponseDto.<UserDto>builder()
                     .code(500)
                     .message("Error while adding new user to DB")
                     .build();
@@ -136,10 +137,18 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public ResponseDto deleteUserById(Integer id) {
-        userRepository.deleteById(id);
-        return ResponseDto.builder()
+    public ResponseDto<UserDto> deleteUserById(Integer id) {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isEmpty()){
+            return ResponseDto.<UserDto>builder()
+                    .message("User is not exists")
+                    .code(-1)
+                    .build();
+        }
+        userRepository.delete(user.get());
+        return ResponseDto.<UserDto>builder()
                 .code(0)
+                .responseData(userMapper.toDto(user.get()))
                 .success(true)
                 .message("Ok")
                 .build();

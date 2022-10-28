@@ -21,9 +21,6 @@
         <module name="gmail-service" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="discovery-server" target="19" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
