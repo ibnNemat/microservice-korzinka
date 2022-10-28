@@ -1,5 +1,6 @@
 package shared.libs.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,13 +22,13 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(value = {"isActive"},ignoreUnknown = true)
 public class UserDto implements UserDetails {
     private Integer id;
     private String firstname;
     private String lastname;
     @Column(unique = true)
     private String username;
-    @Column(unique = true)
     private String password;
     @Email
     private String email;
@@ -35,7 +36,7 @@ public class UserDto implements UserDetails {
     private String phoneNumber;
     private Date created_at;
     private String location;
-    private Boolean isActive = false;
+    private Boolean isActive;
     private Set<SimpleGrantedAuthority> authorities;
 
     @Override

@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 public class UserDetailServiceImpl implements UserDetailsService, UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    public static Map<Integer, UserDto> usersMap = new HashMap<>();
     private final PasswordEncoder passwordEncoder = Config.passwordEncoder();
     private final JwtService jwtService;
 
@@ -51,7 +50,7 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public ResponseDto addUser(UserDto userDto) {
+    public ResponseDto<String> addUser(UserDto userDto) {
         try{
             User user = userMapper.toEntity(userDto);
             user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -61,16 +60,18 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
             if(responseDto.getSuccess()) {
                 verifyCode = responseDto.getResponseData();
             }
-            return ResponseDto.builder()
+            return ResponseDto.<String>builder()
                     .code(200)
                     .success(true)
-                    .message("Successfully saved")
+                    .message("Ok")
+                    .responseData("Successfully saved")
                     .build();
         }catch (Exception e){
             log.error(e.getMessage());
-            return ResponseDto.builder()
+            return ResponseDto.<String>builder()
                     .code(500)
-                    .message("Error while adding new user to DB")
+                    .message("Error")
+                    .responseData("Error while adding new user to DB")
                     .build();
         }
     }
@@ -115,7 +116,6 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
                 .code(200)
                 .success(true)
                 .message("OK")
-                .responseData(usersMap.get(subject))
                 .build();
     }
 
