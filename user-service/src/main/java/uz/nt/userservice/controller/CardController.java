@@ -14,8 +14,7 @@ import java.util.List;
 @RequestMapping("/cards")
 public class CardController implements CardService {
     private final CardServiceImpl cardService;
-
-    @GetMapping("get-all-cards")
+    @GetMapping("/get-all-cards")
     public ResponseDto<List<CardDto>> getAllCards() {
         return cardService.getAllCards();
     }
@@ -30,7 +29,7 @@ public class CardController implements CardService {
         return cardService.getCardById(cardId);
     }
 
-    @DeleteMapping()
+    @DeleteMapping
     public ResponseDto deleteCardById(@PathVariable Integer id) {
         return cardService.deleteCardById(id);
     }
