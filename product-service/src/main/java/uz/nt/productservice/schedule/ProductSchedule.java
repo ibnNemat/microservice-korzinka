@@ -9,5 +9,5 @@ public interface ProductSchedule {
 
     ResponseDto<List<ProductDto>> getTopProductsThatOrderALot();
 
-    void updateProductWhereAmountIsZero();
+//    void updateProductWhereAmountIsZero();
 }

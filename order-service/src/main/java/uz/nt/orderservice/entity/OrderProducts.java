@@ -16,7 +16,7 @@ public class OrderProducts {
     @SequenceGenerator(name = "order_products_id_seq", sequenceName = "order_products_id_seq", allocationSize = 1)
     @Column(name = "id")
     private Integer id;
-    private Integer order_id;
-    private Integer product_id;
+    private Integer orderId;
+    private Integer productId;
     private Double amount;
 }

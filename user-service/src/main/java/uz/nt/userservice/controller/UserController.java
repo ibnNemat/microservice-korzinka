@@ -1,6 +1,7 @@
 package uz.nt.userservice.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shared.libs.dto.JWTResponseDto;
 import shared.libs.dto.ResponseDto;
@@ -30,17 +31,17 @@ public class UserController {
         return userService.getUserById(id);
     }
     @PostMapping
-    public ResponseDto addUser(@RequestBody UserDto userDto){
+    public ResponseDto<UserDto> addUser(@RequestBody UserDto userDto){
         return userService.addUser(userDto);
     }
 
-    @PutMapping("/sign-in")
+    @PutMapping
     public ResponseDto updateUser(@RequestBody UserDto userDto){
         return userService.updateUser(userDto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseDto deleteUser(@PathVariable Integer id){
+    public ResponseDto<UserDto> deleteUser(@PathVariable Integer id){
         return userService.deleteUserById(id);
     }
 

@@ -2,9 +2,8 @@ package uz.nt.cashbackservice.entity;
 
 import lombok.Data;
 import javax.persistence.*;
-import java.util.UUID;
 
-@Entity
+@Entity(name = "cashback_card")
 @Data
 public class CashbackCard {
 
@@ -19,4 +18,5 @@ public class CashbackCard {
 
     private String barcode;
 
+    private Integer userId;
 }

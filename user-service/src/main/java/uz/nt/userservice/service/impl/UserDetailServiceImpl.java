@@ -8,28 +8,22 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import shared.libs.configuration.Config;
 import shared.libs.dto.JWTResponseDto;
 import shared.libs.dto.ResponseDto;
-import shared.libs.dto.UserDto;
 import shared.libs.entity.UserSession;
 import shared.libs.repository.UserSessionRepository;
 import shared.libs.security.JwtService;
-import shared.libs.utils.DateUtil;
 import uz.nt.userservice.dto.LoginDto;
+import shared.libs.dto.UserDto;
+import shared.libs.utils.DateUtil;
 import uz.nt.userservice.entity.User;
 import uz.nt.userservice.repository.UserRepository;
-import uz.nt.userservice.service.ExcelService;
 import uz.nt.userservice.service.UserService;
 import uz.nt.userservice.service.mapper.UserMapper;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Service
@@ -40,7 +34,7 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
     public static Map<Integer, UserDto> usersMap = new HashMap<>();
     private final PasswordEncoder passwordEncoder = Config.passwordEncoder();
     private final JwtService jwtService;
-    private final ExcelService excelService;
+
     private final UserSessionRepository userSessionRepository;
 
     @Override

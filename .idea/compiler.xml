@@ -19,6 +19,7 @@
         <module name="order-service" />
         <module name="user-service" />
         <module name="shared-libs" />
+        <module name="gmail-service" />
       </profile>
     </annotationProcessing>
   </component>
@@ -28,6 +29,7 @@
       <module name="cloud-config-server" options="-parameters" />
       <module name="delivery-service" options="-parameters" />
       <module name="discovery-server" options="-parameters" />
+      <module name="gmail-service" options="-parameters" />
       <module name="order-service" options="-parameters" />
       <module name="orders-service" options="-parameters" />
       <module name="product-service" options="-parameters" />

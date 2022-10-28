@@ -6,4 +6,6 @@ import uz.nt.productservice.entity.Unit;
 
 @Repository
 public interface UnitRepository extends JpaRepository<Unit, Integer> {
+
+    boolean existsByName(String name);
 }
