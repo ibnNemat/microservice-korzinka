@@ -96,6 +96,7 @@ public class OrderServiceImpl implements OrderService {
 
             OrderedProductsRedis orderedProductsRedis = new OrderedProductsRedis(orderId, orderedProductsList);
             redisRepository.save(orderedProductsRedis);
+            timerTask.holdingTheOrderForFifteenMinutes(orderId);
 
             return ResponseDto.<List<OrderedProductsDetail>>builder()
                     .code(0)
