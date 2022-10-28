@@ -35,6 +35,7 @@ public class UserDto implements UserDetails {
     private String phoneNumber;
     private Date created_at;
     private String location;
+    private Boolean isActive = false;
     private Set<SimpleGrantedAuthority> authorities;
 
     @Override

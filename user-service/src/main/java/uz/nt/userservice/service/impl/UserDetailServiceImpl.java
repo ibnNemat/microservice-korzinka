@@ -14,6 +14,7 @@ import shared.libs.dto.ResponseDto;
 import shared.libs.entity.UserSession;
 import shared.libs.repository.UserSessionRepository;
 import shared.libs.security.JwtService;
+import uz.nt.userservice.client.GmailPlaceHolder;
 import uz.nt.userservice.dto.LoginDto;
 import shared.libs.dto.UserDto;
 import shared.libs.utils.DateUtil;
@@ -36,6 +37,8 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
     private final JwtService jwtService;
 
     private final UserSessionRepository userSessionRepository;
+    private final GmailPlaceHolder gmailPlaceHolder;
+    private Integer verifyCode;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -54,7 +57,10 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
 
             userRepository.save(user);
-
+            ResponseDto<Integer> responseDto = gmailPlaceHolder.sendToGmailAndGetVerifyCode(userDto.getEmail());
+            if(responseDto.getSuccess()) {
+                verifyCode = responseDto.getResponseData();
+            }
             return ResponseDto.builder()
                     .code(200)
                     .success(true)
@@ -114,6 +120,22 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
+    public ResponseDto<String> checkVerifyCode(Integer code) {
+        if(verifyCode != null && verifyCode == code) {
+            return ResponseDto.<String>builder()
+                    .code(0)
+                    .message("Ok")
+                    .success(true)
+                    .responseData("Access Verify").build();
+        }
+        return ResponseDto.<String>builder()
+                .code(-10)
+                .message("failed")
+                .success(false)
+                .responseData("Verify code is incorrect").build();
+    }
+
+    @Override
     public ResponseDto<List<UserDto>> getAllUser() {
         List<UserDto> list =userRepository.findAll().stream().map(userMapper::toDto).collect(Collectors.toList());
         return ResponseDto.<List<UserDto>>builder()
@@ -136,19 +158,28 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public ResponseDto deleteUserById(Integer id) {
-        userRepository.deleteById(id);
-        return ResponseDto.builder()
-                .code(0)
-                .success(true)
-                .message("Ok")
+    public ResponseDto<String> deleteUserById(Integer id) {
+        if(userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+            return ResponseDto.<String>builder()
+                    .code(0)
+                    .success(true)
+                    .message("Ok")
+                    .responseData("Success delete")
+                    .build();
+        }
+        return ResponseDto.<String>builder()
+                .code(-3)
+                .success(false)
+                .message("Failed")
+                .responseData("User Id dont found")
                 .build();
     }
 
     @Override
-    public ResponseDto updateUser(UserDto userDto) {
+    public ResponseDto<String> updateUser(UserDto userDto) {
         userRepository.save(userMapper.toEntity(userDto));
-        return ResponseDto.builder()
+        return ResponseDto.<String>builder()
                 .code(0)
                 .success(true)
                 .message("Ok")

@@ -24,26 +24,30 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseDto getById(@PathVariable Integer id){
+    public ResponseDto<UserDto> getById(@PathVariable Integer id){
         return userService.getUserById(id);
     }
     @PostMapping
-    public ResponseDto addUser(@RequestBody UserDto userDto){
+    public ResponseDto<String> addUser(@RequestBody UserDto userDto){
         return userService.addUser(userDto);
     }
 
     @PutMapping
-    public ResponseDto updateUser(@RequestBody UserDto userDto){
+    public ResponseDto<String> updateUser(@RequestBody UserDto userDto){
         return userService.updateUser(userDto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseDto deleteUser(@PathVariable Integer id){
+    public ResponseDto<String> deleteUser(@PathVariable Integer id){
         return userService.deleteUserById(id);
     }
 
     @PostMapping("/login")
     public ResponseDto<JWTResponseDto> login(@RequestBody LoginDto loginDto){
         return userDetailService.login(loginDto);
+    }
+    @PostMapping("/verify{code}")
+    public ResponseDto<String> checkVerifyCode(@PathVariable Integer code) {
+        return userService.checkVerifyCode(code);
     }
 }
