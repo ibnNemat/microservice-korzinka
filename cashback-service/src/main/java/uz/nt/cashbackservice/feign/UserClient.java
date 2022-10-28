@@ -12,11 +12,11 @@ import java.util.List;
 @FeignClient(url = "http://localhost:8083", name = "user-service")
 public interface UserClient {
 
-    @GetMapping("/")
+    @GetMapping("/get-card-id")
     ResponseDto<Integer> getCashbackCardId(@RequestParam Integer userId);
 
 
-    @GetMapping("/")
+    @GetMapping("/get-list-card-id")
     ResponseDto<HashMap<Integer, Integer>> getListCashbackCardId(@RequestParam List<Integer> usersId);
 
 }

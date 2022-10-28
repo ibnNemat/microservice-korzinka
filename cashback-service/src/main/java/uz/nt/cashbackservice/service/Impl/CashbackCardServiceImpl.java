@@ -1,11 +1,13 @@
 package uz.nt.cashbackservice.service.Impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import shared.libs.dto.CashbackCardDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.cashbackservice.entity.CashbackCard;
 import uz.nt.cashbackservice.feign.UserClient;
+import uz.nt.cashbackservice.handler.ExceptionCashBackHandler;
 import uz.nt.cashbackservice.mapper.CashbackCardMapper;
 import uz.nt.cashbackservice.repository.CashbackCardRepository;
 import uz.nt.cashbackservice.service.Main.CashbackCardService;
@@ -21,67 +23,58 @@ public class CashbackCardServiceImpl implements CashbackCardService {
     private final UserClient userClient;
 
 
+    @SneakyThrows
     @Override
     public ResponseDto<CashbackCard> getCashbackById(Integer cashbackId) {
         Optional<CashbackCard> cashbackCard = cashbackCardRepository.findById(cashbackId);
-        if (cashbackCard.isPresent()){
-            return ResponseDto.<CashbackCard>builder()
-                    .code(200)
-                    .success(true)
-                    .message("ok")
-                    .responseData(cashbackCard.get())
-                    .build();
+        if (cashbackCard.isEmpty()){
+            throw new ExceptionCashBackHandler.CashBackId();
         }
+
         return ResponseDto.<CashbackCard>builder()
-                .code(-1)
-                .success(false)
+                .code(0)
+                .success(true)
                 .message("ok")
+                .responseData(cashbackCard.get())
                 .build();
     }
 
+    @SneakyThrows
     @Override
     public ResponseDto<Boolean> subtractUserCashback(Integer userId, Double amount) {
         Integer cardId = userClient.getCashbackCardId(userId).getResponseData();
         Optional<CashbackCard> cashbackCard = cashbackCardRepository.findById(cardId);
-        if (cashbackCard.isPresent()){
-            CashbackCard card = cashbackCard.get();
-            card.setAmount(card.getAmount() - amount);
+        if (cashbackCard.isEmpty()){
+            throw new ExceptionCashBackHandler.UserId();
 
-            return ResponseDto.<Boolean>builder()
-                    .code(200)
-                    .responseData(true)
-                    .success(true)
-                    .message("ok")
-                    .build();
 
         }
+        CashbackCard card = cashbackCard.get();
+        card.setAmount(card.getAmount() - amount);
         return ResponseDto.<Boolean>builder()
-                .code(-1)
-                .success(false)
+                .code(0)
+                .responseData(true)
+                .success(true)
                 .message("ok")
                 .build();
+
     }
 
+    @SneakyThrows
     @Override
     public ResponseDto<Boolean>  increaseCashbackForUser(Integer userId, Double totalPrice) {
         Integer cardId = userClient.getCashbackCardId(userId).getResponseData();
         Optional<CashbackCard> cashbackCard = cashbackCardRepository.findById(cardId);
-        if (cashbackCard.isPresent()){
-
-            CashbackCard card = cashbackCard.get();
-            card.setAmount(card.getAmount() + totalPrice / 100);
-
-            return ResponseDto.<Boolean>builder()
-                    .code(200)
-                    .responseData(true)
-                    .success(true)
-                    .message("ok")
-                    .build();
-
+        if (cashbackCard.isEmpty()){
+            throw new ExceptionCashBackHandler.UserId();
         }
+        CashbackCard card = cashbackCard.get();
+        card.setAmount(card.getAmount() + totalPrice / 100);
+
         return ResponseDto.<Boolean>builder()
-                .code(-1)
-                .success(false)
+                .code(0)
+                .responseData(true)
+                .success(true)
                 .message("ok")
                 .build();
     }
@@ -91,8 +84,14 @@ public class CashbackCardServiceImpl implements CashbackCardService {
         return null;
     }
 
+    @SneakyThrows
     @Override
     public ResponseDto<Boolean> deleteCashBack(Integer cashbackCardId) {
+        Optional<CashbackCard> cashbackCard = cashbackCardRepository.findById(cashbackCardId);
+        if (cashbackCard.isEmpty()) {
+            throw new ExceptionCashBackHandler.CashBackCardId();
+        }
+        cashbackCardRepository.deleteById(cashbackCardId);
         return ResponseDto.<Boolean>builder()
                 .code(200)
                 .responseData(true)
@@ -100,7 +99,6 @@ public class CashbackCardServiceImpl implements CashbackCardService {
                 .message("ok")
                 .build();
     }
-
 
     @Override
     public void increaseCashbackForMoreBought(Integer cardId, Double amount) {

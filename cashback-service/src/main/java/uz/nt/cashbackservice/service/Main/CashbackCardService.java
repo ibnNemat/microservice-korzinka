@@ -4,6 +4,7 @@ package uz.nt.cashbackservice.service.Main;
 import shared.libs.dto.CashbackCardDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.cashbackservice.entity.CashbackCard;
+import uz.nt.cashbackservice.handler.ExceptionCashBackHandler;
 
 public interface CashbackCardService {
 

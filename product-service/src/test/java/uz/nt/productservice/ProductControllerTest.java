@@ -5,7 +5,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ProductControllerTest {
+public class    ProductControllerTest {
 
 //    @Autowired
 //    private MockMvc mockMvc;
