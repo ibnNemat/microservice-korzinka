@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
+import uz.nt.orderservice.client.ProductClient;
 import uz.nt.orderservice.dto.OrderedProductsDetail;
 import uz.nt.orderservice.repository.OrderRepository;
 
@@ -18,6 +19,7 @@ import java.util.List;
 public class OrderProductRepositoryHelper {
     private final EntityManager entityManager;
     private final OrderRepository orderRepository;
+    private final ProductClient productClient;
 
     public List<OrderedProductsDetail> getOrderedProductDetails(Integer orderId){
         Query query = entityManager.createNativeQuery(
@@ -35,14 +37,16 @@ public class OrderProductRepositoryHelper {
     public void removeAllNonOrderedProducts(){
         List<Integer> orderIdList = orderRepository.getAllOrdersIdIsPayedFalse();
 
-        for (Integer orderId: orderIdList){
-            List<OrderedProductsDetail> unpaidOrderedProducts = getOrderedProductDetails(orderId);
-            for (OrderedProductsDetail productsDetail: unpaidOrderedProducts){
-//                productRepository.addProductAmount(productsDetail.getAmount(), productsDetail.getProduct_id());
+        if (!orderIdList.isEmpty()) {
+            for (Integer orderId : orderIdList) {
+                List<OrderedProductsDetail> unpaidOrderedProducts = getOrderedProductDetails(orderId);
+                for (OrderedProductsDetail productsDetail : unpaidOrderedProducts) {
+                    productClient.setProductAmount(productsDetail.getAmount(), productsDetail.getProductId());
+                }
+                String stringQuery = "delete from OrderProducts op where op.orderId = " + orderId;
+                Query query = entityManager.createQuery(stringQuery);
+                query.executeUpdate();
             }
-            String stringQuery = "delete from OrderProducts op where op.orderId = " + orderId;
-            Query query = entityManager.createQuery(stringQuery);
-            query.executeUpdate();
         }
     }
 }
