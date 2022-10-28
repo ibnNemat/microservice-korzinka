@@ -55,7 +55,6 @@ public class OrderServiceImpl implements OrderService {
         return productClient.getProductDtoList(productIdList)
                 .getResponseData();
     }
-
     @Transactional
     @Override
     public ResponseDto<List<OrderedProductsDetail>> addOrder(List<OrderedProductsDetail> list){
