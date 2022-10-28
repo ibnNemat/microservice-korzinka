@@ -4,10 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.Column;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
@@ -20,12 +25,16 @@ public class UserDto implements UserDetails {
     private Integer id;
     private String firstname;
     private String lastname;
+    @Column(unique = true)
     private String username;
+    @Column(unique = true)
     private String password;
+    @Email
     private String email;
+    @NotNull
     private String phoneNumber;
     private Date created_at;
-    private Integer cashbackCardId;
+    private String location;
     private Set<SimpleGrantedAuthority> authorities;
 
     @Override
