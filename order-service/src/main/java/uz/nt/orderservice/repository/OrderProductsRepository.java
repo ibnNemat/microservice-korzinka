@@ -5,10 +5,13 @@ import uz.nt.orderservice.entity.OrderProducts;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 public interface OrderProductsRepository extends JpaRepository<OrderProducts, Integer> {
     Optional<OrderProducts> findByOrderIdAndProductId(Integer orderId, Integer productId);
+
+    List<OrderProducts> findAllByOrderIdAndProductIdIn(Integer orderId, List<Integer> productIdList);
 
     @Transactional
     @Modifying

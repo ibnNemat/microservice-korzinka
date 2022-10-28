@@ -47,6 +47,17 @@ public class OrderServiceImpl implements OrderService {
     private static ResourceBundle bundle;
     private final OrderedProductsRedisRepository redisRepository;
 
+    public Map<Integer, ProductDto> buildHashMap(List<OrderedProductsDetail> list) {
+        List<Integer> productIdList = new ArrayList<>();
+        for (OrderedProductsDetail op : list) {
+            productIdList.add(op.getProductId());
+        }
+        return productClient.getProductDtoList(productIdList)
+                .getResponseData();
+    }
+
+    @Transactional
+    @Override
     public ResponseDto<List<OrderedProductsDetail>> addOrder(List<OrderedProductsDetail> list){
         try{
             if (list == null){
@@ -55,21 +66,9 @@ public class OrderServiceImpl implements OrderService {
                         .message("OrderProducts list is null")
                         .build();
             }
-            List<Integer> productIdList = new ArrayList<>();
-            for (OrderedProductsDetail op : list) {
-                productIdList.add(op.getProductId());
-            }
-            Map<Integer, ProductDto> map = productClient.getProductDtoList(productIdList)
-                    .getResponseData();
-            if (map == null){
-                return ResponseDto.<List<OrderedProductsDetail>>builder()
-                        .code(-1)
-                        .message("OrderProducts list is null")
-                        .build();
-            }
 
-            List<OrderedProductsDetail> productsNotEnoughAmount = checkProductAmount(list,map);
-            if (productsNotEnoughAmount.size() > 0){
+            List<OrderedProductsDetail> productsNotEnoughAmount = checkProductAmount(list);
+            if (productsNotEnoughAmount != null && productsNotEnoughAmount.size() > 0){
                 return ResponseDto.<List<OrderedProductsDetail>>builder()
                         .code(-10)
                         .message("some products are not enough in the database")
@@ -97,7 +96,11 @@ public class OrderServiceImpl implements OrderService {
             OrderedProductsRedis orderedProductsRedis = new OrderedProductsRedis(orderId, orderedProductsList);
             redisRepository.save(orderedProductsRedis);
 
-            return null;
+            return ResponseDto.<List<OrderedProductsDetail>>builder()
+                    .code(0)
+                    .success(true)
+                    .message("Successfully saved orderedProducts to Database")
+                    .build();
 
         }catch (Exception e){
             log.error(e.getMessage());
@@ -108,7 +111,11 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    public List<OrderedProductsDetail> checkProductAmount(List<OrderedProductsDetail> list, Map<Integer, ProductDto> map){
+    public List<OrderedProductsDetail> checkProductAmount(List<OrderedProductsDetail> list){
+        Map<Integer, ProductDto> map = buildHashMap(list);
+
+        if (map == null) return null;
+
         List<OrderedProductsDetail> productsNotEnoughAmount = new ArrayList<>();
         for (OrderedProductsDetail op : list) {
             ProductDto productInDateBase = map.get(op.getProductId());
@@ -123,7 +130,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-    @Transactional
     public ResponseDto<Integer> addOrderIfNotExistUserOrders(
             List<OrderedProductsDetail> orderedProductsDetails) throws Exception{
             bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());

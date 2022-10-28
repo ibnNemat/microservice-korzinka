@@ -8,6 +8,7 @@ import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
+import shared.libs.dto.ProductDto;
 import shared.libs.dto.ResponseDto;
 import shared.libs.utils.MyDateUtil;
 import uz.nt.orderservice.client.ProductClient;
@@ -17,6 +18,7 @@ import uz.nt.orderservice.entity.OrderProducts;
 import uz.nt.orderservice.entity.Orders;
 import uz.nt.orderservice.repository.OrderProductsRepository;
 import uz.nt.orderservice.repository.OrderRepository;
+import uz.nt.orderservice.repository.OrderedProductsRedisRepository;
 import uz.nt.orderservice.repository.helperRepository.OrderProductRepositoryHelper;
 import uz.nt.orderservice.service.OrderProductsService;
 import uz.nt.orderservice.service.OrderService;
@@ -40,22 +42,15 @@ public class OrderProductsServiceImpl implements OrderProductsService {
     private final OrderProductRepositoryHelper orderProductRepositoryHelper;
     private final OrderRepository orderRepository;
     private static ResourceBundle bundle;
+    private final OrderService orderService;
+    private final OrderedProductsRedisRepository redisRepository;
 
-    @Transactional
     @Override
     public ResponseDto addOrderProducts(Integer orderId, List<OrderedProductsDetail> orderedProductsDetails) {
         try {
             bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
 
-            ResponseDto<Boolean> checkProductAmount = productClient.checkAmountProduct(productId, amount);
-            if (!checkProductAmount.getSuccess() || !checkProductAmount.getResponseData()){
-                return ResponseDto.builder()
-                        .code(-5)
-                        .message("We don't have products in that many amounts!")
-                        .build();
-            }
-
-            return saveOrUpdateOrderProduct(productId, orderId, amount);
+            return saveOrUpdateOrderProduct(orderId, orderedProductsDetails);
         }catch (Exception e){
             return ResponseDto.builder()
                     .code(-1)
@@ -65,21 +60,20 @@ public class OrderProductsServiceImpl implements OrderProductsService {
         }
     }
 
-    private ResponseDto saveOrUpdateOrderProduct(Integer productId, Integer orderId, Double amount) {
+    private ResponseDto saveOrUpdateOrderProduct(Integer orderId, List<OrderedProductsDetail> orderedProductsDetails) {
         bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
-
-        Optional<OrderProducts> optional = orderProductsRepository
-                .findByOrderIdAndProductId(orderId, productId);
-
-        OrderProducts orderProduct;
-        if (optional.isPresent() && optional.get().getAmount()!= null){
-            Integer orderedProductId = optional.get().getId();
-            amount += optional.get().getAmount();
-            orderProduct = new OrderProducts(orderedProductId, orderId, productId, amount);
-        }else {
-            orderProduct = new OrderProducts(null, orderId, productId, amount);
+        List<Integer> productIdList = new ArrayList<>();
+        for (OrderedProductsDetail op: orderedProductsDetails){
+            productIdList.add(op.getProductId());
         }
-        orderProductsRepository.save(orderProduct);
+
+        List<OrderProducts> orderProductsById = orderProductsRepository
+                .findAllByOrderIdAndProductIdIn(orderId, productIdList);
+        Integer productId, amount;
+
+
+
+
 
         return ResponseDto.builder()
                 .code(0)
