@@ -3,15 +3,13 @@ package shared.libs.utils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class DateUtil {
+public class MyDateUtil {
     public static Date expirationTimeToken(){
         try {
             Calendar calendar = new GregorianCalendar();

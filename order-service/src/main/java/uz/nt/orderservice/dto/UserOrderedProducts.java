@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserOrderedProducts {
-    private Integer order_id;
-    private String name_product;
+    private Integer orderId;
+    private String nameProduct;
     private String type;
-    private Double amount_order;
+    private Double amountOrder;
 }
