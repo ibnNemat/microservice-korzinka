@@ -80,7 +80,8 @@ public class OrderProductsServiceImpl implements OrderProductsService {
             }
             orderProductsRepository.save(orderProducts);
 
-            // TODO: Map<productId, amount> yasab parametriga shu mapni qaytaradigan qilish kerak
+            // TODO: Map<productId, amount> yasab parametriga shu mapni qaytaradigan
+            //  qilib o'zgartirish kerak, fordan tashqarida bo'ladi shunda
             productClient.subtractAmount(op.getProductId(), op.getAmount());
         }
 
