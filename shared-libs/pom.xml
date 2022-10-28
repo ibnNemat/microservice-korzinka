@@ -10,6 +10,7 @@
         <version>1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
+
     <groupId>uz_nt-korzinka</groupId>
     <artifactId>shared-libs</artifactId>
     <version>1.0.0</version>

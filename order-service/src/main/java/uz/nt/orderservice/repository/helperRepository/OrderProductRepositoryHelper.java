@@ -19,30 +19,30 @@ public class OrderProductRepositoryHelper {
     private final EntityManager entityManager;
     private final OrderRepository orderRepository;
 
-    public List<OrderedProductsDetail> getOrderedProductDetails(Integer order_id){
-        Query query = entityManager.createNativeQuery(
-                "select op.product_id as product_id, price, amount" +
-                        " from order_products op inner join product p on p.id = op.product_id" +
-                        " where op.order_id =:orderId", OrderedProductsDetail.class);
-        query.setParameter("orderId", order_id);
+//    public List<OrderedProductsDetail> getOrderedProductDetails(Integer order_id){
+//        Query query = entityManager.createNativeQuery(
+//                "select op.product_id as product_id, price, amount" +
+//                        " from order_products op inner join product p on p.id = op.product_id" +
+//                        " where op.order_id =:orderId", OrderedProductsDetail.class);
+//        query.setParameter("orderId", order_id);
+//
+//        List<OrderedProductsDetail> productsDetailList = query.getResultList();
+//        return productsDetailList;
+//    }
 
-        List<OrderedProductsDetail> productsDetailList = query.getResultList();
-        return productsDetailList;
-    }
-
-    @Transactional
-    @Scheduled(cron = "30 45 23 * * *")
-    public void removeAllNonOrderedProducts(){
-        List<Integer> orderIdList = orderRepository.getAllOrdersIdIsPayedFalse();
-
-        for (Integer order_id: orderIdList){
-            List<OrderedProductsDetail> unpaidOrderedProducts = getOrderedProductDetails(order_id);
-            for (OrderedProductsDetail productsDetail: unpaidOrderedProducts){
-                productRepository.addProductAmount(productsDetail.getAmount(), productsDetail.getProduct_id());
-            }
-            String stringQuery = "delete from OrderProducts op where op.orderId = " + order_id;
-            Query query = entityManager.createQuery(stringQuery);
-            query.executeUpdate();
-        }
-    }
+//    @Transactional
+//    @Scheduled(cron = "30 45 23 * * *")
+//    public void removeAllNonOrderedProducts(){
+//        List<Integer> orderIdList = orderRepository.getAllOrdersIdIsPayedFalse();
+//
+//        for (Integer order_id: orderIdList){
+//            List<OrderedProductsDetail> unpaidOrderedProducts = getOrderedProductDetails(order_id);
+//            for (OrderedProductsDetail productsDetail: unpaidOrderedProducts){
+//                //productRepository.addProductAmount(productsDetail.getAmount(), productsDetail.getProduct_id());
+//            }
+//            String stringQuery = "delete from OrderProducts op where op.orderId = " + order_id;
+//            Query query = entityManager.createQuery(stringQuery);
+//            query.executeUpdate();
+//        }
+//    }
 }
