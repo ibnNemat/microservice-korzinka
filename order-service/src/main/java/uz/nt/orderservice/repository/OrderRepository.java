@@ -32,6 +32,9 @@ public interface OrderRepository extends JpaRepository<Orders, Integer> {
     @Query("update Orders o set o.totalPrice = :price where o.id = :orderId")
     void updateOrderTotalPrice(Integer orderId, Double price);
 
+
+    Optional<Integer> findByIdAndUserIdAndPayedIsFalse(Integer orderId, Integer userId);
+
     @Query("select o from Orders o where o.payed = true" +
             " and o.createdAt between :startOfMonth and :endOfMoth")
     List<Orders> userPayedOrderedProducts(Date startOfMonth, Date endOfMonth);

@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import shared.libs.dto.ProductDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.orderservice.config.FeignConfiguration;
+import uz.nt.orderservice.dto.OrderedProductsDetail;
+import uz.nt.orderservice.entity.OrderedProductsRedis;
 
 import java.util.List;
 import java.util.Map;
@@ -25,4 +27,7 @@ public interface ProductClient {
 
     @PostMapping("/products-by-id")
     ResponseDto<Map<Integer, ProductDto>> getProductDtoList(@RequestBody List<Integer> productIdList);
+
+    @PostMapping("/add-all-product-amount")
+    void addProductAmountBackWard(@RequestBody List<OrderedProductsDetail> productIdList);
 }

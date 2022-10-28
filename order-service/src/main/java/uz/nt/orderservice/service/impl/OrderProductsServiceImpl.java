@@ -51,12 +51,15 @@ public class OrderProductsServiceImpl implements OrderProductsService {
             if (!checkProductAmount.getSuccess() || !checkProductAmount.getResponseData()){
                 return ResponseDto.builder()
                         .code(-5)
-                        .message("We don't have products in that many amounts!")
+                        .message(bundle.getString("response.product.is.not.enough"))
+                        .success(false)
                         .build();
             }
 
             return saveOrUpdateOrderProduct(productId, orderId, amount);
         }catch (Exception e){
+            log.error(e.getMessage());
+
             return ResponseDto.builder()
                     .code(-1)
                     .message(bundle.getString("response.failed") + " : " + e.getMessage())
