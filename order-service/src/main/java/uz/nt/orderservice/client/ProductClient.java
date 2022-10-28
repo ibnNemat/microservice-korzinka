@@ -22,8 +22,8 @@ public interface ProductClient {
 
     @GetMapping("product/check-amount")
     ResponseDto<Boolean> checkAmountProduct(@RequestParam Integer productId, @RequestParam Double amount);
-    @PostMapping("product/set-amount")
-    ResponseDto setProductAmount(Double amount, Integer productId);
+//    @PostMapping("product/set-amount")
+//    ResponseDto setProductAmount(Double amount, Integer productId);
 
     @PostMapping("/products-by-id")
     ResponseDto<Map<Integer, ProductDto>> getProductDtoList(@RequestBody List<Integer> productIdList);

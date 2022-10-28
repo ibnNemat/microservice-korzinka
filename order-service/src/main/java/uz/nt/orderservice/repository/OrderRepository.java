@@ -36,6 +36,6 @@ public interface OrderRepository extends JpaRepository<Orders, Integer> {
     Optional<Integer> findByIdAndUserIdAndPayedIsFalse(Integer orderId, Integer userId);
 
     @Query("select o from Orders o where o.payed = true" +
-            " and o.createdAt between :startOfMonth and :endOfMoth")
+            " and o.createdAt between ?1 and ?2")
     List<Orders> userPayedOrderedProducts(Date startOfMonth, Date endOfMonth);
 }

@@ -17,9 +17,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+//@SpringBootTest
+//@AutoConfigureMockMvc
+//@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CityControllerTest {
 
     @Autowired
