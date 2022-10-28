@@ -33,7 +33,9 @@ public class MyFilterChain extends OncePerRequestFilter {
                     Optional<UserSession> userSessionOptional = userSessionRepository.findById(id);
                     userSessionOptional.ifPresent(userSession -> {
                         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                            userSession.getUserDto(), token, userSession.getUserDto().getAuthorities());
+                            userSession.getUserDto(),
+                                token,
+                                userSession.getUserDto().getAuthorities());
 
                         // This object has requestAddress and sessionId
                         WebAuthenticationDetails details = new WebAuthenticationDetails(request);
