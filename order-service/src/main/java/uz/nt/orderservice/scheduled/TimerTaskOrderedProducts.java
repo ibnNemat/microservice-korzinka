@@ -38,6 +38,8 @@ public class TimerTaskOrderedProducts {
                         Optional<OrderedProductsRedis> optionalRedis = redis.findById(orderId);
                         if (optionalRedis.isPresent()) {
                             OrderedProductsRedis orderedProductsRedis = optionalRedis.get();
+                            // TODO: Sardor ProductControllerda shunaqa endPoint
+                            //  ochib productAmountni qaytatib olishi kerak
                             productClient.addProductAmountBackWard(orderedProductsRedis.getOrderedProductsList());
                             redis.deleteById(orderId);
                         }
