@@ -1,10 +1,12 @@
 package uz.nt.orderservice.scheduled;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import uz.nt.orderservice.client.ProductClient;
 import uz.nt.orderservice.dto.OrderedProductsDetail;
+import uz.nt.orderservice.entity.OrderedProductsRedis;
 import uz.nt.orderservice.repository.OrderProductsRepository;
 import uz.nt.orderservice.repository.OrderRepository;
 import uz.nt.orderservice.repository.OrderedProductsRedisRepository;
@@ -13,8 +15,8 @@ import java.util.*;
 
 @Component
 @RequiredArgsConstructor
+@EnableScheduling
 public class TimerTaskOrderedProducts {
-
     private final OrderRepository orderRepository;
     private final OrderedProductsRedisRepository redis;
     private final ProductClient productClient;
@@ -29,9 +31,10 @@ public class TimerTaskOrderedProducts {
                 if (optional.isPresent()){
                     orderRepository.deleteById(orderId);
 
-                    Optional<List<OrderedProductsDetail>> optionalList = redis.findById(orderId);
-                    if (optionalList.isPresent()) {
-                        productClient.addProductAmountBackWard(optionalList.get());
+                    Optional<OrderedProductsRedis> optionalRedis = redis.findById(orderId);
+                    if (optionalRedis.isPresent()) {
+                        OrderedProductsRedis orderedProductsRedis = optionalRedis.get();
+                        productClient.addProductAmountBackWard(orderedProductsRedis.getOrderedProductsList());
                         redis.deleteById(orderId);
                     }
                 }
@@ -45,5 +48,4 @@ public class TimerTaskOrderedProducts {
         timer.schedule(timerTask, date);
 
     }
-
 }
