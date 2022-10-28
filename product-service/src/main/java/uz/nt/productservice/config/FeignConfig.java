@@ -1,8 +1,10 @@
 package uz.nt.productservice.config;
 
 import feign.Logger;
+import feign.RequestInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Configuration
 public class FeignConfig {
@@ -12,4 +14,13 @@ public class FeignConfig {
         return Logger.Level.FULL;
     }
 
+    @Bean
+    public RequestInterceptor interceptor(){
+        return (req) ->{
+            if (SecurityContextHolder.getContext().getAuthentication() != null &&
+                SecurityContextHolder.getContext().getAuthentication().getCredentials() instanceof String token) {
+                req.header("Authorization", "Bearer " + token);
+            }
+        };
+    }
 }
