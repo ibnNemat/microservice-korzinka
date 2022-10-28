@@ -16,6 +16,6 @@ public class CashbackCardDto {
 
     private Integer userId;
 
-    private String barcode;
+    private Long barcode;
 
 }

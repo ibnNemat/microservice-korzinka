@@ -5,7 +5,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shared.libs.dto.CashbackCardDto;
-import shared.libs.dto.CashbackHistoryDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.cashbackservice.entity.CashbackCard;
 import uz.nt.cashbackservice.entity.CashbackHistory;
@@ -13,7 +12,6 @@ import uz.nt.cashbackservice.mapper.CashbackCardMapper;
 import uz.nt.cashbackservice.repository.CashbackCardRepository;
 import uz.nt.cashbackservice.service.Main.CashbackCardService;
 import uz.nt.cashbackservice.service.Main.CashbackHistoryService;
-
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.Locale;
@@ -28,12 +26,10 @@ public class CashbackCardServiceImpl implements CashbackCardService {
     private final MessageSource messageSource;
     private final CashbackHistoryService cashbackHistoryService;
 
-
     @Override
     public ResponseDto<CashbackCardDto> getCashbackById(Integer cashbackId, HttpServletRequest request) {
         Locale locale = request.getLocale();
         String message;
-
         if(cashbackId != null) {
             Optional<CashbackCard> cashbackCard = cashbackCardRepository.findById(cashbackId);
 
@@ -115,7 +111,7 @@ public class CashbackCardServiceImpl implements CashbackCardService {
         message = messageSource.getMessage("error", new String[]{}, locale);
         return ResponseDto.<Boolean>builder()
                 .code(-1)
-                .success(false)
+                .responseData(false)
                 .success(false)
                 .message(message)
                 .build();
@@ -181,6 +177,7 @@ public class CashbackCardServiceImpl implements CashbackCardService {
         message = messageSource.getMessage("not.found", new String[]{}, locale);
         return ResponseDto.<Boolean>builder()
                 .code(-1)
+                .responseData(false)
                 .success(false)
                 .message(message)
                 .build();
@@ -207,6 +204,7 @@ public class CashbackCardServiceImpl implements CashbackCardService {
         message = messageSource.getMessage("not.found", new String[]{}, locale);
         return ResponseDto.<Boolean>builder()
                 .code(-1)
+                .responseData(false)
                 .success(false)
                 .message(message)
                 .build();
@@ -218,11 +216,10 @@ public class CashbackCardServiceImpl implements CashbackCardService {
     public void increaseCashbackForMoreBought(Integer userId, Double amount) {
         CashbackCard card = cashbackCardRepository.findCashbackCardByUserId(userId);
         if(Optional.ofNullable(card).isPresent()){
-            Double updatedAmount = (amount / 100) + card.getAmount();
-            card.setAmount(updatedAmount);
-            cashbackCardRepository.save(card);
-
-            addCashbackHistory(card.getId(), updatedAmount - (amount / 100), amount / 100, updatedAmount, new Date());
+            Double money = (amount / 100) + card.getAmount();
+            Integer cardId = card.getId();
+            cashbackCardRepository.increaseCashback(money, cardId);
+            addCashbackHistory(card.getId(), money - (amount / 100), amount / 100, money, new Date());
         }
     }
 
