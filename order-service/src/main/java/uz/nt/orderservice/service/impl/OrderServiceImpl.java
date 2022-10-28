@@ -47,7 +47,7 @@ public class OrderServiceImpl implements OrderService {
     private static ResourceBundle bundle;
     private final OrderedProductsRedisRepository redisRepository;
 
-    public ResponseDto<List<OrderedProductsDetail>> addOrderIfProductAmountIsEnough(List<OrderedProductsDetail> list){
+    public ResponseDto<List<OrderedProductsDetail>> addOrder(List<OrderedProductsDetail> list){
         try{
             if (list == null){
                 return ResponseDto.<List<OrderedProductsDetail>>builder()
@@ -68,7 +68,7 @@ public class OrderServiceImpl implements OrderService {
                         .build();
             }
 
-            List<OrderedProductsDetail> productsNotEnoughAmount= checkProductAmount(list,map);
+            List<OrderedProductsDetail> productsNotEnoughAmount = checkProductAmount(list,map);
             if (productsNotEnoughAmount.size() > 0){
                 return ResponseDto.<List<OrderedProductsDetail>>builder()
                         .code(-10)
@@ -77,6 +77,16 @@ public class OrderServiceImpl implements OrderService {
                         .build();
             }
 
+            ResponseDto<Integer> responseDto = addOrderIfNotExistUserOrders(list);
+            Integer orderId;
+            if (!responseDto.getSuccess() || responseDto.getResponseData() == null){
+                return ResponseDto.<List<OrderedProductsDetail>>builder()
+                        .code(-1)
+                        .message("Error while saving orderedProducts")
+                        .build();
+            }
+            orderId = responseDto.getResponseData();
+
             List<OrderedProductsDetail> orderedProductsList = new ArrayList<>();
             for (OrderedProductsDetail op: list){
                 orderedProductsList.add(new OrderedProductsDetail(
@@ -84,7 +94,9 @@ public class OrderServiceImpl implements OrderService {
                 );
             }
 
-            OrderedProductsRedis orderedProductsRedis = new OrderedProductsRedis();
+            OrderedProductsRedis orderedProductsRedis = new OrderedProductsRedis(orderId, orderedProductsList);
+            redisRepository.save(orderedProductsRedis);
+
             return null;
 
         }catch (Exception e){
@@ -111,17 +123,24 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-    @Override
     @Transactional
-    public ResponseDto<OrderDto> addOrderIfNotExistUserOrders(Integer productId, Double amount) {
-        try{
+    public ResponseDto<Integer> addOrderIfNotExistUserOrders(
+            List<OrderedProductsDetail> orderedProductsDetails) throws Exception{
             bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
-            UserDto userDto = (UserDto) SecurityContextHolder.getContext()
-                            .getAuthentication()
-                            .getPrincipal();
+
+            Integer userId;
+            if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserDto user) {
+                userId = user.getId();
+            }else {
+                return ResponseDto.<Integer>builder()
+                        .code(-3)
+                        .message("Authorization expired")
+                        .success(false)
+                        .build();
+            }
 
             Optional<Orders> optionalOrder = orderRepository
-                    .findUserOrderByUserIdWherePayedIsFalse(userDto.getId());
+                    .findUserOrderByUserIdWherePayedIsFalse(userId);
             int orderId;
 
             if (optionalOrder.isPresent()){
@@ -131,26 +150,20 @@ public class OrderServiceImpl implements OrderService {
             }else{
                 Orders orders1 = new Orders();
                 orders1.setId(1);
-                orders1.setUserId(userDto.getId());
+                orders1.setUserId(userId);
                 orderRepository.save(orders1);
 
                 orderId = orderRepository.getMax();
             }
 
-            orderProductsService.addOrderProducts(orderId, productId, amount);
+            orderProductsService.addOrderProducts(orderId, orderedProductsDetails);
 
-            return ResponseDto.<OrderDto>builder()
+            return ResponseDto.<Integer>builder()
                     .code(0)
                     .success(true)
+                    .responseData(orderId)
                     .message(bundle.getString("response.success"))
                     .build();
-        }catch (Exception e){
-            log.error(e.getMessage());
-            return ResponseDto.<OrderDto>builder()
-                    .code(-1)
-                    .message(bundle.getString("response.failed") + " : " + e.getMessage())
-                    .build();
-        }
     }
 
     @Override

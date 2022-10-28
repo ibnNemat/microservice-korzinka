@@ -43,7 +43,7 @@ public class OrderProductsServiceImpl implements OrderProductsService {
 
     @Transactional
     @Override
-    public ResponseDto addOrderProducts(Integer orderId, Integer productId, Double amount) {
+    public ResponseDto addOrderProducts(Integer orderId, List<OrderedProductsDetail> orderedProductsDetails) {
         try {
             bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
 

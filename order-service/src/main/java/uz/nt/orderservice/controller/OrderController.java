@@ -6,6 +6,7 @@ import shared.libs.dto.ResponseDto;
 import uz.nt.orderservice.dto.OrderDto;
 
 
+import uz.nt.orderservice.dto.OrderedProductsDetail;
 import uz.nt.orderservice.dto.UserOrderedProducts;
 import uz.nt.orderservice.service.OrderService;
 import uz.nt.orderservice.dto.PaymentDetails;
@@ -33,8 +34,8 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseDto addOrderIfNotExistUserOrders(@RequestParam Integer productId, @RequestParam Double amount){
-        return orderService.addOrderIfNotExistUserOrders(productId, amount);
+    public ResponseDto addOrderIfNotExistUserOrders(@RequestBody List<OrderedProductsDetail> list){
+        return orderService.addOrder(list);
     }
 
     @PutMapping
