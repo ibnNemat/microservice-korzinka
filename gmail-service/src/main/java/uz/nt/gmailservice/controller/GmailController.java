@@ -13,7 +13,7 @@ import uz.nt.gmailservice.service.impl.GmailServiceImpl;
 public class GmailController {
     private final GmailServiceImpl gmailService;
     @GetMapping("sent")
-    public ResponseDto send(@RequestParam String gmail){
+    public ResponseDto gg(@RequestParam String gmail){
       return gmailService.sentToGmail(gmail);
     }
 

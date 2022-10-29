@@ -5,6 +5,8 @@ import shared.libs.dto.ResponseDto;
 import uz.nt.userservice.dto.LoginDto;
 import shared.libs.dto.UserDto;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public interface UserService {
@@ -12,11 +14,13 @@ public interface UserService {
 
     ResponseDto<UserDto> getUserById(Integer id);
 
-    ResponseDto deleteUserById(Integer id);
+    ResponseDto<UserDto> deleteUserById(Integer id);
 
     ResponseDto updateUser(UserDto userDto);
 
-    ResponseDto addUser(UserDto userDto);
+    ResponseDto<UserDto> addUser(UserDto userDto);
     ResponseDto<JWTResponseDto> login(LoginDto loginDto);
     ResponseDto<UserDto> checkToken(String token);
+
+    void export(HttpServletRequest request, HttpServletResponse response);
 }
