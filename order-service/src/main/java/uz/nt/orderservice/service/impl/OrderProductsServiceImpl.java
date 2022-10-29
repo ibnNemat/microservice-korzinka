@@ -8,6 +8,7 @@ import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
+import shared.libs.dto.ProductDto;
 import shared.libs.dto.ResponseDto;
 import shared.libs.utils.MyDateUtil;
 import uz.nt.orderservice.client.ProductClient;
@@ -17,6 +18,7 @@ import uz.nt.orderservice.entity.OrderProducts;
 import uz.nt.orderservice.entity.Orders;
 import uz.nt.orderservice.repository.OrderProductsRepository;
 import uz.nt.orderservice.repository.OrderRepository;
+import uz.nt.orderservice.repository.OrderedProductsRedisRepository;
 import uz.nt.orderservice.repository.helperRepository.OrderProductRepositoryHelper;
 import uz.nt.orderservice.service.OrderProductsService;
 import uz.nt.orderservice.service.OrderService;
@@ -40,26 +42,16 @@ public class OrderProductsServiceImpl implements OrderProductsService {
     private final OrderProductRepositoryHelper orderProductRepositoryHelper;
     private final OrderRepository orderRepository;
     private static ResourceBundle bundle;
+    private final OrderService orderService;
+    private final OrderedProductsRedisRepository redisRepository;
 
-    @Transactional
     @Override
-    public ResponseDto addOrderProducts(Integer orderId, Integer productId, Double amount) {
+    public ResponseDto addOrderProducts(Integer orderId, List<OrderedProductsDetail> orderedProductsDetails) {
         try {
             bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
 
-            ResponseDto<Boolean> checkProductAmount = productClient.checkAmountProduct(productId, amount);
-            if (!checkProductAmount.getSuccess() || !checkProductAmount.getResponseData()){
-                return ResponseDto.builder()
-                        .code(-5)
-                        .message(bundle.getString("response.product.is.not.enough"))
-                        .success(false)
-                        .build();
-            }
-
-            return saveOrUpdateOrderProduct(productId, orderId, amount);
+            return saveOrUpdateOrderProduct(orderId, orderedProductsDetails);
         }catch (Exception e){
-            log.error(e.getMessage());
-
             return ResponseDto.builder()
                     .code(-1)
                     .message(bundle.getString("response.failed") + " : " + e.getMessage())
@@ -68,21 +60,30 @@ public class OrderProductsServiceImpl implements OrderProductsService {
         }
     }
 
-    private ResponseDto saveOrUpdateOrderProduct(Integer productId, Integer orderId, Double amount) {
+    private ResponseDto saveOrUpdateOrderProduct(Integer orderId, List<OrderedProductsDetail> orderedProductsDetails) {
         bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
+        Orders order = orderRepository.findById(orderId).get();
+        List<OrderProducts> orderProductsInDateBase = order.getOrderProducts();
 
-        Optional<OrderProducts> optional = orderProductsRepository
-                .findByOrderIdAndProductId(orderId, productId);
-
-        OrderProducts orderProduct;
-        if (optional.isPresent() && optional.get().getAmount()!= null){
-            Integer orderedProductId = optional.get().getId();
-            amount += optional.get().getAmount();
-            orderProduct = new OrderProducts(orderedProductId, orderId, productId, amount);
-        }else {
-            orderProduct = new OrderProducts(null, orderId, productId, amount);
+        Map<Integer, OrderProducts> orderProductMap = new HashMap<>();
+        for (OrderProducts op: orderProductsInDateBase){
+            orderProductMap.put(op.getProductId(), op);
         }
-        orderProductsRepository.save(orderProduct);
+
+        OrderProducts orderProducts;
+        for (OrderedProductsDetail op: orderedProductsDetails){
+            if (orderProductMap.containsKey(op.getProductId())){
+                orderProducts = orderProductMap.get(op.getProductId());
+                orderProducts.setAmount(orderProducts.getAmount()+op.getAmount());
+            }else{
+                orderProducts = new OrderProducts(null, orderId, op.getProductId(), op.getAmount());
+            }
+            orderProductsRepository.save(orderProducts);
+
+            // TODO: Map<productId, amount> yasab parametriga shu mapni qaytaradigan
+            //  qilib o'zgartirish kerak, fordan tashqarida bo'ladi shunda
+            productClient.subtractAmount(op.getProductId(), op.getAmount());
+        }
 
         return ResponseDto.builder()
                 .code(0)

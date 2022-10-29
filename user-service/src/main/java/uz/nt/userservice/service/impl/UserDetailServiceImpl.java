@@ -16,7 +16,7 @@ import shared.libs.repository.UserSessionRepository;
 import shared.libs.security.JwtService;
 import uz.nt.userservice.dto.LoginDto;
 import shared.libs.dto.UserDto;
-import shared.libs.utils.MyDateUtil;
+import shared.libs.utils.DateUtil;
 import uz.nt.userservice.entity.User;
 import uz.nt.userservice.repository.UserRepository;
 import uz.nt.userservice.service.UserService;
@@ -48,22 +48,21 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public ResponseDto<UserDto> addUser(UserDto userDto) {
+    public ResponseDto addUser(UserDto userDto) {
         try{
             User user = userMapper.toEntity(userDto);
             user.setPassword(passwordEncoder.encode(user.getPassword()));
 
             userRepository.save(user);
 
-            return ResponseDto.<UserDto>builder()
+            return ResponseDto.builder()
                     .code(200)
                     .success(true)
-                    .responseData(userMapper.toDto(user))
                     .message("Successfully saved")
                     .build();
         }catch (Exception e){
             log.error(e.getMessage());
-            return ResponseDto.<UserDto>builder()
+            return ResponseDto.builder()
                     .code(500)
                     .message("Error while adding new user to DB")
                     .build();
@@ -91,7 +90,7 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
                     .code(200)
                     .success(true)
                     .message("OK")
-                    .responseData(new JWTResponseDto(token, MyDateUtil.expirationTimeToken(), null))
+                    .responseData(new JWTResponseDto(token, DateUtil.expirationTimeToken(), null))
                     .build();
 
         }catch (Exception e){
@@ -137,18 +136,10 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public ResponseDto<UserDto> deleteUserById(Integer id) {
-        Optional<User> user = userRepository.findById(id);
-        if (user.isEmpty()){
-            return ResponseDto.<UserDto>builder()
-                    .message("User is not exists")
-                    .code(-1)
-                    .build();
-        }
-        userRepository.delete(user.get());
-        return ResponseDto.<UserDto>builder()
+    public ResponseDto deleteUserById(Integer id) {
+        userRepository.deleteById(id);
+        return ResponseDto.builder()
                 .code(0)
-                .responseData(userMapper.toDto(user.get()))
                 .success(true)
                 .message("Ok")
                 .build();
@@ -162,6 +153,19 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
                 .success(true)
                 .message("Ok")
                 .build();
+    }
+
+    @Transactional
+    @Override
+    public void export (HttpServletRequest request, HttpServletResponse response){
+        Stream<User> users = userRepository.findAllByIdLessThan(1_000_000);
+        Stream<UserDto> userDtos = users.map(userMapper::toDto);
+
+        try {
+            excelService.export(userDtos, request, response);
+        } catch (IOException e) {
+            log.error("Excel exprot error " + e.getMessage());
+        }
     }
 
     private String sysGuid(){

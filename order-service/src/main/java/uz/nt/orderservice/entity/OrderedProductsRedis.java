@@ -14,6 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderedProductsRedis {
-    private Long id;
+    private Integer id;
     private List<OrderedProductsDetail> orderedProductsList = new ArrayList<>();
 }
