@@ -59,12 +59,17 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
             ResponseDto<Integer> responseDto = gmailPlaceHolder.sendToGmailAndGetVerifyCode(userDto.getEmail());
             if(responseDto.getSuccess()) {
                 verifyCode = responseDto.getResponseData();
+                return ResponseDto.<String>builder()
+                        .code(200)
+                        .success(true)
+                        .message("Ok")
+                        .responseData("Successfully saved")
+                        .build();
             }
             return ResponseDto.<String>builder()
-                    .code(200)
-                    .success(true)
-                    .message("Ok")
-                    .responseData("Successfully saved")
+                    .code(500)
+                    .message("Error")
+                    .responseData("Error while adding new user to DB")
                     .build();
         }catch (Exception e){
             log.error(e.getMessage());
