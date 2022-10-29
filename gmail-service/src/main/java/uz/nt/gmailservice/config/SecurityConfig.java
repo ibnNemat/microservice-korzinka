@@ -24,7 +24,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/user/login/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/user/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/gmail-verify").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

@@ -35,3 +35,4 @@ build/
 /home/xusniddin/Documents/uz_nt_korzinka/KorzinkaProject/KorzinkaProject/cloud-config-server/src/main/resources/application.properties
 
 cloud-config-server/src/main/resources/application.properties
+/.gitignore

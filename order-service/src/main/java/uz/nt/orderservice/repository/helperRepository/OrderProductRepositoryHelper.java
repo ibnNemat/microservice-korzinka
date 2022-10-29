@@ -19,15 +19,14 @@ import java.util.List;
 public class OrderProductRepositoryHelper {
     private final EntityManager entityManager;
     private final OrderRepository orderRepository;
-
     private final ProductClient productClient;
 
-    public List<OrderedProductsDetail> getOrderedProductDetails(Integer order_id){
+    public List<OrderedProductsDetail> getOrderedProductDetails(Integer orderId){
         Query query = entityManager.createNativeQuery(
-                "select op.product_id as product_id, price, amount" +
-                        " from order_products op inner join product p on p.id = op.product_id" +
-                        " where op.order_id =:orderId", OrderedProductsDetail.class);
-        query.setParameter("orderId", order_id);
+                "select op.productId as productId, price, amount" +
+                        " from orderProducts op inner join product p on p.id = op.productId" +
+                        " where op.orderId =:orderId", OrderedProductsDetail.class);
+        query.setParameter("orderId", orderId);
 
         List<OrderedProductsDetail> productsDetailList = query.getResultList();
         return productsDetailList;
@@ -38,14 +37,16 @@ public class OrderProductRepositoryHelper {
     public void removeAllNonOrderedProducts(){
         List<Integer> orderIdList = orderRepository.getAllOrdersIdIsPayedFalse();
 
-        for (Integer order_id: orderIdList){
-            List<OrderedProductsDetail> unpaidOrderedProducts = getOrderedProductDetails(order_id);
-            for (OrderedProductsDetail productsDetail: unpaidOrderedProducts){
-                productClient.setProductAmount(productsDetail.getAmount(), productsDetail.getProduct_id());
+        if (!orderIdList.isEmpty()) {
+            for (Integer orderId : orderIdList) {
+                List<OrderedProductsDetail> unpaidOrderedProducts = getOrderedProductDetails(orderId);
+                for (OrderedProductsDetail productsDetail : unpaidOrderedProducts) {
+                    productClient.setProductAmount(productsDetail.getAmount(), productsDetail.getProductId());
+                }
+                String stringQuery = "delete from OrderProducts op where op.orderId = " + orderId;
+                Query query = entityManager.createQuery(stringQuery);
+                query.executeUpdate();
             }
-            String stringQuery = "delete from OrderProducts op where op.orderId = " + order_id;
-            Query query = entityManager.createQuery(stringQuery);
-            query.executeUpdate();
         }
     }
 }

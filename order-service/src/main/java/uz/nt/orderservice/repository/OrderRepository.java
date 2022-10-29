@@ -2,7 +2,6 @@ package uz.nt.orderservice.repository;
 
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import uz.nt.orderservice.entity.OrderProducts;
 import uz.nt.orderservice.entity.Orders;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -31,6 +30,9 @@ public interface OrderRepository extends JpaRepository<Orders, Integer> {
     @Modifying
     @Query("update Orders o set o.totalPrice = :price where o.id = :orderId")
     void updateOrderTotalPrice(Integer orderId, Double price);
+
+
+    Optional<Integer> findByIdAndUserIdAndPayedIsFalse(Integer orderId, Integer userId);
 
     @Query("select o from Orders o where o.payed = true" +
             " and o.createdAt between :startOfMonth and :endOfMoth")
