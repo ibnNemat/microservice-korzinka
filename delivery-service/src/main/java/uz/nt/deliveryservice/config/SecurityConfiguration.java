@@ -10,7 +10,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import shared.libs.security.MyFilterChain;
 
-@Configuration
+@Configuration(value = "DeliveryConfig")
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableGlobalAuthentication

@@ -13,7 +13,6 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 @EnableRedisRepositories({"shared.libs", "uz.nt.deliveryservice"})
 @EnableFeignClients
 public class DeliveryServiceApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(DeliveryServiceApplication.class, args);
     }

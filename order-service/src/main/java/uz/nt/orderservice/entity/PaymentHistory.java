@@ -19,11 +19,13 @@ public class PaymentHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "payment_history_id_seq")
     @SequenceGenerator(name = "payment_history_id_seq", sequenceName = "payment_history_id_seq", allocationSize = 1)
     private Integer id;
-    private Integer user_id;
-    private Integer card_id;
-    private Double total_price;
+    private Integer userId;
+    private Integer cardId;
+    private Double cashbackPayment;
+    private Double cardPayment;
+    private Double totalPrice;
     private String status;
     private String description;
-    @Column(columnDefinition = "date default now()")
-    private Date created_at;
+    @Column(columnDefinition = "DATE DEFAULT CURRENT_DATE")
+    private Date createdAt;
 }

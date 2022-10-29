@@ -14,15 +14,14 @@ import java.util.List;
 @RequestMapping("/cards")
 public class CardController implements CardService {
     private final CardServiceImpl cardService;
-
-    @GetMapping("get-all-cards")
+    @GetMapping("/get-all-cards")
     public ResponseDto<List<CardDto>> getAllCards() {
         return cardService.getAllCards();
     }
 
     @GetMapping("by-user-id/{user_id}")
-    public ResponseDto<List<CardDto>> getCardsByUserId(@PathVariable Integer userId) {
-        return cardService.getCardsByUserId(userId);
+    public ResponseDto<List<CardDto>> getCardsByUserId(@PathVariable Integer user_id) {
+        return cardService.getCardsByUserId(user_id);
     }
 
     @GetMapping("/by-id/{cardId}")
@@ -30,7 +29,7 @@ public class CardController implements CardService {
         return cardService.getCardById(cardId);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping
     public ResponseDto deleteCardById(@PathVariable Integer id) {
         return cardService.deleteCardById(id);
     }

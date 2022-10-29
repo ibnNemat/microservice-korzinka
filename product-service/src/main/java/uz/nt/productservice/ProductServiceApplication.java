@@ -6,6 +6,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 
+@EnableFeignClients
 @SpringBootApplication
 @EnableConfigurationProperties
 @ComponentScan({"shared.libs", "uz.nt.productservice"})

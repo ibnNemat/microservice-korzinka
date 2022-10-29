@@ -5,10 +5,14 @@ import org.springframework.web.bind.annotation.*;
 import shared.libs.dto.ResponseDto;
 import uz.nt.orderservice.dto.OrderDto;
 
+
+import uz.nt.orderservice.dto.OrderedProductsDetail;
+import uz.nt.orderservice.dto.UserOrderedProducts;
 import uz.nt.orderservice.service.OrderService;
 import uz.nt.orderservice.dto.PaymentDetails;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,8 +34,8 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseDto addOrderIfNotExistUserOrders(@RequestParam Integer product_id, @RequestParam Double amount){
-        return orderService.addOrderIfNotExistUserOrders(product_id, amount);
+    public ResponseDto addOrderIfNotExistUserOrders(@RequestBody List<OrderedProductsDetail> list){
+        return orderService.addOrder(list);
     }
 
     @PutMapping
@@ -48,5 +52,11 @@ public class OrderController {
     public ResponseDto payForOrderProducts(@RequestBody PaymentDetails paymentDetails){
         return orderService.payForOrders(paymentDetails);
     }
+
+    @GetMapping("/getOrders")
+    public ResponseDto<List<UserOrderedProducts>> getAllUsersOrderProductsIsPayedFalse(){
+        return orderService.getAllUsersOrderProductsIsPayedFalse();
+    }
+
 
 }
