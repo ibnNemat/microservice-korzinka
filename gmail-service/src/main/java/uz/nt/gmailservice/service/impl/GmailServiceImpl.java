@@ -1,6 +1,7 @@
 package uz.nt.gmailservice.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -11,6 +12,7 @@ import shared.libs.dto.ResponseDto;
 import shared.libs.dto.UserDto;
 import uz.nt.gmailservice.entity.GmailRedis;
 import uz.nt.gmailservice.feign.ProductFeign;
+import uz.nt.gmailservice.feign.UserFeign;
 import uz.nt.gmailservice.repository.GmailRepository;
 import uz.nt.gmailservice.service.GmailService;
 
@@ -21,6 +23,7 @@ import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class GmailServiceImpl implements GmailService {
 
     private final JavaMailSender mailSender;
@@ -29,6 +32,7 @@ public class GmailServiceImpl implements GmailService {
     private GmailRepository gmailRepository;
 
     private final ProductFeign productFeign;
+    private final UserFeign userFeign;
 
     @Override
     public ResponseDto sentToGmail(String gmail) {
@@ -92,19 +96,27 @@ public class GmailServiceImpl implements GmailService {
 
     @Override
     public void SendDiscountProductToUser() {
-       List<ProductDto> prList = productFeign.getLiked();
+        List<UserDto> usList = userFeign.getAllUsers().getResponseData();
+        List<ProductDto> prList = productFeign.getLiked();
 
-       SimpleMailMessage message = new SimpleMailMessage();
+        SimpleMailMessage message = new SimpleMailMessage();
 
-
-       message.setSubject("Discount products Here ");
-       message.setFrom("faxadev@gmail.com");
-       prList.stream()
-               .forEach(pr ->
-                       message.setText(String.format("Product name - > %s\n" +
-                               "Sell price - > %s",pr.getName(),pr.getPrice()))
-               );
-       message.setTo(); // todo zdes nujna UserId tamu sazdat gmail entity
-
+        try {
+            usList.stream()
+                    .filter(u -> !u.getEmail().isEmpty())
+                    .forEach(userDto -> {
+                        message.setSubject("Discount products Here ");
+                        message.setFrom("faxadev@gmail.com");
+                        message.setTo(userDto.getEmail());
+                        prList
+                                .forEach(pr ->
+                                            message.setText(String.format("Product name - > %s\n" +
+                                                    "Sell price - > %s", pr.getName(), pr.getPrice()))
+                                );
+                    }
+            );
+        }catch (Exception e){
+            log.error(e.getMessage());
+        }
     }
 }

@@ -13,12 +13,16 @@ import uz.nt.gmailservice.service.impl.GmailServiceImpl;
 public class GmailController {
     private final GmailServiceImpl gmailService;
     @GetMapping("sent")
-    public ResponseDto gg(@RequestParam String gmail){
+    public ResponseDto send(@RequestParam String gmail){
       return gmailService.sentToGmail(gmail);
     }
 
     @PostMapping("gmail-verify")
     public ResponseDto verifyGmail(@RequestParam String gmail,Integer code){
         return gmailService.checkGmailCode(gmail,code);
+    }
+    @GetMapping("like")
+    public void sendProductsSales(){
+        gmailService.SendDiscountProductToUser();
     }
 }
