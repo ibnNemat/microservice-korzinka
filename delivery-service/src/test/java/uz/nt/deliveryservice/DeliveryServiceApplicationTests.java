@@ -23,6 +23,7 @@ class DeliveryServiceApplicationTests {
     void checkRapidAPITwoPointsDistance() {
         String origins = "41.3223951,69.1763972";
         String destinations = "41.2858806,69.2035627";
+//        41.3043857,69.1974312
         String departure_time = "now";
         String key = "HqwFc7vSeUYvF7vvdgDkWCA0Xzpuc";
 

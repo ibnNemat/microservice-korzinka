@@ -20,7 +20,8 @@ import java.net.http.HttpResponse;
 public class DeliveryServiceImpl implements DeliveryService {
 
     private final DistanceClient distanceClient;
-    private final String ORIGINS = "41.3223951,69.1763972";
+    private final String ORIGINS = "41.2859494,69.2029124";
+//    41.2854528,69.203931
 
     private final String DEPARTURE_TIME = "now";
 
