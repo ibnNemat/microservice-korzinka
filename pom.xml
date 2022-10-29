@@ -16,7 +16,6 @@
   <packaging>pom</packaging>
   <modules>
     <module>cashback-service</module>
-    <module>discovery-server</module>
     <module>user-service</module>
     <module>order-service</module>
     <module>product-service</module>
@@ -104,6 +103,12 @@
       <groupId>org.mapstruct</groupId>
       <artifactId>mapstruct-processor</artifactId>
       <version>1.5.3.Final</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20090211</version>
     </dependency>
 
     <dependency>

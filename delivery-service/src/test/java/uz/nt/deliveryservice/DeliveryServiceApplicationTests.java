@@ -1,11 +1,14 @@
 package uz.nt.deliveryservice;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import shared.libs.dto.DistanceResponse;
+import shared.libs.dto.distance.DistanceInfo;
 import uz.nt.deliveryservice.client.RapidClient;
 
 import java.io.IOException;
@@ -22,25 +25,28 @@ class DeliveryServiceApplicationTests {
 
     @Test
     void checkRapidAPITwoPointsDistance() {
-        double startLat = 41.263018D;
-        double startLng = 69.222865;
-        double endLat = 41.274143;
-        double endLng = 69.20499;
-        String unit = "kilometers";
+        String origins = "41.3223951,69.1763972";
+        String destinations = "41.2858806,69.2035627";
+        String departure_time = "now";
+        String key = "HqwFc7vSeUYvF7vvdgDkWCA0Xzpuc";
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("X-RapidAPI-Key", "8ecd8a14d1mshc3743e65d6fee2ep1b1d00jsnd346fdad2f20");
-        headers.add("X-RapidAPI-Host", "distance-calculator1.p.rapidapi.com");
-        headers.add("x-rapidapi-ua", "RapidAPI-Playground");
-        headers.add("sec-fetch-mode", "cors");
-        headers.add("origin", "https://rapidapi.com");
+        try {
+            DistanceInfo distanceInfo = rapidClient.getResponseBetweenTwoPoints(
+                            origins,
+                            destinations,
+                            departure_time,
+                            key
+                    );
+            Assertions.assertNotNull(distanceInfo);
+            System.out.println(distanceInfo.getDestination_addresses().toString());
+            System.out.println(distanceInfo.getOrigin_addresses().toString());
+            System.out.println(distanceInfo.getRows().get(0).getElements().get(0).getDistance().toString());
+            System.out.println(distanceInfo.getRows().get(0).getElements().get(0).getDuration().toString());
+            System.out.println(distanceInfo.getRows().get(0).getElements().get(0).getDuration_in_traffic().toString());
 
-        DistanceResponse response = rapidClient.getResponseBetweenTwoPoints(startLat, startLng, endLat, endLng, unit, headers);
-
-        Assertions.assertNotNull(response);
-        Assertions.assertEquals(response.getUnit(), "kilometers");
-
-        System.out.println(response);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test

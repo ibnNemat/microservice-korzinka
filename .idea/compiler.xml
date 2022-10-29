@@ -11,7 +11,6 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="delivery-service" />
-        <module name="discovery-server" />
         <module name="cloud-config-server" />
         <module name="product-service" />
         <module name="cashback-service" />

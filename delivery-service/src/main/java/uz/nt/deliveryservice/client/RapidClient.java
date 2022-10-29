@@ -7,15 +7,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import shared.libs.dto.DistanceResponse;
+import shared.libs.dto.distance.DistanceInfo;
 
-@FeignClient(value = "rapid-service", url = "https://distance-calculator1.p.rapidapi.com/v1")
+@FeignClient(value = "distance-service", url = "https://api.distancematrix.ai/maps/api")
 public interface RapidClient {
 
-    @GetMapping("/getdistance")
-    DistanceResponse getResponseBetweenTwoPoints(@RequestParam(value = "start_lat") double startLat,
-                                                 @RequestParam(value = "start_lng") double startLng,
-                                                 @RequestParam(value = "end_lat") double endLat,
-                                                 @RequestParam(value = "end_lng") double endLng,
-                                                 @RequestParam(value = "unit", defaultValue = "kilometers") String unit,
-                                                 @RequestHeader HttpHeaders headers);
+    @GetMapping("/distancematrix/json")
+    DistanceInfo getResponseBetweenTwoPoints(@RequestParam(value = "origins") String origins,
+                                             @RequestParam(value = "destinations") String destinations,
+                                             @RequestParam(value = "departure_time") String departure_time,
+                                             @RequestParam(value = "key") String key);
 }
