@@ -50,8 +50,8 @@ public class UserController {
         return userDetailService.login(loginDto);
     }
 
-    @GetMapping("/excel")
-    public void export(HttpServletRequest request, HttpServletResponse response){
-        userService.export(request, response);
-    }
+//    @GetMapping("/excel")
+//    public void export(HttpServletRequest request, HttpServletResponse response){
+//        userService.export(request, response);
+//    }
 }

@@ -21,6 +21,7 @@
     <module>product-service</module>
     <module>delivery-service</module>
     <module>shared-libs</module>
+    <module>gmail-service</module>
     <module>cloud-config-server</module>
 <!--    <module>delivery-service</module>-->
   </modules>

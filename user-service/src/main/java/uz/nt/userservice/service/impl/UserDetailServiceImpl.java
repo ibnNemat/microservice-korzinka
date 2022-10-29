@@ -16,7 +16,7 @@ import shared.libs.repository.UserSessionRepository;
 import shared.libs.security.JwtService;
 import uz.nt.userservice.dto.LoginDto;
 import shared.libs.dto.UserDto;
-import shared.libs.utils.DateUtil;
+//import shared.libs.utils.DateUtil;
 import uz.nt.userservice.entity.User;
 import uz.nt.userservice.repository.UserRepository;
 import uz.nt.userservice.service.UserService;
@@ -90,7 +90,7 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
                     .code(200)
                     .success(true)
                     .message("OK")
-                    .responseData(new JWTResponseDto(token, DateUtil.expirationTimeToken(), null))
+                    .responseData(new JWTResponseDto(token, /*DateUtil.expirationTimeToken()*/ null, null))
                     .build();
 
         }catch (Exception e){
@@ -155,18 +155,18 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
                 .build();
     }
 
-    @Transactional
-    @Override
-    public void export (HttpServletRequest request, HttpServletResponse response){
-        Stream<User> users = userRepository.findAllByIdLessThan(1_000_000);
-        Stream<UserDto> userDtos = users.map(userMapper::toDto);
-
-        try {
-            excelService.export(userDtos, request, response);
-        } catch (IOException e) {
-            log.error("Excel exprot error " + e.getMessage());
-        }
-    }
+//    @Transactional
+//    @Override
+//    public void export (HttpServletRequest request, HttpServletResponse response){
+//        Stream<User> users = userRepository.findAllByIdLessThan(1_000_000);
+//        Stream<UserDto> userDtos = users.map(userMapper::toDto);
+//
+//        try {
+//            excelService.export(userDtos, request, response);
+//        } catch (IOException e) {
+//            log.error("Excel exprot error " + e.getMessage());
+//        }
+//    }
 
     private String sysGuid(){
         return UUID.randomUUID().toString().replace("-","");

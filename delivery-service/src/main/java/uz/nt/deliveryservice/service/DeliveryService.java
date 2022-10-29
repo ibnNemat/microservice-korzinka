@@ -7,5 +7,5 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 public interface DeliveryService {
-    String distanceCost(double startLat, double startLng) throws IOException, InterruptedException;
+    ResponseDto<BigDecimal> distanceCost(String destinations) throws IOException, InterruptedException;
 }

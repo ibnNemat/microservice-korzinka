@@ -16,8 +16,9 @@ import java.math.BigDecimal;
 @RequestMapping("/delivery")
 public class DeliveryController {
     private final DeliveryService deliveryService;
+
     @GetMapping("/distance-cost")
-    public String distanceCost(@RequestParam double endLat, @RequestParam double endLng) throws IOException, InterruptedException {
-        return deliveryService.distanceCost(endLat, endLng);
+    public ResponseDto<BigDecimal> distanceCost(@RequestParam String destinations) throws IOException, InterruptedException {
+        return deliveryService.distanceCost(destinations);
     }
 }

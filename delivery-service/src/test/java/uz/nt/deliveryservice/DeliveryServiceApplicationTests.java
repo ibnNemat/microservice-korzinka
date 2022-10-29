@@ -1,15 +1,11 @@
 package uz.nt.deliveryservice;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
-import shared.libs.dto.DistanceResponse;
 import shared.libs.dto.distance.DistanceInfo;
-import uz.nt.deliveryservice.client.RapidClient;
+import uz.nt.deliveryservice.client.DistanceClient;
 
 import java.io.IOException;
 import java.net.URI;
@@ -21,7 +17,7 @@ import java.net.http.HttpResponse;
 class DeliveryServiceApplicationTests {
 
     @Autowired
-    private RapidClient rapidClient;
+    private DistanceClient rapidClient;
 
     @Test
     void checkRapidAPITwoPointsDistance() {
