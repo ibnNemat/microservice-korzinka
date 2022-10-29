@@ -28,7 +28,7 @@ public class UserController {
         return userService.getUserById(id);
     }
     @PostMapping
-    public ResponseDto<String> addUser(@RequestBody UserDto userDto){
+    public ResponseDto<UserDto> addUser(@RequestBody UserDto userDto){
         return userService.addUser(userDto);
     }
 
@@ -38,7 +38,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseDto<String> deleteUser(@PathVariable Integer id){
+    public ResponseDto<UserDto> deleteUser(@PathVariable Integer id){
         return userService.deleteUserById(id);
     }
 

@@ -15,6 +15,7 @@ import shared.libs.dto.ResponseDto;
 import shared.libs.entity.UserSession;
 import shared.libs.repository.UserSessionRepository;
 import shared.libs.security.JwtService;
+import uz.nt.userservice.client.GmailPlaceHolder;
 import uz.nt.userservice.dto.LoginDto;
 import shared.libs.dto.UserDto;
 import shared.libs.utils.MyDateUtil;
@@ -42,6 +43,9 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
     private final JwtService jwtService;
 
     private final UserSessionRepository userSessionRepository;
+    private final GmailPlaceHolder gmailPlaceHolder;
+    private Integer verifyCode;
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -54,26 +58,31 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public ResponseDto addUser(UserDto userDto) {
+    public ResponseDto<UserDto> addUser(UserDto userDto) {
         try{
             User user = userMapper.toEntity(userDto);
             user.setPassword(passwordEncoder.encode(user.getPassword()));
 
             userRepository.save(user);
-
-            return ResponseDto.builder()
+            ResponseDto<Integer> responseDto = gmailPlaceHolder.sendToGmailAndGetVerifyCode(userDto.getEmail());
+            if(responseDto.getSuccess()) {
+                verifyCode = responseDto.getResponseData();
+            }
+            return ResponseDto.<UserDto>builder()
                     .code(200)
                     .success(true)
                     .message("Successfully saved")
+                    .responseData(userMapper.toDto(user))
                     .build();
         }catch (Exception e){
             log.error(e.getMessage());
-            return ResponseDto.builder()
+            return ResponseDto.<UserDto>builder()
                     .code(500)
                     .message("Error while adding new user to DB")
                     .build();
         }
     }
+
     @Override
     public ResponseDto<JWTResponseDto> login(LoginDto loginDto){
         User user = userRepository.findFirstByUsername(loginDto.getUsername()).orElseThrow(
@@ -142,24 +151,53 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public ResponseDto deleteUserById(Integer id) {
-        userRepository.deleteById(id);
-        return ResponseDto.builder()
+    public ResponseDto<UserDto> deleteUserById(Integer id) {
+        Optional<User> user = userRepository.findById(id);
+        if(user.isEmpty()) {
+            return ResponseDto.<UserDto>builder()
+                    .code(-3)
+                    .success(false)
+                    .message("Failed")
+                    .build();
+        }
+        userRepository.delete(user.get());
+        return ResponseDto.<UserDto>builder()
+                .code(0)
+                .success(true)
+                .message("Ok")
+                .responseData(userMapper.toDto(user.get()))
+                .build();
+    }
+
+    @Override
+    public ResponseDto<String> updateUser(UserDto userDto) {
+        userRepository.save(userMapper.toEntity(userDto));
+        return ResponseDto.<String>builder()
                 .code(0)
                 .success(true)
                 .message("Ok")
                 .build();
     }
 
+
+
     @Override
-    public ResponseDto updateUser(UserDto userDto) {
-        userRepository.save(userMapper.toEntity(userDto));
-        return ResponseDto.builder()
-                .code(0)
-                .success(true)
-                .message("Ok")
-                .build();
+    public ResponseDto<String> checkVerifyCode(Integer code) {
+        if(verifyCode != null && verifyCode == code) {
+            return ResponseDto.<String>builder()
+                    .code(0)
+                    .message("Ok")
+                    .success(true)
+                    .responseData("Access Verify").build();
+        }
+        return ResponseDto.<String>builder()
+                .code(-10)
+                .message("failed")
+                .success(false)
+                .responseData("Verify code is incorrect").build();
     }
+
+
 
     @Transactional
     @Override

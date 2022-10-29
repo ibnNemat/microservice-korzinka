@@ -10,7 +10,9 @@ import uz.nt.userservice.service.ReviewService;
 import javax.validation.Valid;
 import java.util.List;
 
-@RestController @RequiredArgsConstructor @RequestMapping("/review")
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/review")
 public class ReviewController {
     private final ReviewService service;
     @PostMapping
@@ -22,7 +24,7 @@ public class ReviewController {
         return service.getAll();
     }
     @GetMapping("{id}")
-    public ResponseDto<Review> getById(@PathVariable Integer id) {
+    public ResponseDto<ReviewDto> getById(@PathVariable Integer id) {
         return service.getById(id);
     }
 }
