@@ -12,6 +12,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="orders-service" />
         <module name="delivery-service" />
+        <module name="discovery-server" />
         <module name="cloud-config-server" />
         <module name="cashback-service" />
         <module name="product-service" />
@@ -21,6 +22,9 @@
         <module name="gmail-service" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="gmail-service" target="19" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
