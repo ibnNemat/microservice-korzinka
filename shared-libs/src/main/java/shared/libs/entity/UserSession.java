@@ -11,8 +11,6 @@ import shared.libs.dto.UserDto;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserSession {
-
     private String id;
     private UserDto userDto;
-
 }

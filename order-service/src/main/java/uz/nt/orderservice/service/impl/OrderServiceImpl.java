@@ -15,6 +15,7 @@ import uz.nt.orderservice.client.ProductClient;
 import uz.nt.orderservice.client.UserCardClient;
 import uz.nt.orderservice.dto.*;
 import uz.nt.orderservice.entity.Orders;
+import uz.nt.orderservice.scheduled.TimerTaskOrderedProducts;
 import uz.nt.orderservice.service.PaymentHistoryService;
 import shared.libs.dto.ResponseDto;
 import uz.nt.orderservice.dto.OrderDto;
@@ -46,8 +47,19 @@ public class OrderServiceImpl implements OrderService {
     private final ProductClient productClient;
     private static ResourceBundle bundle;
     private final OrderedProductsRedisRepository redisRepository;
+    private final TimerTaskOrderedProducts timerTask;
 
-    public ResponseDto<List<OrderedProductsDetail>> addOrderIfProductAmountIsEnough(List<OrderedProductsDetail> list){
+    public Map<Integer, ProductDto> buildHashMap(List<OrderedProductsDetail> list) {
+        List<Integer> productIdList = new ArrayList<>();
+        for (OrderedProductsDetail op : list) {
+            productIdList.add(op.getProductId());
+        }
+        return productClient.getProductDtoList(productIdList)
+                .getResponseData();
+    }
+    @Transactional
+    @Override
+    public ResponseDto<List<OrderedProductsDetail>> addOrder(List<OrderedProductsDetail> list){
         try{
             if (list == null){
                 return ResponseDto.<List<OrderedProductsDetail>>builder()
@@ -55,27 +67,25 @@ public class OrderServiceImpl implements OrderService {
                         .message("OrderProducts list is null")
                         .build();
             }
-            List<Integer> productIdList = new ArrayList<>();
-            for (OrderedProductsDetail op : list) {
-                productIdList.add(op.getProductId());
-            }
-            Map<Integer, ProductDto> map = productClient.getProductDtoList(productIdList)
-                    .getResponseData();
-            if (map == null){
-                return ResponseDto.<List<OrderedProductsDetail>>builder()
-                        .code(-1)
-                        .message("OrderProducts list is null")
-                        .build();
-            }
 
-            List<OrderedProductsDetail> productsNotEnoughAmount= checkProductAmount(list,map);
-            if (productsNotEnoughAmount.size() > 0){
+            List<OrderedProductsDetail> productsNotEnoughAmount = checkProductAmount(list);
+            if (productsNotEnoughAmount != null && productsNotEnoughAmount.size() > 0){
                 return ResponseDto.<List<OrderedProductsDetail>>builder()
                         .code(-10)
                         .message("some products are not enough in the database")
                         .responseData(productsNotEnoughAmount)
                         .build();
             }
+
+            ResponseDto<Integer> responseDto = addOrderIfNotExistUserOrders(list);
+            Integer orderId;
+            if (!responseDto.getSuccess() || responseDto.getResponseData() == null){
+                return ResponseDto.<List<OrderedProductsDetail>>builder()
+                        .code(-1)
+                        .message("Error while saving orderedProducts")
+                        .build();
+            }
+            orderId = responseDto.getResponseData();
 
             List<OrderedProductsDetail> orderedProductsList = new ArrayList<>();
             for (OrderedProductsDetail op: list){
@@ -84,8 +94,15 @@ public class OrderServiceImpl implements OrderService {
                 );
             }
 
-            OrderedProductsRedis orderedProductsRedis = new OrderedProductsRedis();
-            return null;
+            OrderedProductsRedis orderedProductsRedis = new OrderedProductsRedis(orderId, orderedProductsList);
+            redisRepository.save(orderedProductsRedis);
+            timerTask.holdingTheOrderForFifteenMinutes(orderId);
+
+            return ResponseDto.<List<OrderedProductsDetail>>builder()
+                    .code(0)
+                    .success(true)
+                    .message("Successfully saved orderedProducts to Database")
+                    .build();
 
         }catch (Exception e){
             log.error(e.getMessage());
@@ -96,7 +113,11 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    public List<OrderedProductsDetail> checkProductAmount(List<OrderedProductsDetail> list, Map<Integer, ProductDto> map){
+    public List<OrderedProductsDetail> checkProductAmount(List<OrderedProductsDetail> list){
+        Map<Integer, ProductDto> map = buildHashMap(list);
+
+        if (map == null) return null;
+
         List<OrderedProductsDetail> productsNotEnoughAmount = new ArrayList<>();
         for (OrderedProductsDetail op : list) {
             ProductDto productInDateBase = map.get(op.getProductId());
@@ -111,17 +132,23 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-    @Override
-    @Transactional
-    public ResponseDto<OrderDto> addOrderIfNotExistUserOrders(Integer productId, Double amount) {
-        try{
+    public ResponseDto<Integer> addOrderIfNotExistUserOrders(
+            List<OrderedProductsDetail> orderedProductsDetails) throws Exception{
             bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
-            UserDto userDto = (UserDto) SecurityContextHolder.getContext()
-                            .getAuthentication()
-                            .getPrincipal();
+
+            Integer userId;
+            if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserDto user) {
+                userId = user.getId();
+            }else {
+                return ResponseDto.<Integer>builder()
+                        .code(-3)
+                        .message("Authorization expired")
+                        .success(false)
+                        .build();
+            }
 
             Optional<Orders> optionalOrder = orderRepository
-                    .findUserOrderByUserIdWherePayedIsFalse(userDto.getId());
+                    .findUserOrderByUserIdWherePayedIsFalse(userId);
             int orderId;
 
             if (optionalOrder.isPresent()){
@@ -131,26 +158,20 @@ public class OrderServiceImpl implements OrderService {
             }else{
                 Orders orders1 = new Orders();
                 orders1.setId(1);
-                orders1.setUserId(userDto.getId());
+                orders1.setUserId(userId);
                 orderRepository.save(orders1);
 
                 orderId = orderRepository.getMax();
             }
 
-            orderProductsService.addOrderProducts(orderId, productId, amount);
+            orderProductsService.addOrderProducts(orderId, orderedProductsDetails);
 
-            return ResponseDto.<OrderDto>builder()
+            return ResponseDto.<Integer>builder()
                     .code(0)
                     .success(true)
+                    .responseData(orderId)
                     .message(bundle.getString("response.success"))
                     .build();
-        }catch (Exception e){
-            log.error(e.getMessage());
-            return ResponseDto.<OrderDto>builder()
-                    .code(-1)
-                    .message(bundle.getString("response.failed") + " : " + e.getMessage())
-                    .build();
-        }
     }
 
     @Override
@@ -357,6 +378,17 @@ public class OrderServiceImpl implements OrderService {
         bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
 
         List<OrderedProductsDetail> orderedProducts = orderProductsService.getOrderedProductsToPayFor(orderId);
+
+        List<OrderedProductsDetail> productsNotEnoughAmount = checkProductAmount(orderedProducts);
+
+        if (productsNotEnoughAmount != null && productsNotEnoughAmount.size() > 0){
+            return ResponseDto.<List<OrderedProductsDetail>>builder()
+                    .code(-10)
+                    .message("some products are not enough in the database")
+                    .responseData(productsNotEnoughAmount)
+                    .build();
+        }
+
         Double cashbackMoney = paymentDetails.getCashbackMoney();
         CardDto cardDto = userCardClient.getCardById(paymentDetails.getCardId()).getResponseData();
         Double account = cardDto.getAccount();

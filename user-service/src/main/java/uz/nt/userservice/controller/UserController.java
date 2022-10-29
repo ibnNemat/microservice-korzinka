@@ -10,6 +10,8 @@ import uz.nt.userservice.dto.LoginDto;
 import uz.nt.userservice.service.UserService;
 import uz.nt.userservice.service.impl.UserDetailServiceImpl;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
@@ -46,5 +48,10 @@ public class UserController {
     @PostMapping("/login")
     public ResponseDto<JWTResponseDto> login(@RequestBody LoginDto loginDto){
         return userDetailService.login(loginDto);
+    }
+
+    @GetMapping("/excel")
+    public void export(HttpServletRequest request, HttpServletResponse response){
+        userService.export(request, response);
     }
 }

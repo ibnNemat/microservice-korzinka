@@ -16,14 +16,13 @@
   <packaging>pom</packaging>
   <modules>
     <module>cashback-service</module>
-    <module>discovery-server</module>
     <module>user-service</module>
     <module>order-service</module>
     <module>product-service</module>
     <module>delivery-service</module>
     <module>shared-libs</module>
     <module>cloud-config-server</module>
-    <module>gmail-service</module>
+<!--    <module>delivery-service</module>-->
   </modules>
 
   <dependencies>
