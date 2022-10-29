@@ -378,6 +378,17 @@ public class OrderServiceImpl implements OrderService {
         bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
 
         List<OrderedProductsDetail> orderedProducts = orderProductsService.getOrderedProductsToPayFor(orderId);
+
+        List<OrderedProductsDetail> productsNotEnoughAmount = checkProductAmount(orderedProducts);
+
+        if (productsNotEnoughAmount != null && productsNotEnoughAmount.size() > 0){
+            return ResponseDto.<List<OrderedProductsDetail>>builder()
+                    .code(-10)
+                    .message("some products are not enough in the database")
+                    .responseData(productsNotEnoughAmount)
+                    .build();
+        }
+
         Double cashbackMoney = paymentDetails.getCashbackMoney();
         CardDto cardDto = userCardClient.getCardById(paymentDetails.getCardId()).getResponseData();
         Double account = cardDto.getAccount();
