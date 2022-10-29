@@ -19,7 +19,11 @@ import uz.nt.userservice.client.GmailPlaceHolder;
 import uz.nt.userservice.dto.LoginDto;
 import shared.libs.dto.UserDto;
 import shared.libs.utils.MyDateUtil;
+import uz.nt.userservice.entity.BanIp;
+import uz.nt.userservice.entity.CheckAttempt;
 import uz.nt.userservice.entity.User;
+import uz.nt.userservice.repository.BanIpRepository;
+import uz.nt.userservice.repository.CheckAttemptRepository;
 import uz.nt.userservice.repository.UserRepository;
 import uz.nt.userservice.service.UserService;
 import uz.nt.userservice.service.mapper.UserMapper;
@@ -44,7 +48,8 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
 
     private final UserSessionRepository userSessionRepository;
     private final GmailPlaceHolder gmailPlaceHolder;
-    private Integer verifyCode;
+    private final CheckAttemptRepository checkAttemptRepository;
+    private final BanIpRepository banIpRepository;
 
 
     @Override
@@ -58,29 +63,31 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public ResponseDto<UserDto> addUser(UserDto userDto) {
+    public ResponseDto<UserDto> addUser(UserDto userDto,HttpServletRequest request) {
         try{
             User user = userMapper.toEntity(userDto);
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-
             userRepository.save(user);
-            ResponseDto<Integer> responseDto = gmailPlaceHolder.sendToGmailAndGetVerifyCode(userDto.getEmail());
+            ResponseDto<String> responseDto = sendToGmail(userDto,request.getRemoteAddr());
             if(responseDto.getSuccess()) {
-                verifyCode = responseDto.getResponseData();
+                return ResponseDto.<UserDto>builder()
+                        .code(200)
+                        .success(true)
+                        .message("Successfully saved")
+                        .responseData(userMapper.toDto(user))
+                        .build();
             }
-            return ResponseDto.<UserDto>builder()
-                    .code(200)
-                    .success(true)
-                    .message("Successfully saved")
-                    .responseData(userMapper.toDto(user))
-                    .build();
         }catch (Exception e){
             log.error(e.getMessage());
             return ResponseDto.<UserDto>builder()
                     .code(500)
-                    .message("Error while adding new user to DB")
+                    .message("Error while adding new user to DB or gmail incorrect")
                     .build();
         }
+        return ResponseDto.<UserDto>builder()
+                .code(500)
+                .message("Gmail incorrect")
+                .build();
     }
 
     @Override
@@ -180,23 +187,60 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
     }
 
 
-
     @Override
-    public ResponseDto<String> checkVerifyCode(Integer code) {
-        if(verifyCode != null && verifyCode == code) {
-            return ResponseDto.<String>builder()
-                    .code(0)
-                    .message("Ok")
-                    .success(true)
-                    .responseData("Access Verify").build();
+    public ResponseDto<String> checkVerifyCode(Integer code,HttpServletRequest request) {
+        Optional<BanIp> optionalBanIp = banIpRepository.findById(request.getRemoteAddr());
+        if(optionalBanIp.isEmpty()) {
+            Optional<CheckAttempt> optionalCheckAttempt = checkAttemptRepository.findById(request.getRemoteAddr());
+            if(optionalCheckAttempt.isPresent() && optionalCheckAttempt.get().getUserDto().getCode() == code) {
+                UserDto userDto = optionalCheckAttempt.get().getUserDto();
+                userDto.setIsActive(true);
+                userRepository.save(userMapper.toEntity(userDto));
+                return ResponseDto.<String>builder()
+                        .code(0)
+                        .message("Ok")
+                        .success(true)
+                        .responseData("Verify is correct").build();
+            } else if(optionalCheckAttempt.isPresent() && optionalCheckAttempt.get().getUserDto().getCode() < 3) {
+                checkAttemptRepository.deleteById(request.getRemoteAddr());
+                banIpRepository.save(new BanIp(request.getRemoteAddr(),optionalCheckAttempt.get().getUserDto()));
+                return ResponseDto.<String>builder()
+                        .code(-10)
+                        .message("failed")
+                        .success(false)
+                        .responseData("Verify code is incorrect Your are banned 15 minute").build();
+            } else {
+                UserDto userDto = optionalCheckAttempt.get().getUserDto();
+                userDto.setIncrement(userDto.getIncrement()+1);
+                checkAttemptRepository.save(new CheckAttempt(request.getRemoteAddr(),userDto));
+                return ResponseDto.<String>builder()
+                        .code(-2)
+                        .message("failed")
+                        .success(false)
+                        .responseData("Verify code is incorrect!").build();
+            }
         }
         return ResponseDto.<String>builder()
                 .code(-10)
                 .message("failed")
                 .success(false)
-                .responseData("Verify code is incorrect").build();
+                .responseData("Verify code is incorrect Your are banned 15 minute").build();
     }
 
+    @Override
+    public ResponseDto<String> sendToGmail(UserDto userDto,String IpAddress) {
+        Random random = new Random();
+        int rand = random.nextInt(1000,9999);
+        ResponseDto<String> responseDto = gmailPlaceHolder.sendToGmailAndGetVerifyCode(userDto.getEmail(),rand);
+        if(responseDto.getSuccess()) {
+            userDto.setCode(rand);
+            userDto.setIncrement(0);
+            CheckAttempt checkAttempt = new CheckAttempt(IpAddress,userDto);
+            checkAttemptRepository.save(checkAttempt);
+            return ResponseDto.<String>builder().code(0).message("Ok").success(true).responseData("Please verify your code from gmail").build();
+        }
+        return ResponseDto.<String>builder().code(-3).message("Failed").success(false).responseData("Error gmail").build();
+    }
 
 
     @Transactional

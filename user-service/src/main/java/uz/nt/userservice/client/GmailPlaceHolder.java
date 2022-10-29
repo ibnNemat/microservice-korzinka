@@ -8,6 +8,6 @@ import shared.libs.dto.ResponseDto;
 
 @FeignClient(url = "//http://localhost:8888",name = "gmail-service",configuration = FeignClient.class)
 public interface GmailPlaceHolder {
-    @GetMapping("/send")
-    ResponseDto<Integer> sendToGmailAndGetVerifyCode(@RequestParam String gmail);
+    @PostMapping("/send")
+    ResponseDto<String> sendToGmailAndGetVerifyCode(@RequestParam String gmail,@RequestParam Integer code);
 }

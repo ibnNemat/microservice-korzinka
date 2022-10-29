@@ -1,6 +1,7 @@
 package uz.nt.userservice.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.*;
 import shared.libs.dto.JWTResponseDto;
 import shared.libs.dto.ResponseDto;
@@ -9,6 +10,7 @@ import uz.nt.userservice.dto.LoginDto;
 import uz.nt.userservice.service.UserService;
 import uz.nt.userservice.service.impl.UserDetailServiceImpl;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -28,8 +30,8 @@ public class UserController {
         return userService.getUserById(id);
     }
     @PostMapping
-    public ResponseDto<UserDto> addUser(@RequestBody UserDto userDto){
-        return userService.addUser(userDto);
+    public ResponseDto<UserDto> addUser(@RequestBody UserDto userDto,HttpServletRequest request){
+        return userService.addUser(userDto,request);
     }
 
     @PutMapping
@@ -47,7 +49,9 @@ public class UserController {
         return userDetailService.login(loginDto);
     }
     @PostMapping("/verify{code}")
-    public ResponseDto<String> checkVerifyCode(@PathVariable Integer code) {
-        return userService.checkVerifyCode(code);
+    public ResponseDto<String> checkVerifyCode(@PathVariable Integer code,HttpServletRequest request) {
+        return userService.checkVerifyCode(code,request);
     }
+
+
 }

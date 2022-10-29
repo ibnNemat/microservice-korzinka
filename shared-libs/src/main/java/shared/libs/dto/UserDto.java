@@ -18,7 +18,7 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreProperties(value = {"isActive"},ignoreUnknown = true)
+@JsonIgnoreProperties(value = {"isActive", "code", "increment"},ignoreUnknown = true)
 public class UserDto implements UserDetails {
     private Integer id;
     private String firstname;
@@ -33,6 +33,8 @@ public class UserDto implements UserDetails {
     private Date created_at;
     private String location;
     private Boolean isActive;
+    private Integer code;                          // verify uchun
+    private Integer increment;                    // tekshirish uchun
     private Set<SimpleGrantedAuthority> authorities;
 
     @Override
