@@ -22,8 +22,8 @@ public class CashbackHistoryController {
     }
 
     @GetMapping("/get-between")
-    public ResponseDto<List<CashbackHistoryDto>> getCashbackHistoryBetween(@RequestParam Date date, HttpServletRequest request){
-        return cashbackHistoryService.getCashbackHistoryBetween(date, request);
+    public ResponseDto<List<CashbackHistoryDto>> getCashbackHistoryBetween(@RequestParam Integer cardId, @RequestParam Date date, HttpServletRequest request){
+        return cashbackHistoryService.getCashbackHistoryBetween(cardId, date, request);
     }
 
 
