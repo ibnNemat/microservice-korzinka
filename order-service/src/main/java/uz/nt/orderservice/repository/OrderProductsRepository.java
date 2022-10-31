@@ -11,8 +11,6 @@ import java.util.Optional;
 public interface OrderProductsRepository extends JpaRepository<OrderProducts, Integer> {
     Optional<OrderProducts> findByOrderIdAndProductId(Integer orderId, Integer productId);
 
-    List<OrderProducts> findAllByOrderIdAndProductIdIn(Integer orderId, List<Integer> productIdList);
-
     @Transactional
     @Modifying
     void deleteByProductIdAndOrderId(Integer productId, Integer orderId);

@@ -15,6 +15,7 @@ import uz.nt.orderservice.client.ProductClient;
 import uz.nt.orderservice.client.UserCardClient;
 import uz.nt.orderservice.dto.*;
 import uz.nt.orderservice.entity.Orders;
+import uz.nt.orderservice.scheduled.TimerTaskOrderedProducts;
 import uz.nt.orderservice.service.PaymentHistoryService;
 import shared.libs.dto.ResponseDto;
 import uz.nt.orderservice.dto.OrderDto;
@@ -46,6 +47,7 @@ public class OrderServiceImpl implements OrderService {
     private final ProductClient productClient;
     private static ResourceBundle bundle;
     private final OrderedProductsRedisRepository redisRepository;
+    private final TimerTaskOrderedProducts timerTask;
 
     public Map<Integer, ProductDto> buildHashMap(List<OrderedProductsDetail> list) {
         List<Integer> productIdList = new ArrayList<>();
@@ -94,6 +96,7 @@ public class OrderServiceImpl implements OrderService {
 
             OrderedProductsRedis orderedProductsRedis = new OrderedProductsRedis(orderId, orderedProductsList);
             redisRepository.save(orderedProductsRedis);
+            timerTask.holdingTheOrderForFifteenMinutes(orderId);
 
             return ResponseDto.<List<OrderedProductsDetail>>builder()
                     .code(0)
@@ -375,6 +378,17 @@ public class OrderServiceImpl implements OrderService {
         bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
 
         List<OrderedProductsDetail> orderedProducts = orderProductsService.getOrderedProductsToPayFor(orderId);
+
+        List<OrderedProductsDetail> productsNotEnoughAmount = checkProductAmount(orderedProducts);
+
+        if (productsNotEnoughAmount != null && productsNotEnoughAmount.size() > 0){
+            return ResponseDto.<List<OrderedProductsDetail>>builder()
+                    .code(-10)
+                    .message("some products are not enough in the database")
+                    .responseData(productsNotEnoughAmount)
+                    .build();
+        }
+
         Double cashbackMoney = paymentDetails.getCashbackMoney();
         CardDto cardDto = userCardClient.getCardById(paymentDetails.getCardId()).getResponseData();
         Double account = cardDto.getAccount();

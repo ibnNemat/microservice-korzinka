@@ -2,7 +2,6 @@ package uz.nt.userservice.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,6 +17,7 @@ import shared.libs.repository.UserSessionRepository;
 import shared.libs.security.JwtService;
 import uz.nt.userservice.dto.LoginDto;
 import shared.libs.dto.UserDto;
+import shared.libs.utils.MyDateUtil;
 import uz.nt.userservice.entity.User;
 import uz.nt.userservice.repository.UserRepository;
 import uz.nt.userservice.service.UserService;
@@ -25,6 +25,7 @@ import uz.nt.userservice.service.mapper.UserMapper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -35,6 +36,7 @@ import java.util.stream.Stream;
 public class UserDetailServiceImpl implements UserDetailsService, UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final ExcelServiceImpl excelService;
     public static Map<Integer, UserDto> usersMap = new HashMap<>();
     private final PasswordEncoder passwordEncoder = Config.passwordEncoder();
     private final JwtService jwtService;
@@ -94,7 +96,7 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
                     .code(200)
                     .success(true)
                     .message("OK")
-                    .responseData(new JWTResponseDto(token, DateUtil.expirationTimeToken(), null))
+                    .responseData(new JWTResponseDto(token, MyDateUtil.expirationTimeToken(), null))
                     .build();
 
         }catch (Exception e){

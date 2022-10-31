@@ -18,7 +18,7 @@ import java.util.Map;
 public interface ProductClient {
 
     @PostMapping("/product/update-amount")
-    ResponseDto<Boolean> update(@RequestParam Integer productId, @RequestParam Double amount);
+    ResponseDto<Boolean> subtractAmount(@RequestParam Integer productId, @RequestParam Double amount);
 
     @GetMapping("product/check-amount")
     ResponseDto<Boolean> checkAmountProduct(@RequestParam Integer productId, @RequestParam Double amount);
