@@ -27,7 +27,7 @@ class CashbackHistoryServiceImplTest {
     @Order(1)
     @DisplayName("Add cashback into history")
     @Test
-//    @Sql(value = "classpath:/before-cashback-history.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = "classpath:/before-cashback-history.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void addCashbackHistory() throws ParseException {
 
         Date firstDate = new SimpleDateFormat("dd-MM-yyyy").parse("18-10-2022");
