@@ -1,12 +1,13 @@
 package uz.nt.cashbackservice.service.Impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shared.libs.dto.CashbackCardDto;
 import shared.libs.dto.ResponseDto;
+import shared.libs.dto.UserDto;
 import uz.nt.cashbackservice.entity.CashbackCard;
 import uz.nt.cashbackservice.entity.CashbackHistory;
 import uz.nt.cashbackservice.mapper.CashbackCardMapper;
@@ -26,6 +27,17 @@ public class CashbackCardServiceImpl implements CashbackCardService {
     private final CashbackCardMapper cashbackMapper;
     private final MessageSource messageSource;
     private final CashbackHistoryService cashbackHistoryService;
+
+    private Long barcode;
+
+    private Long getBarcode(){
+        if(barcode == null){
+            barcode = cashbackCardRepository.getMaxBarcode();
+            return (barcode != null) ? ++barcode : 2398389489L;
+        }
+        return ++barcode;
+    }
+
     @Override
     public ResponseDto<CashbackCardDto> getCashbackById(Integer cashbackId, HttpServletRequest request) {
         Locale locale = request.getLocale();
@@ -43,8 +55,15 @@ public class CashbackCardServiceImpl implements CashbackCardService {
                         .responseData(cashbackCardDto)
                         .build();
             }
+            message = messageSource.getMessage("not.found", new String[]{} , locale);
+
+            return ResponseDto.<CashbackCardDto>builder()
+                    .code(-2)
+                    .success(false)
+                    .message(message)
+                    .build();
         }
-        message = messageSource.getMessage("not.found", new String[]{} , locale);
+        message = messageSource.getMessage("error", new String[]{} , locale);
 
         return ResponseDto.<CashbackCardDto>builder()
                 .code(-1)
@@ -71,8 +90,15 @@ public class CashbackCardServiceImpl implements CashbackCardService {
                         .responseData(cashbackCardDto)
                         .build();
             }
+            message = messageSource.getMessage("not.found", new String[]{}, locale);
+            return ResponseDto.<CashbackCardDto>builder()
+                    .code(-2)
+                    .success(false)
+                    .message(message)
+                    .build();
+
         }
-        message = messageSource.getMessage("not.found", new String[]{}, locale);
+        message = messageSource.getMessage("error", new String[]{}, locale);
             return ResponseDto.<CashbackCardDto>builder()
                     .code(-1)
                     .success(false)
@@ -107,6 +133,13 @@ public class CashbackCardServiceImpl implements CashbackCardService {
                         .build();
 
             }
+            message = messageSource.getMessage("not.found", new String[]{}, locale);
+            return ResponseDto.<CashbackCardDto>builder()
+                    .code(-2)
+                    .responseData(null)
+                    .success(false)
+                    .message(message)
+                    .build();
         }
         message = messageSource.getMessage("error", new String[]{}, locale);
         return ResponseDto.<CashbackCardDto>builder()
@@ -139,6 +172,13 @@ public class CashbackCardServiceImpl implements CashbackCardService {
                         .message(message)
                         .build();
             }
+            message = messageSource.getMessage("not.found", new String[]{}, locale);
+            return ResponseDto.<CashbackCardDto>builder()
+                    .code(-2)
+                    .responseData(null)
+                    .success(false)
+                    .message(message)
+                    .build();
         }
 
         message = messageSource.getMessage("error", new String[]{}, locale);
@@ -153,7 +193,25 @@ public class CashbackCardServiceImpl implements CashbackCardService {
 
     @Override
     public ResponseDto<CashbackCardDto> addCashback() {
-        return null;
+        CashbackCard card = null;
+        try{
+            if(SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserDto userDto){
+                Integer userId = userDto.getId();
+                card = CashbackCard.builder().amount(5000D).userId(userId).barcode(getBarcode()).build();
+                card = cashbackCardRepository.save(card);
+            }
+        }catch (Exception e){
+            return ResponseDto.<CashbackCardDto>builder()
+                    .success(false).code(-1)
+                    .message("error".concat(": ").concat(e.getMessage()))
+                    .responseData(null)
+                    .build();
+        }
+        return ResponseDto.<CashbackCardDto>builder()
+                .success(true).code(200)
+                .message("add.success")
+                .responseData(cashbackMapper.toDto(card))
+                .build();
     }
 
 
@@ -174,7 +232,7 @@ public class CashbackCardServiceImpl implements CashbackCardService {
                     .message(message)
                     .build();
         }
-        message = messageSource.getMessage("not.found", new String[]{}, locale);
+        message = messageSource.getMessage("error", new String[]{}, locale);
         return ResponseDto.<Boolean>builder()
                 .code(-1)
                 .responseData(false)
@@ -201,7 +259,7 @@ public class CashbackCardServiceImpl implements CashbackCardService {
                     .build();
         }
 
-        message = messageSource.getMessage("not.found", new String[]{}, locale);
+        message = messageSource.getMessage("error", new String[]{}, locale);
         return ResponseDto.<Boolean>builder()
                 .code(-1)
                 .responseData(false)
