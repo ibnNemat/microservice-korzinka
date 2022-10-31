@@ -10,10 +10,9 @@ public interface CashbackCardService {
 
     ResponseDto<CashbackCardDto> getCashbackById(Integer cashbackId, HttpServletRequest request);
 
-    ResponseDto<Boolean>  subtractUserCashback(Integer userId, Double cashback, HttpServletRequest request);
+    ResponseDto<CashbackCardDto>  subtractUserCashback(Integer userId, Double cashback, HttpServletRequest request);
 
-    ResponseDto<Boolean>  increaseCashbackForUser(Integer userId, Double totalPrice, HttpServletRequest request);
-
+    ResponseDto<CashbackCardDto>  increaseCashbackForUser(Integer userId, Double totalPrice, HttpServletRequest request);
 
     ResponseDto<CashbackCardDto> addCashback();
 
@@ -23,6 +22,6 @@ public interface CashbackCardService {
 
     ResponseDto<Boolean> deleteCashbackCardIdByUserId(Integer userId, HttpServletRequest request);
 
-    void increaseCashbackForMoreBought(Integer cardId, Double amount);
+    void increaseCashbackForMoreBought(Integer userId, Double amount);
 
 }

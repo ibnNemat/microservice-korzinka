@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import shared.libs.dto.CashbackCardDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.cashbackservice.service.Main.CashbackCardService;
-
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
@@ -33,12 +32,12 @@ public class CashbackCardController {
 
 
     @PutMapping("/subtract")
-    public ResponseDto<Boolean> subtractCashback(@RequestParam Integer userId, @RequestParam Double cashbackAmount, HttpServletRequest request){
+    public ResponseDto<CashbackCardDto> subtractCashback(@RequestParam Integer userId, @RequestParam Double cashbackAmount, HttpServletRequest request){
         return cashbackCardService.subtractUserCashback(userId, cashbackAmount, request);
     }
 
     @PutMapping("/calculate-cashback")
-    public ResponseDto<Boolean> increase(@RequestParam Integer userId, @RequestParam Double cashbackAmount, HttpServletRequest request){
+    public ResponseDto<CashbackCardDto> increase(@RequestParam Integer userId, @RequestParam Double cashbackAmount, HttpServletRequest request){
         return cashbackCardService.increaseCashbackForUser(userId, cashbackAmount, request);
     }
 
