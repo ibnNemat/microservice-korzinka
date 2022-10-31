@@ -14,4 +14,7 @@ public interface CashbackCardRepository extends JpaRepository<CashbackCard, Inte
 
     Boolean deleteCashbackCardByUserId(Integer userId);
     CashbackCard findCashbackCardByUserId(Integer userId);
+
+    @Query(value = "select max(barcode) from cashback_card", nativeQuery = true)
+    Long getMaxBarcode();
 }
