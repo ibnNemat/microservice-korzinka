@@ -8,6 +8,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CashbackHistoryDto {
 
     private Integer id;
