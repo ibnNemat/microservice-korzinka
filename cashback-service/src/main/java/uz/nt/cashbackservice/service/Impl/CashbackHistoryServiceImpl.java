@@ -45,7 +45,7 @@ public class CashbackHistoryServiceImpl implements CashbackHistoryService {
                     .message(message)
                     .build();
         }
-        message = messageSource.getMessage("operation.success", new String[]{} , locale);
+        message = messageSource.getMessage("error", new String[]{} , locale);
         return ResponseDto.<Boolean>builder()
                 .code(-1)
                 .responseData(false)
@@ -70,7 +70,7 @@ public class CashbackHistoryServiceImpl implements CashbackHistoryService {
                         .message(message)
                         .build();
         }
-        message = messageSource.getMessage("not.found", new String[]{} , locale);
+        message = messageSource.getMessage("error", new String[]{} , locale);
 
         return ResponseDto.<List<CashbackHistoryDto>>builder()
                 .code(-1)
@@ -96,7 +96,7 @@ public class CashbackHistoryServiceImpl implements CashbackHistoryService {
                     .message(message)
                     .build();
         }
-        message = messageSource.getMessage("not.found", new String[]{} , locale);
+        message = messageSource.getMessage("error", new String[]{} , locale);
 
         return ResponseDto.<List<CashbackHistoryDto>>builder()
                 .code(-1)
