@@ -1,6 +1,7 @@
 package uz.nt.cashbackservice.service.Impl;
 
 import org.junit.jupiter.api.*;
+import org.junit.platform.commons.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
@@ -8,7 +9,10 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.jdbc.Sql;
 import shared.libs.dto.CashbackCardDto;
 import shared.libs.dto.ResponseDto;
+import uz.nt.cashbackservice.entity.CashbackCard;
 import uz.nt.cashbackservice.service.Main.CashbackCardService;
+
+import java.util.Random;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -19,6 +23,7 @@ class CashbackCardServiceImplTest {
 
     @Autowired
     private CashbackCardService cashbackCardService;
+
 
     @Order(1)
     @DisplayName(value = "Positive. Check get cashback by id")
@@ -50,7 +55,7 @@ class CashbackCardServiceImplTest {
         Assertions.assertNotNull(responseDto);
         Assertions.assertNull(responseDto.getResponseData());
         Assertions.assertFalse(responseDto.getSuccess());
-        Assertions.assertEquals("Ma`lumot topilmadi", responseDto.getMessage());
+        Assertions.assertEquals("Xatolik yuz berdi", responseDto.getMessage());
         Assertions.assertEquals(-1, responseDto.getCode());
 
     }
@@ -86,7 +91,7 @@ class CashbackCardServiceImplTest {
         Assertions.assertNotNull(responseDto);
         Assertions.assertNull(responseDto.getResponseData());
         Assertions.assertFalse(responseDto.getSuccess());
-        Assertions.assertEquals("Informatsiya ne naydeno", responseDto.getMessage());
+        Assertions.assertEquals("Proizoshla oshibka", responseDto.getMessage());
         Assertions.assertEquals(-1, responseDto.getCode());
     }
 
@@ -225,12 +230,12 @@ class CashbackCardServiceImplTest {
         Assertions.assertNotNull(responseDto.getResponseData());
         Assertions.assertFalse(responseDto.getSuccess());
         Assertions.assertEquals(-1, responseDto.getCode());
-        Assertions.assertEquals("Informatsiya ne naydeno", responseDto.getMessage());
+        Assertions.assertEquals("Proizoshla oshibka", responseDto.getMessage());
     }
 
 
 
-    @Order(2)
+    @Order(12)
     @DisplayName(value = "Positive. Delete cashback by user id")
     @Test
     void firstDeleteCashbackCardIdByUserId() {
@@ -262,13 +267,10 @@ class CashbackCardServiceImplTest {
         Assertions.assertNotNull(responseDto.getResponseData());
         Assertions.assertFalse(responseDto.getSuccess());
         Assertions.assertEquals(-1, responseDto.getCode());
-        Assertions.assertEquals("Ma`lumot topilmadi", responseDto.getMessage());
+        Assertions.assertEquals("Xatolik yuz berdi", responseDto.getMessage());
 
     }
 
 
 
-    @Test
-    void addCashback() {
-    }
 }
