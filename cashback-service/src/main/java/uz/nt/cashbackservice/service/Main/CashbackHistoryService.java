@@ -10,12 +10,12 @@ import java.util.List;
 
 public interface CashbackHistoryService {
 
-    void addCashbackHistory(CashbackHistory cashbackHistory);
+    CashbackHistory addCashbackHistory(CashbackHistory cashbackHistory);
 
     ResponseDto<Boolean> deleteCashbackHistoryByCardId(Integer cashbackCardId, HttpServletRequest request);
 
     ResponseDto<List<CashbackHistoryDto>> getCashbackHistoryByCardId(Integer cashbackCardId, HttpServletRequest request);
 
-    ResponseDto<List<CashbackHistoryDto>> getCashbackHistoryBetween(Date date, HttpServletRequest request);
+    ResponseDto<List<CashbackHistoryDto>> getCashbackHistoryBetween(Integer cardId, Date date, HttpServletRequest request);
 
 }

@@ -1,6 +1,7 @@
 package uz.nt.cashbackservice.service.Impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +26,6 @@ public class CashbackCardServiceImpl implements CashbackCardService {
     private final CashbackCardMapper cashbackMapper;
     private final MessageSource messageSource;
     private final CashbackHistoryService cashbackHistoryService;
-
     @Override
     public ResponseDto<CashbackCardDto> getCashbackById(Integer cashbackId, HttpServletRequest request) {
         Locale locale = request.getLocale();
@@ -85,7 +85,7 @@ public class CashbackCardServiceImpl implements CashbackCardService {
 
     @Transactional
     @Override
-    public ResponseDto<Boolean> subtractUserCashback(Integer userId, Double amount, HttpServletRequest request) {
+    public ResponseDto<CashbackCardDto> subtractUserCashback(Integer userId, Double amount, HttpServletRequest request) {
         Locale locale = request.getLocale();
         String message;
 
@@ -99,9 +99,9 @@ public class CashbackCardServiceImpl implements CashbackCardService {
                 addCashbackHistory(card.getId(), card.getAmount() - amount, amount, card.getAmount(), new Date());
 
                 message = messageSource.getMessage("operation.success", new String[]{}, locale);
-                return ResponseDto.<Boolean>builder()
+                return ResponseDto.<CashbackCardDto>builder()
                         .code(200)
-                        .responseData(true)
+                        .responseData(cashbackMapper.toDto(card))
                         .success(true)
                         .message(message)
                         .build();
@@ -109,9 +109,9 @@ public class CashbackCardServiceImpl implements CashbackCardService {
             }
         }
         message = messageSource.getMessage("error", new String[]{}, locale);
-        return ResponseDto.<Boolean>builder()
+        return ResponseDto.<CashbackCardDto>builder()
                 .code(-1)
-                .responseData(false)
+                .responseData(null)
                 .success(false)
                 .message(message)
                 .build();
@@ -120,7 +120,7 @@ public class CashbackCardServiceImpl implements CashbackCardService {
 
     @Transactional
     @Override
-    public ResponseDto<Boolean> increaseCashbackForUser(Integer userId, Double totalPrice, HttpServletRequest request) {
+    public ResponseDto<CashbackCardDto> increaseCashbackForUser(Integer userId, Double totalPrice, HttpServletRequest request) {
         Locale locale = request.getLocale();
         String message;
         if(userId != null && totalPrice != null) {
@@ -132,9 +132,9 @@ public class CashbackCardServiceImpl implements CashbackCardService {
 
                 addCashbackHistory(card.getId(), card.getAmount() - totalPrice / 100, totalPrice / 100, card.getAmount(), new Date());
                 message = messageSource.getMessage("operation.success", new String[]{}, locale);
-                return ResponseDto.<Boolean>builder()
+                return ResponseDto.<CashbackCardDto>builder()
                         .code(200)
-                        .responseData(true)
+                        .responseData(cashbackMapper.toDto(card))
                         .success(true)
                         .message(message)
                         .build();
@@ -142,9 +142,9 @@ public class CashbackCardServiceImpl implements CashbackCardService {
         }
 
         message = messageSource.getMessage("error", new String[]{}, locale);
-        return ResponseDto.<Boolean>builder()
+        return ResponseDto.<CashbackCardDto>builder()
                 .code(-1)
-                .responseData(false)
+                .responseData(null)
                 .success(false)
                 .message(message)
                 .build();
@@ -166,7 +166,7 @@ public class CashbackCardServiceImpl implements CashbackCardService {
         if(cashbackCardId != null) {
 
             cashbackCardRepository.deleteById(cashbackCardId);
-            message = messageSource.getMessage("delete.success", new String[]{}, locale);
+            message = messageSource.getMessage("operation.success", new String[]{}, locale);
             return ResponseDto.<Boolean>builder()
                     .code(200)
                     .responseData(true)
@@ -217,8 +217,8 @@ public class CashbackCardServiceImpl implements CashbackCardService {
         CashbackCard card = cashbackCardRepository.findCashbackCardByUserId(userId);
         if(Optional.ofNullable(card).isPresent()){
             Double money = (amount / 100) + card.getAmount();
-            Integer cardId = card.getId();
-            cashbackCardRepository.increaseCashback(money, cardId);
+            card.setAmount(money);
+            cashbackCardRepository.save(card);
             addCashbackHistory(card.getId(), money - (amount / 100), amount / 100, money, new Date());
         }
     }

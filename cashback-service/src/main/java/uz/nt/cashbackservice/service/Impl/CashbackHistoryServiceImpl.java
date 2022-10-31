@@ -25,8 +25,8 @@ public class CashbackHistoryServiceImpl implements CashbackHistoryService {
     private final MessageSource messageSource;
 
     @Override
-    public void addCashbackHistory(CashbackHistory cashbackHistory) {
-        cashbackHistoryRepository.save(cashbackHistory);
+    public CashbackHistory addCashbackHistory(CashbackHistory cashbackHistory) {
+        return cashbackHistoryRepository.save(cashbackHistory);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class CashbackHistoryServiceImpl implements CashbackHistoryService {
         if(cashbackCardId != null){
             cashbackHistoryRepository.deleteCashbackHistoryByCardId(cashbackCardId);
 
-            message = messageSource.getMessage("delete.success", new String[]{} , locale);
+            message = messageSource.getMessage("operation.success", new String[]{} , locale);
 
             return ResponseDto.<Boolean>builder()
                     .code(200)
@@ -45,7 +45,7 @@ public class CashbackHistoryServiceImpl implements CashbackHistoryService {
                     .message(message)
                     .build();
         }
-        message = messageSource.getMessage("delete.success", new String[]{} , locale);
+        message = messageSource.getMessage("operation.success", new String[]{} , locale);
         return ResponseDto.<Boolean>builder()
                 .code(-1)
                 .responseData(false)
@@ -80,11 +80,12 @@ public class CashbackHistoryServiceImpl implements CashbackHistoryService {
     }
 
     @Override
-    public ResponseDto<List<CashbackHistoryDto>> getCashbackHistoryBetween(Date date, HttpServletRequest request) {
+    public ResponseDto<List<CashbackHistoryDto>> getCashbackHistoryBetween(Integer cardId, Date date, HttpServletRequest request) {
         Locale locale = request.getLocale();
         String message;
         if(date != null) {
-            List<CashbackHistoryDto> list = cashbackHistoryRepository.findAllByTransactionDateBetween(date, new Date())
+            List<CashbackHistoryDto> list = cashbackHistoryRepository.
+                    findAllByCardIdAndTransactionDateBetween(cardId, date, new Date())
                     .stream().map(cashbackHistoryMapper::toDto).toList();
             message = messageSource.getMessage("get.success", new String[]{} , locale);
 
