@@ -192,4 +192,36 @@ public class ProductServiceImpl implements ProductService {
         return ResponseDto.builder()
                 .code(0).success(true).message("OK").responseData(new Object()).build();
     }
+
+    @Override
+    public ResponseDto<ProductDto> update(ProductDto dto) {
+        if(dto.getId() == null){
+            return ResponseDto.<ProductDto>builder()
+                    .code(-6).success(false).message("ID is not given!").build();
+        }
+
+        Optional<Product> optional = productRepository.findById(dto.getId());
+        if(optional.isEmpty()){
+            return ResponseDto.<ProductDto>builder()
+                    .code(-4).success(false).message("Data is not found.").build();
+        }
+
+        Product old = optional.get();
+        Product young = productMapper.toEntity(dto);
+
+        old.setName(young.getName() == null? old.getName(): young.getName());
+        old.setAmount(young.getAmount() == null? old.getAmount(): young.getAmount());
+        old.setPrice(young.getPrice() == null? old.getPrice(): young.getPrice());
+        old.setCaption(young.getCaption() == null? old.getCaption(): young.getCaption());
+        old.setActive(young.getActive() == null? old.getActive(): young.getActive());
+        old.setCreatedAt(young.getCreatedAt() == null? old.getCreatedAt(): young.getCreatedAt());
+        old.setStorageLife(young.getStorageLife() == null? old.getStorageLife(): young.getStorageLife());
+        old.setDiscount(young.getDiscount());
+        old.setType(young.getType() == null? old.getType(): young.getType());
+
+        productRepository.save(old);
+
+        return ResponseDto.<ProductDto>builder()
+                .code(0).success(true).message("OK").responseData(ProductMapperImpl.toDto(old)).build();
+    }
 }

@@ -12,6 +12,7 @@ import uz.nt.productservice.errors.exceptions.PaginationExceptions;
 import uz.nt.productservice.repository.DiscountRepository;
 import uz.nt.productservice.service.DiscountService;
 import uz.nt.productservice.service.mapper.DiscountMapper;
+import uz.nt.productservice.service.mapper.DiscountMapperImpl;
 
 import java.util.Optional;
 
@@ -22,6 +23,8 @@ public class DiscountServiceImpl implements DiscountService {
     private final DiscountRepository repository;
 
     private final DiscountMapper mapper;
+
+    private final DiscountMapperImpl mapperImpl;
 
     @Override
     public ResponseDto<DiscountDto> add(DiscountDto discountDto) {
@@ -48,7 +51,7 @@ public class DiscountServiceImpl implements DiscountService {
 
 
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<DiscountDto> pagination = repository.findAllByStatusTrue(pageRequest).map(mapper::toDto);
+        Page<DiscountDto> pagination = repository.findAllByStatusTrue(pageRequest).map(mapperImpl::toDto);
 
         return ResponseDto.<Page<DiscountDto>>builder()
                 .code(0).success(true).message("OK").responseData(pagination).build();
@@ -76,6 +79,6 @@ public class DiscountServiceImpl implements DiscountService {
 
         repository.save(discount);
         return ResponseDto.<DiscountDto>builder()
-                .code(0).success(true).message("OK").responseData(mapper.toDto(discount)).build();
+                .code(0).success(true).message("OK").responseData(mapperImpl.toDto(discount)).build();
     }
 }

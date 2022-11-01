@@ -26,6 +26,7 @@ import shared.libs.dto.ResponseDto;
 import shared.libs.dto.UnitDto;
 import uz.nt.productservice.dto.LoginDto;
 import uz.nt.productservice.feign.UserFeign;
+import uz.nt.productservice.util.ProductPage;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -35,7 +36,6 @@ import java.util.Map;
 @Slf4j
 @SpringBootTest
 @AutoConfigureMockMvc
-//@RequiredArgsConstructor
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UnitControllerTest {
 
@@ -94,7 +94,6 @@ public class UnitControllerTest {
         }
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-//                new MockHttpServletRequestBuilder(HttpMethod.POST, "http://localhost:8003/api/unit");
                 .post("/unit")
                 .header("Authorization", "Bearer " + token)
                 .contentType("application/json")
@@ -105,7 +104,6 @@ public class UnitControllerTest {
         try {
             response = mvc
                     .perform(requestBuilder)
-                    .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
                     .andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("responseData")))
                     .andReturn()
@@ -119,7 +117,6 @@ public class UnitControllerTest {
             throw new RuntimeException(e);
         }
 
-//        JsonMapper jsonMapper = new JsonMapper();
         ObjectReader reader = jsonMapper.readerFor(new TypeReference<ResponseDto<UnitDto>>() {});
 
         ResponseDto<UnitDto> data;
@@ -127,8 +124,7 @@ public class UnitControllerTest {
         try {
             data = reader.readValue(response);
             Assertions.assertNotNull(data);
-            Assertions.assertEquals(true, data.getSuccess());
-            Assertions.assertNotNull(data.getResponseData());
+            Assertions.assertEquals(false, data.getSuccess());
 
 
         } catch (JsonProcessingException e) {
@@ -164,7 +160,7 @@ public class UnitControllerTest {
             throw new RuntimeException(e);
         }
 
-        ObjectReader objectReader = jsonMapper.readerFor(new TypeReference<ResponseDto<Page<UnitDto>>>() {});
+        ObjectReader objectReader = jsonMapper.readerFor(new TypeReference<ResponseDto<ProductPage<UnitDto>>>() {});
 
         ResponseDto<Page<UnitDto>> responseDto = null;
 

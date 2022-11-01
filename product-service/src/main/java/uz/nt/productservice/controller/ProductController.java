@@ -10,6 +10,7 @@ import shared.libs.dto.ResponseDto;
 import uz.nt.productservice.dto.ProductSearchDto;
 import uz.nt.productservice.service.impl.ProductServiceImpl;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +35,9 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseDto<ProductDto> one(@PathVariable Integer id){
+    public ResponseDto<ProductDto> one(@PathVariable Integer id, HttpServletRequest request){
+
+        System.out.println("LANGUAGE: " + request.getLocale().getLanguage());
         return productService.oneById(id);
     }
 
@@ -75,5 +78,10 @@ public class ProductController {
     public ResponseDto setAmount(@RequestParam(required = false) Double amount,
                                  @RequestParam(required = false) Integer productId){
         return productService.setAmount(amount, productId);
+    }
+
+    @PutMapping("/update")
+    public ResponseDto<ProductDto> update(@RequestBody ProductDto productDto){
+        return productService.update(productDto);
     }
 }

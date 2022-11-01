@@ -32,4 +32,6 @@ public interface ProductService {
     ResponseDto<Page<ProductDto>> discountProducts(Integer page, Integer size);
 
     ResponseDto<Object> setAmount(Double amount, Integer productId);
+
+    ResponseDto<ProductDto> update(ProductDto dto);
 }

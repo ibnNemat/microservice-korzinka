@@ -1,9 +1,9 @@
 package uz.nt.productservice.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
+import shared.libs.dto.DiscountDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.productservice.service.DiscountService;
 
@@ -14,8 +14,19 @@ public class DiscountController {
 
     private final DiscountService service;
 
-    @GetMapping
-    public void pagination(){
-        service.pagination(null, null);
+    @GetMapping("/pagination")
+    public ResponseDto<Page<DiscountDto>> pagination(@RequestParam(required = false) Integer page,
+                                                     @RequestParam(required = false) Integer size){
+        return service.pagination(page, size);
+    }
+
+    @PostMapping
+    public ResponseDto<DiscountDto> add(@RequestBody DiscountDto discountDto){
+        return service.add(discountDto);
+    }
+
+    @PutMapping
+    public ResponseDto<DiscountDto> update(@RequestBody DiscountDto discountDto){
+        return service.update(discountDto);
     }
 }
