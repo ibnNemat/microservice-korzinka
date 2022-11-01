@@ -10,11 +10,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.*;
+import org.mapstruct.control.MappingControl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -24,6 +26,7 @@ import org.springframework.util.MultiValueMapAdapter;
 import shared.libs.dto.JWTResponseDto;
 import shared.libs.dto.ResponseDto;
 import shared.libs.dto.UnitDto;
+import shared.libs.dto.UserDto;
 import uz.nt.productservice.dto.LoginDto;
 import uz.nt.productservice.feign.UserFeign;
 import uz.nt.productservice.util.ProductPage;
@@ -48,7 +51,7 @@ public class UnitControllerTest {
     private static String token;
     private static ObjectMapper objectMapper;
     private static JsonMapper jsonMapper;
-
+    private static UserDto userDto;
 
     @PostConstruct
     public void injecting(){
@@ -60,6 +63,25 @@ public class UnitControllerTest {
 
     @Test
     @Order(1)
+    public void addUser(){
+        UserDto userDto = new UserDto();
+        userDto.setEmail("test@gmail.com");
+        userDto.setLastname("test");
+        userDto.setFirstname("test");
+        userDto.setPassword("password");
+        userDto.setUsername("sardorbroo");
+
+        ResponseDto<UserDto> response = userFeign.addUser(userDto);
+
+        Assertions.assertTrue(response.getSuccess());
+        Assertions.assertEquals(response.getResponseData().getUsername(), userDto.getUsername());
+        Assertions.assertEquals(response.getCode(), 200);
+
+        UnitControllerTest.userDto = response.getResponseData();
+    }
+
+    @Test
+    @Order(2)
     public void token(){
         LoginDto loginDto = LoginDto.builder()
                 .username("sardorbroo").password("password").build();
@@ -75,7 +97,7 @@ public class UnitControllerTest {
 
 
     @Test
-    @Order(3)
+    @Order(4)
     public void addNewUnit(){
         UnitDto unitDto = UnitDto.builder()
                 .name("Litr").shortName("L")
@@ -133,7 +155,7 @@ public class UnitControllerTest {
     }
 
     @Test
-    @Order(2)
+    @Order(3)
     public void checkPaginationController(){
         Map<String, List<String>> map = Map.of(
                 "page", List.of(String.valueOf(0)),
@@ -175,5 +197,18 @@ public class UnitControllerTest {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Order(5)
+    @Test
+    public void deleteInsertedUserAtTheEndOfTesting(){
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + token);
+
+        ResponseDto<UserDto> deletedUser = userFeign.deleteUser(userDto.getId(), headers);
+
+        Assertions.assertTrue(deletedUser.getSuccess());
+        Assertions.assertNotNull(deletedUser.getResponseData());
+        Assertions.assertEquals(deletedUser.getResponseData().getUsername(), userDto.getUsername());
     }
 }

@@ -1,5 +1,4 @@
 package uz.nt.orderservice.service.impl;
-import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -9,16 +8,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import shared.libs.dto.CardDto;
 import shared.libs.dto.ProductDto;
 import shared.libs.dto.UserDto;
+import uz.nt.orderservice.entity.OrderedProductsRedis;
+import uz.nt.orderservice.repository.OrderedProductsRedisRepository;
 import uz.nt.orderservice.client.CashbackClient;
 import uz.nt.orderservice.client.ProductClient;
 import uz.nt.orderservice.client.UserCardClient;
 import uz.nt.orderservice.dto.*;
 import uz.nt.orderservice.entity.Orders;
+import uz.nt.orderservice.scheduled.TimerTaskOrderedProducts;
 import uz.nt.orderservice.service.PaymentHistoryService;
 import shared.libs.dto.ResponseDto;
 import uz.nt.orderservice.dto.OrderDto;
 import uz.nt.orderservice.dto.OrderedProductsDetail;
-import uz.nt.orderservice.entity.PaymentHistory;
 import uz.nt.orderservice.repository.OrderRepository;
 import uz.nt.orderservice.service.OrderProductsService;
 import uz.nt.orderservice.service.OrderService;
@@ -45,19 +46,109 @@ public class OrderServiceImpl implements OrderService {
     private final CashbackClient cashbackClient;
     private final ProductClient productClient;
     private static ResourceBundle bundle;
+    private final OrderedProductsRedisRepository redisRepository;
+    private final TimerTaskOrderedProducts timerTask;
 
-
-    @Override
+    public Map<Integer, ProductDto> buildHashMap(List<OrderedProductsDetail> list) {
+        List<Integer> productIdList = new ArrayList<>();
+        for (OrderedProductsDetail op : list) {
+            productIdList.add(op.getProductId());
+        }
+        return productClient.getProductDtoList(productIdList)
+                .getResponseData();
+    }
     @Transactional
-    public ResponseDto<OrderDto> addOrderIfNotExistUserOrders(Integer productId, Double amount) {
+    @Override
+    public ResponseDto<List<OrderedProductsDetail>> addOrder(List<OrderedProductsDetail> list){
         try{
+            if (list == null){
+                return ResponseDto.<List<OrderedProductsDetail>>builder()
+                        .code(-1)
+                        .message("OrderProducts list is null")
+                        .build();
+            }
+
+            List<OrderedProductsDetail> productsNotEnoughAmount = checkProductAmount(list);
+            if (productsNotEnoughAmount != null && productsNotEnoughAmount.size() > 0){
+                return ResponseDto.<List<OrderedProductsDetail>>builder()
+                        .code(-10)
+                        .message("some products are not enough in the database")
+                        .responseData(productsNotEnoughAmount)
+                        .build();
+            }
+
+            ResponseDto<Integer> responseDto = addOrderIfNotExistUserOrders(list);
+            Integer orderId;
+            if (!responseDto.getSuccess() || responseDto.getResponseData() == null){
+                return ResponseDto.<List<OrderedProductsDetail>>builder()
+                        .code(-1)
+                        .message("Error while saving orderedProducts")
+                        .build();
+            }
+            orderId = responseDto.getResponseData();
+
+            List<OrderedProductsDetail> orderedProductsList = new ArrayList<>();
+            for (OrderedProductsDetail op: list){
+                orderedProductsList.add(new OrderedProductsDetail(
+                        op.getProductId(), op.getPrice(),op.getAmount())
+                );
+            }
+
+            OrderedProductsRedis orderedProductsRedis = new OrderedProductsRedis(orderId, orderedProductsList);
+            redisRepository.save(orderedProductsRedis);
+            timerTask.holdingTheOrderForFifteenMinutes(orderId);
+
+            return ResponseDto.<List<OrderedProductsDetail>>builder()
+                    .code(0)
+                    .success(true)
+                    .message("Successfully saved orderedProducts to Database")
+                    .build();
+
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return ResponseDto.<List<OrderedProductsDetail>>builder()
+                    .code(-1)
+                    .message(e.getMessage())
+                    .build();
+        }
+    }
+
+    public List<OrderedProductsDetail> checkProductAmount(List<OrderedProductsDetail> list){
+        Map<Integer, ProductDto> map = buildHashMap(list);
+
+        if (map == null) return null;
+
+        List<OrderedProductsDetail> productsNotEnoughAmount = new ArrayList<>();
+        for (OrderedProductsDetail op : list) {
+            ProductDto productInDateBase = map.get(op.getProductId());
+            if (productInDateBase.getAmount() < op.getAmount()){
+                productsNotEnoughAmount.add(
+                        new OrderedProductsDetail(op.getProductId(), null, productInDateBase.getAmount())
+                );
+            }
+        }
+
+        return productsNotEnoughAmount;
+    }
+
+
+    public ResponseDto<Integer> addOrderIfNotExistUserOrders(
+            List<OrderedProductsDetail> orderedProductsDetails) throws Exception{
             bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
-            UserDto userDto = (UserDto) SecurityContextHolder.getContext()
-                            .getAuthentication()
-                            .getPrincipal();
+
+            Integer userId;
+            if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserDto user) {
+                userId = user.getId();
+            }else {
+                return ResponseDto.<Integer>builder()
+                        .code(-3)
+                        .message("Authorization expired")
+                        .success(false)
+                        .build();
+            }
 
             Optional<Orders> optionalOrder = orderRepository
-                    .findUserOrderByUserIdWherePayedIsFalse(userDto.getId());
+                    .findUserOrderByUserIdWherePayedIsFalse(userId);
             int orderId;
 
             if (optionalOrder.isPresent()){
@@ -67,26 +158,20 @@ public class OrderServiceImpl implements OrderService {
             }else{
                 Orders orders1 = new Orders();
                 orders1.setId(1);
-                orders1.setUserId(userDto.getId());
+                orders1.setUserId(userId);
                 orderRepository.save(orders1);
 
                 orderId = orderRepository.getMax();
             }
 
-            orderProductsService.addOrderProducts(orderId, productId, amount);
+            orderProductsService.addOrderProducts(orderId, orderedProductsDetails);
 
-            return ResponseDto.<OrderDto>builder()
+            return ResponseDto.<Integer>builder()
                     .code(0)
                     .success(true)
+                    .responseData(orderId)
                     .message(bundle.getString("response.success"))
                     .build();
-        }catch (Exception e){
-            log.error(e.getMessage());
-            return ResponseDto.<OrderDto>builder()
-                    .code(-1)
-                    .message(bundle.getString("response.failed") + " : " + e.getMessage())
-                    .build();
-        }
     }
 
     @Override
@@ -293,6 +378,17 @@ public class OrderServiceImpl implements OrderService {
         bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
 
         List<OrderedProductsDetail> orderedProducts = orderProductsService.getOrderedProductsToPayFor(orderId);
+
+        List<OrderedProductsDetail> productsNotEnoughAmount = checkProductAmount(orderedProducts);
+
+        if (productsNotEnoughAmount != null && productsNotEnoughAmount.size() > 0){
+            return ResponseDto.<List<OrderedProductsDetail>>builder()
+                    .code(-10)
+                    .message("some products are not enough in the database")
+                    .responseData(productsNotEnoughAmount)
+                    .build();
+        }
+
         Double cashbackMoney = paymentDetails.getCashbackMoney();
         CardDto cardDto = userCardClient.getCardById(paymentDetails.getCardId()).getResponseData();
         Double account = cardDto.getAccount();
@@ -323,12 +419,6 @@ public class OrderServiceImpl implements OrderService {
                     .success(false)
                     .build();
         }
-
-//        ResponseDto<Boolean> responseDto = productClient.update(product_id, amount);
-//        return ResponseDto.builder()
-//                .code(-5)
-//                .message("We don't have products in that many amounts!")
-//                .build();
 
         if (cashbackMoney != 0) {
              cashbackClient.subtractCashback(userId, cashbackMoney);
@@ -369,31 +459,28 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    public Double sumAllOfUserOrderedProductsMonthly(){
-        return null;
-    }
-
     @Override
     public ResponseDto<List<UserOrderedProducts>> getAllUsersOrderProductsIsPayedFalse() {
         try {
             bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
 
             ArrayList<Integer> list = new ArrayList<>();
-            if(SecurityContextHolder.getContext().getAuthentication().getPrincipal() == null) {
+            UserDto userDto = (UserDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            if(userDto == null) {
                 return ResponseDto.<List<UserOrderedProducts>>builder()
                         .code(-4)
                         .success(false)
-                        .message("SecurityContextHolder getPrincipal isNull")
+                        .message("UserDto is null")
                         .build();
             }
-            UserDto userDto = (UserDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
             Orders orders = orderRepository.getByUserIdAndPayedIsFalse(userDto.getId());
             if(orders == null){
                 return ResponseDto.<List<UserOrderedProducts>>builder()
                         .code(-4)
                         .success(false)
-                        .message("Orders isNull")
+                        .message("Order is null")
                         .build();
             }
 
@@ -416,7 +503,7 @@ public class OrderServiceImpl implements OrderService {
     private ResponseDto<List<UserOrderedProducts>> addToListUserOrderedProducts(ArrayList<Integer> list, OrderDto orderDto) {
         bundle = ResourceBundle.getBundle("message", LocaleContextHolder.getLocale());
 
-        Map<Integer, ProductDto> map = productClient.getShownDtoList(list).getResponseData();
+        Map<Integer, ProductDto> map = productClient.getProductDtoList(list).getResponseData();
         UserOrderedProducts orderedProducts = new UserOrderedProducts();
         ArrayList<UserOrderedProducts> userOrderedProducts = new ArrayList<>();
 
@@ -444,6 +531,4 @@ public class OrderServiceImpl implements OrderService {
                 .responseData(userOrderedProducts)
                 .build();
     }
-
-
 }

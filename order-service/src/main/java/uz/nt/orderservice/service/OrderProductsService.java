@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface OrderProductsService {
-    ResponseDto addOrderProducts(Integer orderId, Integer productId, Double amount);
+    ResponseDto addOrderProducts(Integer orderId, List<OrderedProductsDetail> list);
     ResponseDto<OrderProductsDto> getById(Integer id);
     ResponseDto<Page<OrderProductsDto>> getAllOrderProductsByPage(Integer page, Integer size);
     ResponseDto updateOrderProducts(OrderProductsDto orderProductsDto);

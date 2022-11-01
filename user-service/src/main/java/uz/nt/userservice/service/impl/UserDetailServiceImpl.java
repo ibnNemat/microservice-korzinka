@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import shared.libs.configuration.Config;
 import shared.libs.dto.JWTResponseDto;
 import shared.libs.dto.ResponseDto;
@@ -22,8 +23,12 @@ import uz.nt.userservice.repository.UserRepository;
 import uz.nt.userservice.service.UserService;
 import uz.nt.userservice.service.mapper.UserMapper;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Service
@@ -31,6 +36,7 @@ import java.util.stream.Collectors;
 public class UserDetailServiceImpl implements UserDetailsService, UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final ExcelServiceImpl excelService;
     public static Map<Integer, UserDto> usersMap = new HashMap<>();
     private final PasswordEncoder passwordEncoder = Config.passwordEncoder();
     private final JwtService jwtService;
@@ -153,6 +159,19 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
                 .success(true)
                 .message("Ok")
                 .build();
+    }
+
+    @Transactional
+    @Override
+    public void export (HttpServletRequest request, HttpServletResponse response){
+        Stream<User> users = userRepository.findAllByIdLessThan(1_000_000);
+        Stream<UserDto> userDtos = users.map(userMapper::toDto);
+
+        try {
+            excelService.export(userDtos, request, response);
+        } catch (IOException e) {
+            log.error("Excel exprot error " + e.getMessage());
+        }
     }
 
     private String sysGuid(){
