@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import shared.libs.dto.ResponseDto;
 
-@FeignClient(url = "http://localhost:8888",name = "gmail-service",configuration = FeignClient.class)
+@FeignClient(url = "http://localhost:8888",name = "gmail-service")
 public interface GmailPlaceHolder {
     @PostMapping("/send")
     ResponseDto<String> sendToGmailAndGetVerifyCode(@RequestParam String gmail,@RequestParam Integer code);

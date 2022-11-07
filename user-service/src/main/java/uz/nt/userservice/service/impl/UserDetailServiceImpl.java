@@ -177,6 +177,25 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
+    @Transactional
+    public ResponseDto<Integer> deleteUserByUsername(String username) {
+        if(userRepository.existsByUsername(username)) {
+            Integer howToDelete = userRepository.deleteByUsername(username);
+            return ResponseDto.<Integer>builder()
+                    .code(0)
+                    .message("Ok")
+                    .success(true)
+                    .responseData(howToDelete)
+                    .build();
+        }
+        return ResponseDto.<Integer>builder()
+                .code(-5)
+                .message("Failed")
+                .success(false)
+                .build();
+    }
+
+    @Override
     public ResponseDto<String> updateUser(UserDto userDto) {
         userRepository.save(userMapper.toEntity(userDto));
         return ResponseDto.<String>builder()

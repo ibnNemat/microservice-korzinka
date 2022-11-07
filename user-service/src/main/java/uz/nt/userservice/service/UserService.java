@@ -16,6 +16,8 @@ public interface UserService {
 
     ResponseDto<UserDto> deleteUserById(Integer id);
 
+    ResponseDto<Integer> deleteUserByUsername(String username);
+
     ResponseDto<String> updateUser(UserDto userDto);
 
     ResponseDto<UserDto> addUser(UserDto userDto,HttpServletRequest request);
