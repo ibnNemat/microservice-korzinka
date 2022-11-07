@@ -9,7 +9,7 @@ import shared.libs.dto.UserDto;
 import uz.nt.productservice.config.FeignConfig;
 import uz.nt.productservice.dto.LoginDto;
 
-@FeignClient(name = "UserFeignClient", url = "http://localhost:8005/user", configuration = {FeignConfig.class})
+@FeignClient(name = "UserFeignClient", url = "http://localhost:8001/user-api/user", configuration = {FeignConfig.class})
 public interface UserFeign {
 
     @PostMapping("/login")
