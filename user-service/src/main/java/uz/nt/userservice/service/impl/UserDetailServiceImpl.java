@@ -65,6 +65,7 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
                     .code(200)
                     .success(true)
                     .message("Successfully saved")
+                    .responseData(user)
                     .build();
         }catch (Exception e){
             log.error(e.getMessage());

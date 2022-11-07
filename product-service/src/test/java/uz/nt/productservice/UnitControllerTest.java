@@ -199,16 +199,16 @@ public class UnitControllerTest {
 //        }
 //    }
 
-    @Order(5)
-    @Test
-    public void deleteInsertedUserAtTheEndOfTesting(){
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + token);
-
-        ResponseDto<UserDto> deletedUser = userFeign.deleteUser(userDto.getId(), headers);
-
-        Assertions.assertTrue(deletedUser.getSuccess());
-        Assertions.assertNotNull(deletedUser.getResponseData());
-        Assertions.assertEquals(deletedUser.getResponseData().getUsername(), userDto.getUsername());
-    }
+//    @Order(5)
+//    @Test
+//    public void deleteInsertedUserAtTheEndOfTesting(){
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add("Authorization", "Bearer " + token);
+//
+//        ResponseDto<UserDto> deletedUser = userFeign.deleteUser(userDto.getId(), headers);
+//
+//        Assertions.assertTrue(deletedUser.getSuccess());
+//        Assertions.assertNotNull(deletedUser.getResponseData());
+//        Assertions.assertEquals(deletedUser.getResponseData().getUsername(), userDto.getUsername());
+//    }
 }
