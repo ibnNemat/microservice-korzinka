@@ -22,12 +22,12 @@ public class Discount {
 
     private Double discount;
 
-    @Column(name = "start",  columnDefinition = " set default now()")
+//    @Column(name = "start",  columnDefinition = " set default now()")
     private Date start;
 
     private Date finish;
 
-    @Column(name = "status", columnDefinition = " set default true")
+//    @Column(name = "status", columnDefinition = " set default true")
     private Boolean status;
 
     @OneToOne
