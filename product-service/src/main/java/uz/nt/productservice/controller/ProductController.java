@@ -5,6 +5,7 @@ import org.apache.catalina.LifecycleState;
 import org.springframework.data.domain.Page;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import shared.libs.dto.OrderedProductsDetail;
 import shared.libs.dto.ProductDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.productservice.dto.ProductSearchDto;
@@ -83,5 +84,10 @@ public class ProductController {
     @PutMapping("/update")
     public ResponseDto<ProductDto> update(@RequestBody ProductDto productDto){
         return productService.update(productDto);
+    }
+
+    @PostMapping("/rollback-product-amount")
+    public void rollback(@RequestBody List<OrderedProductsDetail> orderedProducts){
+        productService.rollbackProductsAmount(orderedProducts);
     }
 }

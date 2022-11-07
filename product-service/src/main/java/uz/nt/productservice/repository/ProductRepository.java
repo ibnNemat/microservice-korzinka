@@ -1,6 +1,5 @@
 package uz.nt.productservice.repository;
 
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -40,4 +39,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     List<Product> findByIdIn(List<Integer> ids);
 
     Page<Product> findAllByDiscountNotNull(Pageable pageable);
+
+    @Query("update Product p set p.amount = p.amount + :amount where p.id = :id")
+    void rollbackProductAmount(@Param("amount") Double amount,
+                               @Param("id") Integer id);
 }

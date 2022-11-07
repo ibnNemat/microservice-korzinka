@@ -5,7 +5,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 import uz.nt.orderservice.client.ProductClient;
-import uz.nt.orderservice.dto.OrderedProductsDetail;
+import shared.libs.dto.OrderedProductsDetail;
 import uz.nt.orderservice.repository.OrderRepository;
 
 import javax.persistence.EntityManager;

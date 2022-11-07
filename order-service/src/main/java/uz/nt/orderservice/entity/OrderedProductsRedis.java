@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.redis.core.RedisHash;
-import uz.nt.orderservice.dto.OrderedProductsDetail;
+import shared.libs.dto.OrderedProductsDetail;
 
 import java.util.ArrayList;
 import java.util.List;

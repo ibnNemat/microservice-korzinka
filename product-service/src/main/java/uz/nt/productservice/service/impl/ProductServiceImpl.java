@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
+import shared.libs.dto.OrderedProductsDetail;
 import shared.libs.dto.ProductDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.productservice.dto.ProductSearchDto;
@@ -18,6 +19,8 @@ import uz.nt.productservice.service.ProductService;
 import uz.nt.productservice.service.mapper.ProductMapper;
 import uz.nt.productservice.service.mapper.impl.ProductMapperImpl;
 
+import javax.transaction.Transactional;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -223,5 +226,15 @@ public class ProductServiceImpl implements ProductService {
 
         return ResponseDto.<ProductDto>builder()
                 .code(0).success(true).message("OK").responseData(ProductMapperImpl.toDto(old)).build();
+    }
+
+    @Transactional
+    @Override
+    public void rollbackProductsAmount(List<OrderedProductsDetail> orderedProducts) {
+
+//        if (orderedProducts.size() != 0) {
+//            orderedProducts.stream()
+//                    .forEach(o -> productRepository.rollbackProductAmount(o.getAmount(), o.getProductId()));
+//        }
     }
 }

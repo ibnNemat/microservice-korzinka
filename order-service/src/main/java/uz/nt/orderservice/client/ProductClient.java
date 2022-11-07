@@ -8,8 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import shared.libs.dto.ProductDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.orderservice.config.FeignConfiguration;
-import uz.nt.orderservice.dto.OrderedProductsDetail;
-import uz.nt.orderservice.entity.OrderedProductsRedis;
+import shared.libs.dto.OrderedProductsDetail;
 
 import java.util.List;
 import java.util.Map;
