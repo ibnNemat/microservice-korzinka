@@ -99,8 +99,8 @@ public class IntegrationTest {
     @Order(3)
     @Test
     public void deleteUser() throws Exception {
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/user/delete/" + username)
-                .header("Authorization","Bearer ".concat(token));
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/user/delete")
+                .param("username",username).header("Authorization","Bearer ".concat(token));
 
         String response = mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())

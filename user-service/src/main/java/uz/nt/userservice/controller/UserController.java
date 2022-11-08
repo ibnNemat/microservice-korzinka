@@ -39,8 +39,8 @@ public class UserController {
         return userService.updateUser(userDto);
     }
 
-    @DeleteMapping("/delete/{username}")
-    public ResponseDto<Integer> deleteUserByUsername(@PathVariable String username) {
+    @DeleteMapping("/delete")
+    public ResponseDto<Integer> deleteUserByUsername(@RequestParam String username) {
         return userService.deleteUserByUsername(username);
     }
 
