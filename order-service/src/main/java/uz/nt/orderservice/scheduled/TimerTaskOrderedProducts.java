@@ -20,13 +20,14 @@ public class TimerTaskOrderedProducts {
     private final OrderedProductsRedisRepository redis;
     private final ProductClient productClient;
 
-    public void holdingTheOrderForFifteenMinutes(Integer orderId){
+    public void holdingTheOrderForFifteenMinutes(Integer orderId, Integer userId){
         Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                if(SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserDto userDto) {
-                    Integer userId = userDto.getId();
+//                if(SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserDto userDto) {
+//                    Integer userId = userDto.getId();
+                //todo exists bilan tekshirish
                     Optional<Integer> optional = orderRepository.findByIdAndUserIdAndPayedIsFalse(orderId, userId);
 
                     if (optional.isPresent()) {
@@ -44,11 +45,11 @@ public class TimerTaskOrderedProducts {
 
                     timer.cancel();
                     timer.purge();
-                }
+//                }
             }
         };
 
-        Date date = new Date(System.currentTimeMillis() + 10 * 60 * 60 * 15);
+        Date date = new Date(System.currentTimeMillis() + 1000 * 60 * 15);
         timer.schedule(timerTask, date);
 
     }

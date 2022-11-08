@@ -38,7 +38,6 @@ public class OrderProductsServiceImpl implements OrderProductsService {
     private final OrderProductRepositoryHelper orderProductRepositoryHelper;
     private final OrderRepository orderRepository;
     private static ResourceBundle bundle;
-    private final OrderService orderService;
     private final OrderedProductsRedisRepository redisRepository;
 
     @Override

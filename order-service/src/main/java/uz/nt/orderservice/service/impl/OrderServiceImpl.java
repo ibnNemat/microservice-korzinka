@@ -96,7 +96,9 @@ public class OrderServiceImpl implements OrderService {
 
             OrderedProductsRedis orderedProductsRedis = new OrderedProductsRedis(orderId, orderedProductsList);
             redisRepository.save(orderedProductsRedis);
-            timerTask.holdingTheOrderForFifteenMinutes(orderId);
+            if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserDto userDto) {
+                timerTask.holdingTheOrderForFifteenMinutes(orderId, userDto.getId());
+            }
 
             return ResponseDto.<List<OrderedProductsDetail>>builder()
                     .code(0)

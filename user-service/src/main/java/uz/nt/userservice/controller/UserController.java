@@ -53,7 +53,7 @@ public class UserController {
     public ResponseDto<JWTResponseDto> login(@RequestBody LoginDto loginDto){
         return userDetailService.login(loginDto);
     }
-    @PostMapping("/verify{code}")
+    @PostMapping("/verify/{code}")
     public ResponseDto<String> checkVerifyCode(@PathVariable Integer code,HttpServletRequest request) {
         return userService.checkVerifyCode(code,request);
     }

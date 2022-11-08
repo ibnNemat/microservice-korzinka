@@ -53,10 +53,9 @@ public class OrderController {
         return orderService.payForOrders(paymentDetails);
     }
 
-    @GetMapping("/getOrders")
+    @GetMapping
     public ResponseDto<List<UserOrderedProducts>> getAllUsersOrderProductsIsPayedFalse(){
         return orderService.getAllUsersOrderProductsIsPayedFalse();
     }
-
 
 }

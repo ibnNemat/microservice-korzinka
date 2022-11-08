@@ -9,7 +9,7 @@ import shared.libs.dto.OrderedProductsDetail;
 import java.util.ArrayList;
 import java.util.List;
 
-@RedisHash(timeToLive = 60 * 60 * 15)
+@RedisHash(timeToLive = 60 * 15)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
