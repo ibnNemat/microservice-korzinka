@@ -2,6 +2,7 @@ package uz.nt.deliveryservice.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import shared.libs.dto.ResponseDto;
 import shared.libs.dto.distance.DistanceInfo;
@@ -25,7 +26,8 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     private final String DEPARTURE_TIME = "now";
 
-    private final String KEY = "HqwFc7vSeUYvF7vvdgDkWCA0Xzpuc";
+    @Value("${distance.security.key}")
+    private final String KEY;
     private final Double COST_PER_KILOMETER = 1500D;
     @Override
     public ResponseDto<BigDecimal> distanceCost(String destinations) throws IOException, InterruptedException {
