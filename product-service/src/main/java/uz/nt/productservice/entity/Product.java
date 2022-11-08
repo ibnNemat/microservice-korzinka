@@ -36,7 +36,7 @@ public class Product {
     private String photoPath;
 
     @Column(name = "is_active")
-    private boolean active;
+    private Boolean active;
 
     @OneToOne
     private Discount discount;

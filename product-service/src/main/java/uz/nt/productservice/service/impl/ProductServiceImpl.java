@@ -6,16 +6,21 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
+import shared.libs.dto.OrderedProductsDetail;
 import shared.libs.dto.ProductDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.productservice.dto.ProductSearchDto;
 import uz.nt.productservice.entity.Product;
+import uz.nt.productservice.errors.exceptions.DataExceptions;
+import uz.nt.productservice.errors.exceptions.PaginationExceptions;
 import uz.nt.productservice.repository.ProductRepository;
 import uz.nt.productservice.repository.helperRepositories.ProductRepositoryHelper;
 import uz.nt.productservice.service.ProductService;
 import uz.nt.productservice.service.mapper.ProductMapper;
 import uz.nt.productservice.service.mapper.impl.ProductMapperImpl;
 
+import javax.transaction.Transactional;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,8 +39,9 @@ public class ProductServiceImpl implements ProductService {
 
     public ResponseDto<ProductDto> add(ProductDto productDto){
         if(productRepository.existsByName(productDto.getName())){
-            return ResponseDto.<ProductDto>builder()
-                    .code(-1).success(false).message("Product is already exists.").build();
+            throw DataExceptions.enable();
+//            return ResponseDto.<ProductDto>builder()
+//                    .code(-1).success(false).message("Product is already exists.").build();
         }
         Product entity = productMapper.toEntity(productDto);
         productRepository.save(entity);
@@ -59,12 +65,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ResponseDto<Page<ProductDto>> pagination(Integer p, Integer s){
         if(p == null || p < 0){
-            return ResponseDto.<Page<ProductDto>>builder()
-                    .code(-3).success(false).message("Page is null or below zero.").build();
+            throw PaginationExceptions.getPage();
         }
         if(s == null || s < 1){
-            return ResponseDto.<Page<ProductDto>>builder()
-                    .code(-3).success(false).message("Size is null or below zero.").build();
+            throw PaginationExceptions.getSize();
         }
 
         PageRequest pageRequest = PageRequest.of(p, s);
@@ -83,8 +87,7 @@ public class ProductServiceImpl implements ProductService {
                    .code(0).success(true).message("OK").responseData(productDto).build();
         }
 
-        return ResponseDto.<ProductDto>builder()
-                .code(-4).success(false).message("Data is not found").build();
+        throw DataExceptions.disable();
     }
 
     @Override
@@ -95,12 +98,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ResponseDto<Page<ProductDto>> search(MultiValueMap<String, String> map, ProductSearchDto dto) {
         if(!map.containsKey("page") || map.getFirst("page") == null){
-            return ResponseDto.<Page<ProductDto>>builder()
-                    .code(-3).success(false).message("Parameter \"Page\" is null!").build();
+            throw PaginationExceptions.getPage();
         }
         if(!map.containsKey("size") || map.getFirst("size") == null){
-            return ResponseDto.<Page<ProductDto>>builder()
-                    .code(-3).success(false).message("Parameter \"Size\" is null!").build();
+            throw PaginationExceptions.getSize();
         }
 
         int page = Integer.parseInt(map.getFirst("page"));
@@ -138,12 +139,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ResponseDto<Boolean> checkAmount(Integer productId, Double amount) {
         if(productId != null && productId > 0){
-            return ResponseDto.<Boolean>builder()
-                    .code(-5).success(false).message("Product id is null or equal of zero.").build();
+            throw PaginationExceptions.getPage();
         }
         if(amount != null && amount > 0){
-            return ResponseDto.<Boolean>builder()
-                    .code(-5).success(false).message("Amount is null or equal of zero").build();
+            throw PaginationExceptions.getPage();
         }
 
         boolean result = productRepository.existsByIdAndAmountGreaterThan(productId, amount);
@@ -170,5 +169,72 @@ public class ProductServiceImpl implements ProductService {
 
         return ResponseDto.<Map<Integer, ProductDto>>builder()
                 .code(0).success(true).message("OK").responseData(data).build();
+    }
+
+    @Override
+    public ResponseDto<Page<ProductDto>> discountProducts(Integer page, Integer size) {
+        if(page == null || page < 0){
+            throw PaginationExceptions.getPage();
+        }
+        if(size == null || size <= 0){
+            throw PaginationExceptions.getSize();
+        }
+
+        PageRequest pageRequest = PageRequest.of(page, size);
+
+        Page<ProductDto> pagination = productRepository.findAllByDiscountNotNull(pageRequest).map(ProductMapperImpl::toDto);
+
+        return ResponseDto.<Page<ProductDto>>builder()
+                .code(0).success(true).message("OK").responseData(pagination).build();
+    }
+
+    @Override
+    public ResponseDto<Object> setAmount(Double amount, Integer productId){
+        productRepository.addProductAmount(amount, productId);
+
+        return ResponseDto.builder()
+                .code(0).success(true).message("OK").responseData(new Object()).build();
+    }
+
+    @Override
+    public ResponseDto<ProductDto> update(ProductDto dto) {
+        if(dto.getId() == null){
+            return ResponseDto.<ProductDto>builder()
+                    .code(-6).success(false).message("ID is not given!").build();
+        }
+
+        Optional<Product> optional = productRepository.findById(dto.getId());
+        if(optional.isEmpty()){
+            return ResponseDto.<ProductDto>builder()
+                    .code(-4).success(false).message("Data is not found.").build();
+        }
+
+        Product old = optional.get();
+        Product young = productMapper.toEntity(dto);
+
+        old.setName(young.getName() == null? old.getName(): young.getName());
+        old.setAmount(young.getAmount() == null? old.getAmount(): young.getAmount());
+        old.setPrice(young.getPrice() == null? old.getPrice(): young.getPrice());
+        old.setCaption(young.getCaption() == null? old.getCaption(): young.getCaption());
+        old.setActive(young.getActive() == null? old.getActive(): young.getActive());
+        old.setCreatedAt(young.getCreatedAt() == null? old.getCreatedAt(): young.getCreatedAt());
+        old.setStorageLife(young.getStorageLife() == null? old.getStorageLife(): young.getStorageLife());
+        old.setDiscount(young.getDiscount());
+        old.setType(young.getType() == null? old.getType(): young.getType());
+
+        productRepository.save(old);
+
+        return ResponseDto.<ProductDto>builder()
+                .code(0).success(true).message("OK").responseData(ProductMapperImpl.toDto(old)).build();
+    }
+
+    @Transactional
+    @Override
+    public void rollbackProductsAmount(List<OrderedProductsDetail> orderedProducts) {
+
+//        if (orderedProducts.size() != 0) {
+//            orderedProducts.stream()
+//                    .forEach(o -> productRepository.rollbackProductAmount(o.getAmount(), o.getProductId()));
+//        }
     }
 }

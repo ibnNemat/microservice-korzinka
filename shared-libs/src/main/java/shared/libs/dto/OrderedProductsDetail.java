@@ -1,4 +1,4 @@
-package uz.nt.orderservice.dto;
+package shared.libs.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -4,12 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 import shared.libs.dto.UserDto;
 import uz.nt.orderservice.client.ProductClient;
-import uz.nt.orderservice.dto.OrderedProductsDetail;
 import uz.nt.orderservice.entity.OrderedProductsRedis;
-import uz.nt.orderservice.repository.OrderProductsRepository;
 import uz.nt.orderservice.repository.OrderRepository;
 import uz.nt.orderservice.repository.OrderedProductsRedisRepository;
 

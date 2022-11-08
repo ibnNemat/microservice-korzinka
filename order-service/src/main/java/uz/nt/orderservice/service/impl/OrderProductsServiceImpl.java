@@ -8,12 +8,11 @@ import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
-import shared.libs.dto.ProductDto;
 import shared.libs.dto.ResponseDto;
 import shared.libs.utils.MyDateUtil;
 import uz.nt.orderservice.client.ProductClient;
 import uz.nt.orderservice.dto.OrderProductsDto;
-import uz.nt.orderservice.dto.OrderedProductsDetail;
+import shared.libs.dto.OrderedProductsDetail;
 import uz.nt.orderservice.entity.OrderProducts;
 import uz.nt.orderservice.entity.Orders;
 import uz.nt.orderservice.repository.OrderProductsRepository;
@@ -24,12 +23,9 @@ import uz.nt.orderservice.service.OrderProductsService;
 import uz.nt.orderservice.service.OrderService;
 import uz.nt.orderservice.service.mapper.OrderProductsMapper;
 
-import javax.transaction.Transactional;
 import java.lang.reflect.Method;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.*;
 
 @Service

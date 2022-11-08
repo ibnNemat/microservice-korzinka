@@ -10,7 +10,9 @@ import java.util.stream.Stream;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findFirstByUsername(String username);
+    Boolean existsByUsername(String username);
 
     Stream<User> findAllByIdLessThan(Integer  id);
+    Integer deleteByUsername(String username);
 
 }
