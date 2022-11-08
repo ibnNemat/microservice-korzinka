@@ -19,7 +19,7 @@ import uz.nt.orderservice.scheduled.TimerTaskOrderedProducts;
 import uz.nt.orderservice.service.PaymentHistoryService;
 import shared.libs.dto.ResponseDto;
 import uz.nt.orderservice.dto.OrderDto;
-import uz.nt.orderservice.dto.OrderedProductsDetail;
+import shared.libs.dto.OrderedProductsDetail;
 import uz.nt.orderservice.repository.OrderRepository;
 import uz.nt.orderservice.service.OrderProductsService;
 import uz.nt.orderservice.service.OrderService;
@@ -96,7 +96,9 @@ public class OrderServiceImpl implements OrderService {
 
             OrderedProductsRedis orderedProductsRedis = new OrderedProductsRedis(orderId, orderedProductsList);
             redisRepository.save(orderedProductsRedis);
-            timerTask.holdingTheOrderForFifteenMinutes(orderId);
+            if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserDto userDto) {
+                timerTask.holdingTheOrderForFifteenMinutes(orderId, userDto.getId());
+            }
 
             return ResponseDto.<List<OrderedProductsDetail>>builder()
                     .code(0)

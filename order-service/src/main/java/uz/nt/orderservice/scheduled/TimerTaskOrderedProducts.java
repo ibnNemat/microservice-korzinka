@@ -4,12 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 import shared.libs.dto.UserDto;
 import uz.nt.orderservice.client.ProductClient;
-import uz.nt.orderservice.dto.OrderedProductsDetail;
 import uz.nt.orderservice.entity.OrderedProductsRedis;
-import uz.nt.orderservice.repository.OrderProductsRepository;
 import uz.nt.orderservice.repository.OrderRepository;
 import uz.nt.orderservice.repository.OrderedProductsRedisRepository;
 
@@ -23,13 +20,14 @@ public class TimerTaskOrderedProducts {
     private final OrderedProductsRedisRepository redis;
     private final ProductClient productClient;
 
-    public void holdingTheOrderForFifteenMinutes(Integer orderId){
+    public void holdingTheOrderForFifteenMinutes(Integer orderId, Integer userId){
         Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                if(SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserDto userDto) {
-                    Integer userId = userDto.getId();
+//                if(SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserDto userDto) {
+//                    Integer userId = userDto.getId();
+                //todo exists bilan tekshirish
                     Optional<Integer> optional = orderRepository.findByIdAndUserIdAndPayedIsFalse(orderId, userId);
 
                     if (optional.isPresent()) {
@@ -47,11 +45,11 @@ public class TimerTaskOrderedProducts {
 
                     timer.cancel();
                     timer.purge();
-                }
+//                }
             }
         };
 
-        Date date = new Date(System.currentTimeMillis() + 10 * 60 * 60 * 15);
+        Date date = new Date(System.currentTimeMillis() + 1000 * 60 * 15);
         timer.schedule(timerTask, date);
 
     }

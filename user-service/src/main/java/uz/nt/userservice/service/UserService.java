@@ -16,11 +16,16 @@ public interface UserService {
 
     ResponseDto<UserDto> deleteUserById(Integer id);
 
-    ResponseDto updateUser(UserDto userDto);
+    ResponseDto<Integer> deleteUserByUsername(String username);
 
-    ResponseDto<UserDto> addUser(UserDto userDto);
+    ResponseDto<String> updateUser(UserDto userDto);
+
+    ResponseDto<UserDto> addUser(UserDto userDto,HttpServletRequest request);
     ResponseDto<JWTResponseDto> login(LoginDto loginDto);
     ResponseDto<UserDto> checkToken(String token);
 
     void export(HttpServletRequest request, HttpServletResponse response);
+
+    ResponseDto<String> checkVerifyCode(Integer code,HttpServletRequest request);          //Verify gmail
+    ResponseDto<String> sendToGmail(UserDto userDto,String code);
 }

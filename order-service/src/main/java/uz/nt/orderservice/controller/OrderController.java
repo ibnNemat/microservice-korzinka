@@ -6,7 +6,7 @@ import shared.libs.dto.ResponseDto;
 import uz.nt.orderservice.dto.OrderDto;
 
 
-import uz.nt.orderservice.dto.OrderedProductsDetail;
+import shared.libs.dto.OrderedProductsDetail;
 import uz.nt.orderservice.dto.UserOrderedProducts;
 import uz.nt.orderservice.service.OrderService;
 import uz.nt.orderservice.dto.PaymentDetails;
@@ -53,10 +53,9 @@ public class OrderController {
         return orderService.payForOrders(paymentDetails);
     }
 
-    @GetMapping("/getOrders")
+    @GetMapping
     public ResponseDto<List<UserOrderedProducts>> getAllUsersOrderProductsIsPayedFalse(){
         return orderService.getAllUsersOrderProductsIsPayedFalse();
     }
-
 
 }

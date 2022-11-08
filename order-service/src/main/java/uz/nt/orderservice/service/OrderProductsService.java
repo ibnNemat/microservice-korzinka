@@ -1,11 +1,10 @@
 package uz.nt.orderservice.service;
 import shared.libs.dto.ResponseDto;
 import uz.nt.orderservice.dto.OrderProductsDto;
-import uz.nt.orderservice.dto.OrderedProductsDetail;
+import shared.libs.dto.OrderedProductsDetail;
 import org.springframework.data.domain.Page;
 
 import java.lang.reflect.Method;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 

@@ -18,9 +18,8 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "users_id_seq")
     @SequenceGenerator(name = "users_id_seq", sequenceName = "users_id_seq", allocationSize = 1)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id",nullable = false)
     private Integer id;
-
     private String firstname;
     private String lastname;
     private String username;
@@ -28,5 +27,7 @@ public class User {
     private String email;
     private String phoneNumber;
     private Date created_at;
-    private Integer cashbackCardId;
+    private String location;
+//    @Column(columnDefinition = "false")
+    private Boolean isActive;
 }

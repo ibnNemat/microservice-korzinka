@@ -4,12 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.redis.core.RedisHash;
-import uz.nt.orderservice.dto.OrderedProductsDetail;
+import shared.libs.dto.OrderedProductsDetail;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@RedisHash(timeToLive = 60 * 60 * 15)
+@RedisHash(timeToLive = 60 * 15)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

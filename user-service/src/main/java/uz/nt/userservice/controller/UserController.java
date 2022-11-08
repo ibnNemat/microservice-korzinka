@@ -1,6 +1,7 @@
 package uz.nt.userservice.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shared.libs.dto.JWTResponseDto;
 import shared.libs.dto.ResponseDto;
