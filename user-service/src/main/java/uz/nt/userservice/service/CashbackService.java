@@ -4,6 +4,6 @@ import shared.libs.dto.ResponseDto;
 
 public interface CashbackService {
 
-    ResponseDto<Integer> getCashbackCardId(Integer id);
+//    ResponseDto<Integer> getCashbackCardId(Integer id);
 
 }

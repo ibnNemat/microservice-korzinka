@@ -15,8 +15,8 @@ public class CashbackController {
 
     private final CashbackService cashbackService;
 
-    @GetMapping("/cashbackId")
-    public ResponseDto<Integer> getCashbackCardId(@RequestParam Integer id){
-        return cashbackService.getCashbackCardId(id);
-    }
+//    @GetMapping("/cashbackId")
+//    public ResponseDto<Integer> getCashbackCardId(@RequestParam Integer id){
+//        return cashbackService.getCashbackCardId(id);
+//    }
 }
