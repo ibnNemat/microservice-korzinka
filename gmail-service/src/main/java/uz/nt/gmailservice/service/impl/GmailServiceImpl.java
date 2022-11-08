@@ -149,4 +149,9 @@ public class GmailServiceImpl implements GmailService {
                 .success(false)
                 .build();
     }
+
+    @Override
+    public void SendDiscountProductToUser() {
+
+    }
 }
