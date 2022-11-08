@@ -1,14 +1,16 @@
 package shared.libs.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
+import javax.persistence.Column;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.Set;
 
@@ -16,16 +18,23 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(value = {"isActive", "code", "increment"},ignoreUnknown = true)
 public class UserDto implements UserDetails {
     private Integer id;
     private String firstname;
     private String lastname;
+    @Column(unique = true)
     private String username;
     private String password;
+    @Email
     private String email;
+    @NotNull
     private String phoneNumber;
     private Date created_at;
-    private Integer cashbackCardId;
+    private String location;
+    private Boolean isActive;
+    private Integer code;                          // verify uchun
+    private Integer increment;                    // tekshirish uchun
     private Set<SimpleGrantedAuthority> authorities;
 
     @Override

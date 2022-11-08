@@ -21,12 +21,12 @@ public class CardTypeController implements CardTypeService {
         return cardTypeService.getAllCardTypes();
     }
 
-    @GetMapping("by-id")
+    @GetMapping("by-id/{id}")
     public ResponseDto<CardTypeDto> getCardTypeById(@PathVariable Integer id) {
         return cardTypeService.getCardTypeById(id);
     }
 
-    @DeleteMapping
+    @DeleteMapping("{id}")
     public ResponseDto deleteById(@PathVariable Integer id) {
         return cardTypeService.deleteById(id);
     }

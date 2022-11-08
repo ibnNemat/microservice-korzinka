@@ -19,9 +19,13 @@ public class ProductMapperImpl {
         return ProductDto.builder()
                 .id(product.getId())
                 .name(product.getName())
+                .type(ProductTypeMapperImpl.toDtoWithoutProduct(product.getType()))
                 .amount(product.getAmount())
                 .price(product.getPrice())
-                .type(ProductTypeMapperImpl.toDtoWithoutProduct(product.getType()))
+                .caption(product.getCaption())
+                .active(product.getActive())
+                .createdAt(product.getCreatedAt())
+                .discount(DiscountMapperImpl.toDtoWithoutProduct(product.getDiscount()))
                 .build();
     }
 
