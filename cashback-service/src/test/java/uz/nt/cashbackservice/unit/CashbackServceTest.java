@@ -30,7 +30,7 @@ public class CashbackServceTest {
     public void getCashbackCardId() {
 
     }
-// TODO ishledigon method yog'akan o'zila yozarsila
+// TODO ishledigon method yog'akan
 
 
 }
