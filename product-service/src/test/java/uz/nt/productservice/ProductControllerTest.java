@@ -7,8 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import shared.libs.dto.ProductDto;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+//@SpringBootTest
+//@AutoConfigureMockMvc
 public class ProductControllerTest {
 
     @Autowired

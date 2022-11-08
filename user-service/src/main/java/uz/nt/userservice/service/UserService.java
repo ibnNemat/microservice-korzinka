@@ -22,5 +22,5 @@ public interface UserService {
     ResponseDto<JWTResponseDto> login(LoginDto loginDto);
     ResponseDto<UserDto> checkToken(String token);
 
-//    void export(HttpServletRequest request, HttpServletResponse response);
+    void export(HttpServletRequest request, HttpServletResponse response);
 }

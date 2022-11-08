@@ -13,13 +13,13 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-@SpringBootTest
+//@SpringBootTest
 class DeliveryServiceApplicationTests {
 
-    @Autowired
+//    @Autowired
     private DistanceClient rapidClient;
 
-    @Test
+//    @Test
     void checkRapidAPITwoPointsDistance() {
         String origins = "41.3223951,69.1763972";
         String destinations = "41.2858806,69.2035627";
@@ -46,16 +46,16 @@ class DeliveryServiceApplicationTests {
         }
     }
 
-    @Test
-    public void distance() throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://distance-calculator1.p.rapidapi.com/v1/getdistance?start_lat=41.263018&start_lng=69.222865&end_lat=41.274143&end_lng=69.20499&unit=kilometers"))
-                .header("X-RapidAPI-Key", "8ecd8a14d1mshc3743e65d6fee2ep1b1d00jsnd346fdad2f20")
-                .header("X-RapidAPI-Host", "distance-calculator1.p.rapidapi.com")
-                .method("GET", HttpRequest.BodyPublishers.noBody())
-                .build();
-        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println(response.body());
-    }
+//    @Test
+//    public void distance() throws IOException, InterruptedException {
+//        HttpRequest request = HttpRequest.newBuilder()
+//                .uri(URI.create("https://distance-calculator1.p.rapidapi.com/v1/getdistance?start_lat=41.263018&start_lng=69.222865&end_lat=41.274143&end_lng=69.20499&unit=kilometers"))
+//                .header("X-RapidAPI-Key", "8ecd8a14d1mshc3743e65d6fee2ep1b1d00jsnd346fdad2f20")
+//                .header("X-RapidAPI-Host", "distance-calculator1.p.rapidapi.com")
+//                .method("GET", HttpRequest.BodyPublishers.noBody())
+//                .build();
+//        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+//        System.out.println(response.body());
+//    }
 
 }

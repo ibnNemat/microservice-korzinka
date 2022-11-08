@@ -22,16 +22,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 //@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CityControllerTest {
 
-    @Autowired
+//    @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
+//    @Autowired
     private UserClient userClient;
 
     private static String token;
 
-    @Test
-    @Order(0)
+//    @Test
+//    @Order(0)
     public void getToken() {
         LoginDto loginDto = LoginDto.builder().username("nematovsr").password("nematovsr").build();
 
@@ -40,8 +40,8 @@ public class CityControllerTest {
         token = responseDto.getResponseData().getToken();
     }
 
-    @Test
-    @Order(1)
+//    @Test
+//    @Order(1)
     public void getAllByRegionId() throws Exception {
         int id = 1;
 

@@ -5,15 +5,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import io.netty.handler.codec.string.LineSeparator;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.*;
-import org.mapstruct.control.MappingControl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
@@ -36,16 +31,16 @@ import java.util.Map;
 
 
 @Slf4j
-@SpringBootTest
-@AutoConfigureMockMvc
-//@RequiredArgsConstructor
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+//@SpringBootTest
+//@AutoConfigureMockMvc
+////@RequiredArgsConstructor
+//@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UnitControllerTest {
 
-    @Autowired
+//    @Autowired
     private MockMvc mvc;
 
-    @Autowired
+//    @Autowired
     private UserFeign userFeign;
 
     private static String token;
@@ -53,7 +48,7 @@ public class UnitControllerTest {
     private static JsonMapper jsonMapper;
     private static UserDto userDto;
 
-    @PostConstruct
+//    @PostConstruct
     public void injecting(){
         objectMapper = new ObjectMapper();
         jsonMapper = new JsonMapper();
@@ -61,8 +56,8 @@ public class UnitControllerTest {
         log.info("Annotation \"PostConstruct\" is worked. Objects are injected.");
     }
 
-    @Test
-    @Order(1)
+//    @Test
+//    @Order(1)
     public void addUser(){
         UserDto userDto = new UserDto();
         userDto.setEmail("test@gmail.com");
@@ -80,8 +75,8 @@ public class UnitControllerTest {
         UnitControllerTest.userDto = response.getResponseData();
     }
 
-    @Test
-    @Order(2)
+//    @Test
+//    @Order(2)
     public void token(){
         LoginDto loginDto = LoginDto.builder()
                 .username("sardorbroo").password("password").build();
@@ -96,8 +91,8 @@ public class UnitControllerTest {
     }
 
 
-    @Test
-    @Order(4)
+//    @Test
+//    @Order(4)
     public void addNewUnit(){
         UnitDto unitDto = UnitDto.builder()
                 .name("Litr").shortName("L")
@@ -158,8 +153,8 @@ public class UnitControllerTest {
         }
     }
 
-    @Test
-    @Order(3)
+//    @Test
+//    @Order(3)
     public void checkPaginationController(){
         Map<String, List<String>> map = Map.of(
                 "page", List.of(String.valueOf(0)),
@@ -203,8 +198,8 @@ public class UnitControllerTest {
         }
     }
 
-    @Order(5)
-    @Test
+//    @Order(5)
+//    @Test
     public void deleteInsertedUserAtTheEndOfTesting(){
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + token);
