@@ -29,6 +29,7 @@ public class CashbackHistoryServiceImpl implements CashbackHistoryService {
         return cashbackHistoryRepository.save(cashbackHistory);
     }
 
+
     @Override
     public ResponseDto<Boolean> deleteCashbackHistoryByCardId(Integer cashbackCardId, HttpServletRequest request) {
         Locale locale = request.getLocale();
