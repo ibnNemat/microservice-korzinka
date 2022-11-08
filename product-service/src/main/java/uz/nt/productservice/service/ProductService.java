@@ -2,6 +2,7 @@ package uz.nt.productservice.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.util.MultiValueMap;
+import shared.libs.dto.OrderedProductsDetail;
 import shared.libs.dto.ProductDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.productservice.dto.ProductSearchDto;
@@ -28,4 +29,12 @@ public interface ProductService {
     ResponseDto<Boolean> checkAmount(Integer productId, Double amount);
 
     ResponseDto<Map<Integer, ProductDto>> getProductsByList(List<Integer> ids);
+
+    ResponseDto<Page<ProductDto>> discountProducts(Integer page, Integer size);
+
+    ResponseDto<Object> setAmount(Double amount, Integer productId);
+
+    ResponseDto<ProductDto> update(ProductDto dto);
+
+    void rollbackProductsAmount(List<OrderedProductsDetail> orderedProducts);
 }

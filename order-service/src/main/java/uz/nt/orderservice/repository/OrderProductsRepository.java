@@ -5,6 +5,7 @@ import uz.nt.orderservice.entity.OrderProducts;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 public interface OrderProductsRepository extends JpaRepository<OrderProducts, Integer> {
@@ -14,4 +15,9 @@ public interface OrderProductsRepository extends JpaRepository<OrderProducts, In
     @Modifying
     void deleteByProductIdAndOrderId(Integer productId, Integer orderId);
 
+    @Modifying
+    void deleteByOrderId(Integer id);
+
+    @Modifying
+    boolean existsByOrderId(Integer orderId);
 }

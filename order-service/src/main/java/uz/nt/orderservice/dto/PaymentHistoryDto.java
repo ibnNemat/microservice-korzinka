@@ -3,6 +3,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.Column;
 import java.sql.Date;
 
 @Data
@@ -11,10 +13,12 @@ import java.sql.Date;
 @NoArgsConstructor
 public class PaymentHistoryDto {
     private Integer id;
-    private Integer user_id;
-    private Integer card_id;
-    private Double total_price;
+    private Integer userId;
+    private Integer cardId;
+    private Double cashbackPayment;
+    private Double cardPayment;
+    private Double totalPrice;
     private String status;
     private String description;
-    private Date created_at;
+    private Date createdAt;
 }
