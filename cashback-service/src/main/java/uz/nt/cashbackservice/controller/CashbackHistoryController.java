@@ -1,6 +1,7 @@
 package uz.nt.cashbackservice.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import shared.libs.dto.CashbackHistoryDto;
 import shared.libs.dto.ResponseDto;
@@ -22,7 +23,8 @@ public class CashbackHistoryController {
     }
 
     @GetMapping("/get-between")
-    public ResponseDto<List<CashbackHistoryDto>> getCashbackHistoryBetween(@RequestParam Integer cardId, @RequestParam Date date, HttpServletRequest request){
+    public ResponseDto<List<CashbackHistoryDto>> getCashbackHistoryBetween(@RequestParam Integer cardId, @RequestParam
+    @DateTimeFormat(pattern = "yyyy-mm-dd") Date date, HttpServletRequest request){
         return cashbackHistoryService.getCashbackHistoryBetween(cardId, date, request);
     }
 

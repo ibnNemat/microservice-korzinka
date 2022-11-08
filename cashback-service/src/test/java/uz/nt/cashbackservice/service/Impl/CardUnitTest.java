@@ -1,7 +1,6 @@
 package uz.nt.cashbackservice.service.Impl;
 
 import org.junit.jupiter.api.*;
-import org.junit.platform.commons.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
@@ -9,16 +8,15 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.jdbc.Sql;
 import shared.libs.dto.CashbackCardDto;
 import shared.libs.dto.ResponseDto;
-import uz.nt.cashbackservice.entity.CashbackCard;
 import uz.nt.cashbackservice.service.Main.CashbackCardService;
 
-import java.util.Random;
-
+//todo| Test databaza ochib, 'SQL-script'-dagi sessionni ana o'sha databazaga ulash kerak
+//todo| Va test-databazaning nomi 'application-test.properties' dagi nom bilan bir-xil bo'lsin
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @PropertySource(value = {"classpath:/application-test.properties"})
-@Sql(value = "classpath:/before-cashback-service-unit.sql")
-class CashbackCardServiceImplTest {
+@Sql(value = "classpath:/cashback-card-unit.sql")
+class CardUnitTest {
 
 
     @Autowired
@@ -197,26 +195,47 @@ class CashbackCardServiceImplTest {
 
 
 
-    @Order(10)
-    @DisplayName(value = "Negative. Delete cashback by card id")
-    @Test
-    void firstDeleteCashBackCardById() {
-        Integer cardId = 1;
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Accept-language", "ru");
 
-        ResponseDto<Boolean> responseDto = cashbackCardService.deleteCashBackCardById(cardId, request);
+
+    @Order(10)
+    @DisplayName(value = "Positive. Delete cashback by user id")
+    @Test
+    void firstDeleteCashbackCardIdByUserId() {
+        Integer userId = 2;
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Accept-language", "uz");
+
+        ResponseDto<Boolean> responseDto = cashbackCardService.deleteCashbackCardIdByUserId(userId, request);
 
         Assertions.assertNotNull(responseDto);
         Assertions.assertNotNull(responseDto.getResponseData());
         Assertions.assertTrue(responseDto.getSuccess());
         Assertions.assertEquals(200, responseDto.getCode());
-        Assertions.assertEquals("Operatsiya vipolnena uspeshno", responseDto.getMessage());
+        Assertions.assertEquals("Operatsiya muvaffaqiyatli bajarildi", responseDto.getMessage());
+    }
+
+    @Order(11)
+    @DisplayName(value = "Negative. Delete cashback by user id")
+    @Test
+    void secondDeleteCashbackCardIdByUserId() {
+
+        Integer userId = null;
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Accept-language", "uz");
+
+        ResponseDto<Boolean> responseDto = cashbackCardService.deleteCashBackCardById(userId, request);
+
+        Assertions.assertNotNull(responseDto);
+        Assertions.assertNotNull(responseDto.getResponseData());
+        Assertions.assertFalse(responseDto.getSuccess());
+        Assertions.assertEquals(-1, responseDto.getCode());
+        Assertions.assertEquals("Xatolik yuz berdi", responseDto.getMessage());
+
     }
 
 
 
-    @Order(11)
+    @Order(12)
     @DisplayName(value = "Negative. Delete cashback by card id")
     @Test
     void secondDeleteCashBackCardById() {
@@ -235,41 +254,32 @@ class CashbackCardServiceImplTest {
 
 
 
-    @Order(12)
-    @DisplayName(value = "Positive. Delete cashback by user id")
-    @Test
-    void firstDeleteCashbackCardIdByUserId() {
-        Integer userId = 2;
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Accept-language", "uz");
-
-        ResponseDto<Boolean> responseDto = cashbackCardService.deleteCashBackCardById(userId, request);
-
-        Assertions.assertNotNull(responseDto);
-        Assertions.assertNotNull(responseDto.getResponseData());
-        Assertions.assertTrue(responseDto.getSuccess());
-        Assertions.assertEquals(200, responseDto.getCode());
-        Assertions.assertEquals("Operatsiya muvaffaqiyatli bajarildi", responseDto.getMessage());
-    }
-
     @Order(13)
-    @DisplayName(value = "Negative. Delete cashback by user id")
+    @DisplayName(value = "Positive . Delete cashback by card id")
     @Test
-    void secondDeleteCashbackCardIdByUserId() {
-
-        Integer userId = null;
+    void firstDeleteCashBackCardById() {
+        Integer firstCardId = 1;
+        Integer secondCardId = 2;
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Accept-language", "uz");
+        request.addHeader("Accept-language", "ru");
 
-        ResponseDto<Boolean> responseDto = cashbackCardService.deleteCashBackCardById(userId, request);
+        ResponseDto<Boolean> firstResponseDto = cashbackCardService.deleteCashBackCardById(firstCardId, request);
+        ResponseDto<Boolean> secondResponseDto = cashbackCardService.deleteCashBackCardById(secondCardId, request);
 
-        Assertions.assertNotNull(responseDto);
-        Assertions.assertNotNull(responseDto.getResponseData());
-        Assertions.assertFalse(responseDto.getSuccess());
-        Assertions.assertEquals(-1, responseDto.getCode());
-        Assertions.assertEquals("Xatolik yuz berdi", responseDto.getMessage());
+        Assertions.assertNotNull(firstResponseDto);
+        Assertions.assertNotNull(firstResponseDto.getResponseData());
+        Assertions.assertTrue(firstResponseDto.getSuccess());
+        Assertions.assertEquals(200, firstResponseDto.getCode());
+        Assertions.assertEquals("Operatsiya vipolnena uspeshno", firstResponseDto.getMessage());
+
+
+        Assertions.assertNotNull(secondResponseDto);
+        Assertions.assertNotNull(secondResponseDto.getResponseData());
+        Assertions.assertTrue(secondResponseDto.getSuccess());
 
     }
+
+
 
 
 

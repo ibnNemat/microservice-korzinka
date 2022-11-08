@@ -8,10 +8,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @Configuration
 public class FeignConfiguration {
 
-    @Bean
-    public RequestInterceptor interceptor(){
-        return (req) -> req.header("Authorization", "Bearer "
-                .concat(SecurityContextHolder.getContext().getAuthentication().getCredentials().toString()));
-    }
+//    @Bean
+//    public RequestInterceptor interceptor(){
+//        return (req) -> req.header("Authorization", "Bearer "
+//                .concat(SecurityContextHolder.getContext().getAuthentication().getCredentials().toString()));
+//    }
 
 }
