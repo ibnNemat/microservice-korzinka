@@ -16,10 +16,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+//todo| Test databaza ochib, 'SQL-script'-dagi sessionni ana o'sha databazaga ulash kerak
+//todo| Va test-databazaning nomi 'application-test.properties' dagi nom bilan bir-xil bo'lsin
+
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
 @PropertySource("classpath:/application-test.properties")
-class CashbackHistoryServiceImplTest {
+class CashbackHistoryUnitTest {
 
     @Autowired
     private CashbackHistoryService cashbackHistoryService;
@@ -27,13 +30,13 @@ class CashbackHistoryServiceImplTest {
     @Order(1)
     @DisplayName("Add cashback into history")
     @Test
-    @Sql(value = "classpath:/before-cashback-history.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = "classpath:/cashback-history-unit.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void addCashbackHistory() throws ParseException {
 
-        Date firstDate = new SimpleDateFormat("dd-MM-yyyy").parse("18-10-2022");
+        Date firstDate = new SimpleDateFormat("dd-MM-yyyy").parse("01-10-2022");
         Date secondDate = new SimpleDateFormat("dd-MM-yyyy").parse("21-10-2022");
         Date thirdDate = new SimpleDateFormat("dd-MM-yyyy").parse("30-10-2022");
-        Date fourthDate = new SimpleDateFormat("dd-MM-yyyy").parse("03-11-2022");
+        Date fourthDate = new SimpleDateFormat("dd-MM-yyyy").parse("03-11-2023");
 
         CashbackHistory first = CashbackHistory.builder().cardId(1).beforeTransaction(5000D)
                       .transactionAmount(5000D).afterTransaction(10000D).transactionDate(firstDate).build();

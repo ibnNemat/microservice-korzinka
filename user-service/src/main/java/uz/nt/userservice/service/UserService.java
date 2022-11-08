@@ -2,8 +2,8 @@ package uz.nt.userservice.service;
 
 import shared.libs.dto.JWTResponseDto;
 import shared.libs.dto.ResponseDto;
-import uz.nt.userservice.dto.LoginDto;
 import shared.libs.dto.UserDto;
+import uz.nt.userservice.dto.LoginDto;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
