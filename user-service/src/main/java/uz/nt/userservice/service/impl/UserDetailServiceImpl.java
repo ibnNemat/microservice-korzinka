@@ -198,7 +198,7 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
     @Override
     public ResponseDto<String> updateUser(UserDto userDto) {
         userRepository.save(userMapper.toEntity(userDto));
-        return ResponseDto.builder()
+        return ResponseDto.<String>builder()
                 .code(0)
                 .success(true)
                 .message("Ok")
