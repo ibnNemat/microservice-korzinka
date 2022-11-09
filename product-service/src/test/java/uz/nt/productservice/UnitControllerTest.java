@@ -5,35 +5,21 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import io.netty.handler.codec.string.LineSeparator;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.*;
-import org.mapstruct.control.MappingControl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.MultiValueMapAdapter;
 import shared.libs.dto.JWTResponseDto;
 import shared.libs.dto.ResponseDto;
 import shared.libs.dto.UnitDto;
 import shared.libs.dto.UserDto;
 import uz.nt.productservice.dto.LoginDto;
 import uz.nt.productservice.feign.UserFeign;
-import uz.nt.productservice.util.ProductPage;
-
-import javax.annotation.PostConstruct;
-import java.util.List;
-import java.util.Map;
 
 
 @Slf4j

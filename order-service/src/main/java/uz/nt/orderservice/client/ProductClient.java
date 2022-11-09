@@ -27,6 +27,7 @@ public interface ProductClient {
     @PostMapping("product/products-by-id")
     ResponseDto<Map<Integer, ProductDto>> getProductDtoList(@RequestBody List<Integer> productIdList);
 
-    @PostMapping("product/add-all-product-amount")
-    void addProductAmountBackWard(@RequestBody List<OrderedProductsDetail> productIdList);
+
+    @PostMapping("/rollback-product-amount")
+    void rollback(@RequestBody List<OrderedProductsDetail> orderedProducts);
 }
