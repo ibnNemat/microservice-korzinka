@@ -39,8 +39,8 @@ public class UserController {
         return userService.updateUser(userDto);
     }
 
-    @DeleteMapping("/delete/{username}")
-    public ResponseDto<Integer> deleteUserByUsername(@PathVariable String username) {
+    @DeleteMapping("/delete")
+    public ResponseDto<Integer> deleteUserByUsername(@RequestParam String username) {
         return userService.deleteUserByUsername(username);
     }
 
@@ -53,7 +53,7 @@ public class UserController {
     public ResponseDto<JWTResponseDto> login(@RequestBody LoginDto loginDto){
         return userDetailService.login(loginDto);
     }
-    @PostMapping("/verify{code}")
+    @PostMapping("/verify/{code}")
     public ResponseDto<String> checkVerifyCode(@PathVariable Integer code,HttpServletRequest request) {
         return userService.checkVerifyCode(code,request);
     }

@@ -5,9 +5,7 @@ import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.security.core.context.SecurityContextHolder;
-import shared.libs.dto.CardDto;
-import shared.libs.dto.ProductDto;
-import shared.libs.dto.UserDto;
+import shared.libs.dto.*;
 import uz.nt.orderservice.entity.OrderedProductsRedis;
 import uz.nt.orderservice.repository.OrderedProductsRedisRepository;
 import uz.nt.orderservice.client.CashbackClient;
@@ -17,9 +15,7 @@ import uz.nt.orderservice.dto.*;
 import uz.nt.orderservice.entity.Orders;
 import uz.nt.orderservice.scheduled.TimerTaskOrderedProducts;
 import uz.nt.orderservice.service.PaymentHistoryService;
-import shared.libs.dto.ResponseDto;
 import uz.nt.orderservice.dto.OrderDto;
-import shared.libs.dto.OrderedProductsDetail;
 import uz.nt.orderservice.repository.OrderRepository;
 import uz.nt.orderservice.service.OrderProductsService;
 import uz.nt.orderservice.service.OrderService;
@@ -63,7 +59,7 @@ public class OrderServiceImpl implements OrderService {
         try{
             if (list == null){
                 return ResponseDto.<List<OrderedProductsDetail>>builder()
-                        .code(-1)
+                        .code(ResponseCode.NULL_VALUE)
                         .message("OrderProducts list is null")
                         .build();
             }
@@ -71,7 +67,7 @@ public class OrderServiceImpl implements OrderService {
             List<OrderedProductsDetail> productsNotEnoughAmount = checkProductAmount(list);
             if (productsNotEnoughAmount != null && productsNotEnoughAmount.size() > 0){
                 return ResponseDto.<List<OrderedProductsDetail>>builder()
-                        .code(-10)
+                        .code(ResponseCode.DATABASE_ERROR)
                         .message("some products are not enough in the database")
                         .responseData(productsNotEnoughAmount)
                         .build();
@@ -81,7 +77,7 @@ public class OrderServiceImpl implements OrderService {
             Integer orderId;
             if (!responseDto.getSuccess() || responseDto.getResponseData() == null){
                 return ResponseDto.<List<OrderedProductsDetail>>builder()
-                        .code(-1)
+                        .code(ResponseCode.SERVER_ERROR)
                         .message("Error while saving orderedProducts")
                         .build();
             }
@@ -96,10 +92,12 @@ public class OrderServiceImpl implements OrderService {
 
             OrderedProductsRedis orderedProductsRedis = new OrderedProductsRedis(orderId, orderedProductsList);
             redisRepository.save(orderedProductsRedis);
-            timerTask.holdingTheOrderForFifteenMinutes(orderId);
+            if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserDto userDto) {
+                timerTask.holdingTheOrderForFifteenMinutes(orderId, userDto.getId());
+            }
 
             return ResponseDto.<List<OrderedProductsDetail>>builder()
-                    .code(0)
+                    .code(ResponseCode.OK)
                     .success(true)
                     .message("Successfully saved orderedProducts to Database")
                     .build();
@@ -107,7 +105,7 @@ public class OrderServiceImpl implements OrderService {
         }catch (Exception e){
             log.error(e.getMessage());
             return ResponseDto.<List<OrderedProductsDetail>>builder()
-                    .code(-1)
+                    .code(ResponseCode.SERVER_ERROR)
                     .message(e.getMessage())
                     .build();
         }
@@ -141,7 +139,7 @@ public class OrderServiceImpl implements OrderService {
                 userId = user.getId();
             }else {
                 return ResponseDto.<Integer>builder()
-                        .code(-3)
+                        .code(ResponseCode.NOT_FOUND)
                         .message("Authorization expired")
                         .success(false)
                         .build();
@@ -167,7 +165,7 @@ public class OrderServiceImpl implements OrderService {
             orderProductsService.addOrderProducts(orderId, orderedProductsDetails);
 
             return ResponseDto.<Integer>builder()
-                    .code(0)
+                    .code(ResponseCode.OK)
                     .success(true)
                     .responseData(orderId)
                     .message(bundle.getString("response.success"))
@@ -186,20 +184,20 @@ public class OrderServiceImpl implements OrderService {
                 OrderDto orderDto = orderMapper.toDto(orders);
 
                 return ResponseDto.<OrderDto>builder()
-                        .code(0)
+                        .code(ResponseCode.OK)
                         .success(true)
                         .message(bundle.getString("response.success"))
                         .responseData(orderDto)
                         .build();
             }
             return ResponseDto.<OrderDto>builder()
-                    .code(-4)
+                    .code(ResponseCode.NOT_FOUND)
                     .message(bundle.getString("response.not_found"))
                     .build();
         }catch (Exception e){
             log.error(e.getMessage());
             return ResponseDto.<OrderDto>builder()
-                    .code(-1)
+                    .code(ResponseCode.SERVER_ERROR)
                     .message(bundle.getString("response.failed") + " : " + e.getMessage())
                     .build();
         }
@@ -212,7 +210,7 @@ public class OrderServiceImpl implements OrderService {
 
             if (page == null || size == null) {
                 return ResponseDto.<Page<OrderDto>>builder()
-                        .code(-4)
+                        .code(ResponseCode.NULL_VALUE)
                         .message("Page or size is null")
                         .success(false)
                         .build();
@@ -220,7 +218,7 @@ public class OrderServiceImpl implements OrderService {
             PageRequest pageRequest = PageRequest.of(page, size);
             Page<OrderDto> productDtoList = orderRepository.findAll(pageRequest).map(orderMapper::toDto);
             return ResponseDto.<Page<OrderDto>>builder()
-                    .code(0)
+                    .code(ResponseCode.OK)
                     .success(true)
                     .message(bundle.getString("response.success"))
                     .responseData(productDtoList)
@@ -229,7 +227,7 @@ public class OrderServiceImpl implements OrderService {
             log.error(e.getMessage());
 
             return ResponseDto.<Page<OrderDto>>builder()
-                    .code(-1)
+                    .code(ResponseCode.SERVER_ERROR)
                     .message(bundle.getString("response.failed") + " : " + e.getMessage())
                     .success(false)
                     .build();
@@ -254,7 +252,7 @@ public class OrderServiceImpl implements OrderService {
             log.error(e.getMessage());
 
             return ResponseDto.<Page<OrderDto>>builder()
-                    .code(-1)
+                    .code(ResponseCode.SERVER_ERROR)
                     .message(bundle.getString("response.failed") + " : " + e.getMessage())
                     .success(false)
                     .build();
@@ -273,7 +271,7 @@ public class OrderServiceImpl implements OrderService {
                 OrderDto orderDto1 = orderMapper.toDto(orders);
 
                 return ResponseDto.<OrderDto>builder()
-                        .code(0)
+                        .code(ResponseCode.OK)
                         .success(true)
                         .message(bundle.getString("response.success"))
                         .responseData(orderDto1)
@@ -281,7 +279,7 @@ public class OrderServiceImpl implements OrderService {
             }
 
             return ResponseDto.<OrderDto>builder()
-                    .code(-4)
+                    .code(ResponseCode.NOT_FOUND)
                     .message(bundle.getString("response.not_found"))
                     .success(false)
                     .build();
@@ -290,7 +288,7 @@ public class OrderServiceImpl implements OrderService {
             log.error(e.getMessage());
 
             return ResponseDto.<OrderDto>builder()
-                    .code(-1)
+                    .code(ResponseCode.SERVER_ERROR)
                     .message(bundle.getString("response.failed") + " : " + e.getMessage())
                     .success(false)
                     .build();
@@ -306,21 +304,21 @@ public class OrderServiceImpl implements OrderService {
                 orderRepository.deleteById(id);
 
                 return ResponseDto.<OrderDto>builder()
-                        .code(0)
+                        .code(ResponseCode.OK)
                         .success(true)
                         .message(bundle.getString("response.success"))
                         .build();
             }
 
             return ResponseDto.<OrderDto>builder()
-                    .code(-4)
+                    .code(ResponseCode.NOT_FOUND)
                     .message(bundle.getString("response.not_found"))
                     .success(false)
                     .build();
         }catch (Exception e){
             log.error(e.getMessage());
             return ResponseDto.<OrderDto>builder()
-                    .code(-1)
+                    .code(ResponseCode.SERVER_ERROR)
                     .message(bundle.getString("response.failed") + " : " + e.getMessage())
                     .success(false)
                     .build();
@@ -350,7 +348,7 @@ public class OrderServiceImpl implements OrderService {
                  userId = user.getId();
             }else {
                 return ResponseDto.<OrderDto>builder()
-                        .code(-3)
+                        .code(ResponseCode.NOT_FOUND)
                         .message("Authorization expired")
                         .success(false)
                         .build();
@@ -358,7 +356,7 @@ public class OrderServiceImpl implements OrderService {
             Orders order = orderRepository.getByUserIdAndPayedIsFalse(userId);
             if (order == null) {
                 return ResponseDto.<OrderDto>builder()
-                        .code(-4)
+                        .code(ResponseCode.NOT_FOUND)
                         .message("User is not found!")
                         .success(false)
                         .build();
@@ -367,7 +365,7 @@ public class OrderServiceImpl implements OrderService {
         }catch (Exception e){
             log.error(e.getMessage());
             return ResponseDto.<OrderDto>builder()
-                    .code(-1)
+                    .code(ResponseCode.SERVER_ERROR)
                     .message(bundle.getString("response.failed") + " " + e.getMessage())
                     .success(false)
                     .build();
@@ -383,7 +381,7 @@ public class OrderServiceImpl implements OrderService {
 
         if (productsNotEnoughAmount != null && productsNotEnoughAmount.size() > 0){
             return ResponseDto.<List<OrderedProductsDetail>>builder()
-                    .code(-10)
+                    .code(ResponseCode.NOT_FOUND)
                     .message("some products are not enough in the database")
                     .responseData(productsNotEnoughAmount)
                     .build();
@@ -400,7 +398,7 @@ public class OrderServiceImpl implements OrderService {
 
         if (totalPrice - cashbackMoney > account){
             return ResponseDto.builder()
-                    .code(-2)
+                    .code(ResponseCode.NOT_FOUND)
                     .success(false)
                     .message("Your balance is not enough!!!")
                     .build();
@@ -414,7 +412,7 @@ public class OrderServiceImpl implements OrderService {
 
         if(!updateOrderTotalPrice(orderId, totalPrice)){
             return ResponseDto.builder()
-                    .code(-1)
+                    .code(ResponseCode.DATABASE_ERROR)
                     .message("Error while updating total_price of order")
                     .success(false)
                     .build();
@@ -444,7 +442,7 @@ public class OrderServiceImpl implements OrderService {
             paymentHistoryService.addHistory(paymentHistory);
 
             return ResponseDto.builder()
-                    .code(0)
+                    .code(ResponseCode.OK)
                     .success(true)
                     .message("Successfully Payed!")
                     .build();
@@ -452,7 +450,7 @@ public class OrderServiceImpl implements OrderService {
             log.error(e.getMessage());
 
             return ResponseDto.builder()
-                    .code(-1)
+                    .code(ResponseCode.SERVER_ERROR)
                     .message(bundle.getString("response.failed") + " : " + e.getMessage())
                     .success(false)
                     .build();
@@ -469,7 +467,7 @@ public class OrderServiceImpl implements OrderService {
 
             if(userDto == null) {
                 return ResponseDto.<List<UserOrderedProducts>>builder()
-                        .code(-4)
+                        .code(ResponseCode.NULL_VALUE)
                         .success(false)
                         .message("UserDto is null")
                         .build();
@@ -478,7 +476,7 @@ public class OrderServiceImpl implements OrderService {
             Orders orders = orderRepository.getByUserIdAndPayedIsFalse(userDto.getId());
             if(orders == null){
                 return ResponseDto.<List<UserOrderedProducts>>builder()
-                        .code(-4)
+                        .code(ResponseCode.NULL_VALUE)
                         .success(false)
                         .message("Order is null")
                         .build();
@@ -494,7 +492,7 @@ public class OrderServiceImpl implements OrderService {
         } catch (Exception i){
             log.error("GetAllUsersOrderProducts: " + i.getMessage());
             return ResponseDto.<List<UserOrderedProducts>>builder()
-                    .code(-1)
+                    .code(ResponseCode.SERVER_ERROR)
                     .message(bundle.getString("response.failed")+ " : " + i.getMessage())
                     .success(false)
                     .build();
@@ -509,7 +507,7 @@ public class OrderServiceImpl implements OrderService {
 
         if (map == null){
             return ResponseDto.<List<UserOrderedProducts>>builder()
-                    .code(-4)
+                    .code(ResponseCode.NOT_FOUND)
                     .message("userOrderProduct is not found")
                     .success(false)
                     .build();
@@ -525,7 +523,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return ResponseDto.<List<UserOrderedProducts>>builder()
-                .code(0)
+                .code(ResponseCode.OK)
                 .success(true)
                 .message(bundle.getString("response.success"))
                 .responseData(userOrderedProducts)

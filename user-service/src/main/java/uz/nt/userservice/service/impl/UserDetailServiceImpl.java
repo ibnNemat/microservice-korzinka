@@ -211,7 +211,15 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
         Optional<BanIp> optionalBanIp = banIpRepository.findById(request.getRemoteAddr());
         if(optionalBanIp.isEmpty()) {
             Optional<CheckAttempt> optionalCheckAttempt = checkAttemptRepository.findById(request.getRemoteAddr());
-            if(optionalCheckAttempt.isPresent() && optionalCheckAttempt.get().getUserDto().getCode() == code) {
+            if(optionalCheckAttempt.isPresent() && optionalCheckAttempt.get().getUserDto().getIncrement() >= 3 && optionalCheckAttempt.get().getUserDto().getCode() != code) {
+                checkAttemptRepository.deleteById(request.getRemoteAddr());
+                banIpRepository.save(new BanIp(request.getRemoteAddr(),optionalCheckAttempt.get().getUserDto()));
+                return ResponseDto.<String>builder()
+                        .code(-10)
+                        .message("failed")
+                        .success(false)
+                        .responseData("Verify code is incorrect Your are banned 15 minute").build();
+            } else if(optionalCheckAttempt.isPresent() && optionalCheckAttempt.get().getUserDto().getCode() == code) {
                 UserDto userDto = optionalCheckAttempt.get().getUserDto();
                 userDto.setIsActive(true);
                 userRepository.save(userMapper.toEntity(userDto));
@@ -220,14 +228,6 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
                         .message("Ok")
                         .success(true)
                         .responseData("Verify is correct").build();
-            } else if(optionalCheckAttempt.isPresent() && optionalCheckAttempt.get().getUserDto().getCode() < 3) {
-                checkAttemptRepository.deleteById(request.getRemoteAddr());
-                banIpRepository.save(new BanIp(request.getRemoteAddr(),optionalCheckAttempt.get().getUserDto()));
-                return ResponseDto.<String>builder()
-                        .code(-10)
-                        .message("failed")
-                        .success(false)
-                        .responseData("Verify code is incorrect Your are banned 15 minute").build();
             } else {
                 UserDto userDto = optionalCheckAttempt.get().getUserDto();
                 userDto.setIncrement(userDto.getIncrement()+1);
@@ -250,12 +250,12 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
     public ResponseDto<String> sendToGmail(UserDto userDto,String IpAddress) {
         Random random = new Random();
         int rand = random.nextInt(1000,9999);
-        ResponseDto<String> responseDto = gmailPlaceHolder.sendToGmailAndGetVerifyCode(userDto.getEmail(),rand);
+        ResponseDto<String> responseDto = gmailPlaceHolder.sendToGmailAndGetVerifyCode(userDto.getEmail(),rand);      //send verify code and gmail to gmail-service
         if(responseDto.getSuccess()) {
             userDto.setCode(rand);
             userDto.setIncrement(0);
             CheckAttempt checkAttempt = new CheckAttempt(IpAddress,userDto);
-            checkAttemptRepository.save(checkAttempt);
+            checkAttemptRepository.save(checkAttempt);          // redis save
             return ResponseDto.<String>builder().code(0).message("Ok").success(true).responseData("Please verify your code from gmail").build();
         }
         return ResponseDto.<String>builder().code(-3).message("Failed").success(false).responseData("Error gmail").build();

@@ -9,8 +9,8 @@ import uz.nt.cashbackservice.entity.CashbackCard;
 @Repository
 public interface CashbackCardRepository extends JpaRepository<CashbackCard, Integer> {
 
-    @Query(value = "update cashback_card c set amount = :money where id = cardId", nativeQuery = true)
-    void increaseCashback(@Param("money") Double money, @Param("cardId") Integer cardId);
+//    @Query(value = "update cashback_card c set amount = :money where id = cardId", nativeQuery = true)
+//    void increaseCashback(@Param("money") Double money, @Param("cardId") Integer cardId);
 
 
 

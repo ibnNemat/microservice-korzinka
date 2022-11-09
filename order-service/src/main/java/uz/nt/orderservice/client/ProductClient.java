@@ -22,11 +22,12 @@ public interface ProductClient {
     @GetMapping("product/check-amount")
     ResponseDto<Boolean> checkAmountProduct(@RequestParam Integer productId, @RequestParam Double amount);
     @PostMapping("product/set-amount")
-    ResponseDto setProductAmount(Double amount, Integer productId);
+    ResponseDto setProductAmount(@RequestParam Double amount, @RequestParam Integer productId);
 
-    @PostMapping("/products-by-id")
+    @PostMapping("product/products-by-id")
     ResponseDto<Map<Integer, ProductDto>> getProductDtoList(@RequestBody List<Integer> productIdList);
 
-    @PostMapping("/add-all-product-amount")
-    void addProductAmountBackWard(@RequestBody List<OrderedProductsDetail> productIdList);
+
+    @PostMapping("/rollback-product-amount")
+    void rollback(@RequestBody List<OrderedProductsDetail> orderedProducts);
 }
