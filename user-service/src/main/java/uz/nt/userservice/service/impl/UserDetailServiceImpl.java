@@ -15,15 +15,10 @@ import shared.libs.dto.ResponseDto;
 import shared.libs.entity.UserSession;
 import shared.libs.repository.UserSessionRepository;
 import shared.libs.security.JwtService;
-import uz.nt.userservice.client.GmailPlaceHolder;
 import uz.nt.userservice.dto.LoginDto;
 import shared.libs.dto.UserDto;
 import shared.libs.utils.MyDateUtil;
-import uz.nt.userservice.entity.BanIp;
-import uz.nt.userservice.entity.CheckAttempt;
 import uz.nt.userservice.entity.User;
-import uz.nt.userservice.repository.BanIpRepository;
-import uz.nt.userservice.repository.CheckAttemptRepository;
 import uz.nt.userservice.repository.UserRepository;
 import uz.nt.userservice.service.UserService;
 import uz.nt.userservice.service.mapper.UserMapper;
@@ -47,10 +42,6 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
     private final JwtService jwtService;
 
     private final UserSessionRepository userSessionRepository;
-    private final GmailPlaceHolder gmailPlaceHolder;
-    private final CheckAttemptRepository checkAttemptRepository;
-    private final BanIpRepository banIpRepository;
-
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -63,33 +54,26 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public ResponseDto<UserDto> addUser(UserDto userDto,HttpServletRequest request) {
+    public ResponseDto addUser(UserDto userDto) {
         try{
             User user = userMapper.toEntity(userDto);
             user.setPassword(passwordEncoder.encode(user.getPassword()));
+
             userRepository.save(user);
-            ResponseDto<String> responseDto = sendToGmail(userDto,request.getRemoteAddr());
-            if(responseDto.getSuccess()) {
-                return ResponseDto.<UserDto>builder()
-                        .code(200)
-                        .success(true)
-                        .message("Successfully saved")
-                        .responseData(userMapper.toDto(user))
-                        .build();
-            }
+
+            return ResponseDto.builder()
+                    .code(200)
+                    .success(true)
+                    .message("Successfully saved")
+                    .build();
         }catch (Exception e){
             log.error(e.getMessage());
-            return ResponseDto.<UserDto>builder()
+            return ResponseDto.builder()
                     .code(500)
-                    .message("Error while adding new user to DB or gmail incorrect")
+                    .message("Error while adding new user to DB")
                     .build();
         }
-        return ResponseDto.<UserDto>builder()
-                .code(500)
-                .message("Gmail incorrect")
-                .build();
     }
-
     @Override
     public ResponseDto<JWTResponseDto> login(LoginDto loginDto){
         User user = userRepository.findFirstByUsername(loginDto.getUsername()).orElseThrow(
@@ -158,109 +142,24 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public ResponseDto<UserDto> deleteUserById(Integer id) {
-        Optional<User> user = userRepository.findById(id);
-        if(user.isEmpty()) {
-            return ResponseDto.<UserDto>builder()
-                    .code(-3)
-                    .success(false)
-                    .message("Failed")
-                    .build();
-        }
-        userRepository.delete(user.get());
-        return ResponseDto.<UserDto>builder()
+    public ResponseDto deleteUserById(Integer id) {
+        userRepository.deleteById(id);
+        return ResponseDto.builder()
                 .code(0)
                 .success(true)
                 .message("Ok")
-                .responseData(userMapper.toDto(user.get()))
                 .build();
     }
 
     @Override
-    @Transactional
-    public ResponseDto<Integer> deleteUserByUsername(String username) {
-        if(userRepository.existsByUsername(username)) {
-            Integer howToDelete = userRepository.deleteByUsername(username);
-            return ResponseDto.<Integer>builder()
-                    .code(0)
-                    .message("Ok")
-                    .success(true)
-                    .responseData(howToDelete)
-                    .build();
-        }
-        return ResponseDto.<Integer>builder()
-                .code(-5)
-                .message("Failed")
-                .success(false)
-                .build();
-    }
-
-    @Override
-    public ResponseDto<String> updateUser(UserDto userDto) {
+    public ResponseDto updateUser(UserDto userDto) {
         userRepository.save(userMapper.toEntity(userDto));
-        return ResponseDto.<String>builder()
+        return ResponseDto.builder()
                 .code(0)
                 .success(true)
                 .message("Ok")
                 .build();
     }
-
-
-    @Override
-    public ResponseDto<String> checkVerifyCode(Integer code,HttpServletRequest request) {
-        Optional<BanIp> optionalBanIp = banIpRepository.findById(request.getRemoteAddr());
-        if(optionalBanIp.isEmpty()) {
-            Optional<CheckAttempt> optionalCheckAttempt = checkAttemptRepository.findById(request.getRemoteAddr());
-            if(optionalCheckAttempt.isPresent() && optionalCheckAttempt.get().getUserDto().getIncrement() >= 3 && optionalCheckAttempt.get().getUserDto().getCode() != code) {
-                checkAttemptRepository.deleteById(request.getRemoteAddr());
-                banIpRepository.save(new BanIp(request.getRemoteAddr(),optionalCheckAttempt.get().getUserDto()));
-                return ResponseDto.<String>builder()
-                        .code(-10)
-                        .message("failed")
-                        .success(false)
-                        .responseData("Verify code is incorrect Your are banned 15 minute").build();
-            } else if(optionalCheckAttempt.isPresent() && optionalCheckAttempt.get().getUserDto().getCode() == code) {
-                UserDto userDto = optionalCheckAttempt.get().getUserDto();
-                userDto.setIsActive(true);
-                userRepository.save(userMapper.toEntity(userDto));
-                return ResponseDto.<String>builder()
-                        .code(0)
-                        .message("Ok")
-                        .success(true)
-                        .responseData("Verify is correct").build();
-            } else {
-                UserDto userDto = optionalCheckAttempt.get().getUserDto();
-                userDto.setIncrement(userDto.getIncrement()+1);
-                checkAttemptRepository.save(new CheckAttempt(request.getRemoteAddr(),userDto));
-                return ResponseDto.<String>builder()
-                        .code(-2)
-                        .message("failed")
-                        .success(false)
-                        .responseData("Verify code is incorrect!").build();
-            }
-        }
-        return ResponseDto.<String>builder()
-                .code(-10)
-                .message("failed")
-                .success(false)
-                .responseData("Verify code is incorrect Your are banned 15 minute").build();
-    }
-
-    @Override
-    public ResponseDto<String> sendToGmail(UserDto userDto,String IpAddress) {
-        Random random = new Random();
-        int rand = random.nextInt(1000,9999);
-        ResponseDto<String> responseDto = gmailPlaceHolder.sendToGmailAndGetVerifyCode(userDto.getEmail(),rand);      //send verify code and gmail to gmail-service
-        if(responseDto.getSuccess()) {
-            userDto.setCode(rand);
-            userDto.setIncrement(0);
-            CheckAttempt checkAttempt = new CheckAttempt(IpAddress,userDto);
-            checkAttemptRepository.save(checkAttempt);          // redis save
-            return ResponseDto.<String>builder().code(0).message("Ok").success(true).responseData("Please verify your code from gmail").build();
-        }
-        return ResponseDto.<String>builder().code(-3).message("Failed").success(false).responseData("Error gmail").build();
-    }
-
 
     @Transactional
     @Override

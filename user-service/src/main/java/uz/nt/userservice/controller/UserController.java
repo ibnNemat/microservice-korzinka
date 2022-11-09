@@ -1,7 +1,7 @@
 package uz.nt.userservice.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shared.libs.dto.JWTResponseDto;
 import shared.libs.dto.ResponseDto;
@@ -11,6 +11,7 @@ import uz.nt.userservice.service.UserService;
 import uz.nt.userservice.service.impl.UserDetailServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
@@ -26,22 +27,17 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseDto<UserDto> getById(@PathVariable Integer id){
+    public ResponseDto getById(@PathVariable Integer id){
         return userService.getUserById(id);
     }
     @PostMapping
-    public ResponseDto<UserDto> addUser(@RequestBody UserDto userDto,HttpServletRequest request){
-        return userService.addUser(userDto,request);
+    public ResponseDto<UserDto> addUser(@RequestBody UserDto userDto){
+        return userService.addUser(userDto);
     }
 
     @PutMapping
-    public ResponseDto<String> updateUser(@RequestBody UserDto userDto){
+    public ResponseDto updateUser(@RequestBody UserDto userDto){
         return userService.updateUser(userDto);
-    }
-
-    @DeleteMapping("/delete")
-    public ResponseDto<Integer> deleteUserByUsername(@RequestParam String username) {
-        return userService.deleteUserByUsername(username);
     }
 
     @DeleteMapping("/{id}")
@@ -53,10 +49,9 @@ public class UserController {
     public ResponseDto<JWTResponseDto> login(@RequestBody LoginDto loginDto){
         return userDetailService.login(loginDto);
     }
-    @PostMapping("/verify/{code}")
-    public ResponseDto<String> checkVerifyCode(@PathVariable Integer code,HttpServletRequest request) {
-        return userService.checkVerifyCode(code,request);
+
+    @GetMapping("/excel")
+    public void export(HttpServletRequest request, HttpServletResponse response){
+        userService.export(request, response);
     }
-
-
 }
