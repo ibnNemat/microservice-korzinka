@@ -22,7 +22,7 @@
     <module>delivery-service</module>
     <module>shared-libs</module>
     <module>cloud-config-server</module>
-<!--    <module>delivery-service</module>-->
+    <module>delivery-service</module>
   </modules>
 
   <dependencies>
