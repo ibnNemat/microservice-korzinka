@@ -7,9 +7,7 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.*;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.Assertions;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -23,12 +21,8 @@ import uz.nt.productservice.feign.UserFeign;
 
 
 @Slf4j
-@SpringBootTest
-@AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 //@SpringBootTest
 //@AutoConfigureMockMvc
-////@RequiredArgsConstructor
 //@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UnitControllerTest {
 
@@ -70,8 +64,8 @@ public class UnitControllerTest {
         UnitControllerTest.userDto = response.getResponseData();
     }
 
-    @Test
-    @Order(2)
+//    @Test
+//    @Order(2)
     public void token(){
         LoginDto loginDto = LoginDto.builder()
                 .username("sardorbroo").password("password").build();
@@ -86,8 +80,8 @@ public class UnitControllerTest {
     }
 
 
-    @Test
-    @Order(4)
+//    @Test
+//    @Order(4)
     public void addNewUnit(){
         UnitDto unitDto = UnitDto.builder()
                 .name("Litr").shortName("L")

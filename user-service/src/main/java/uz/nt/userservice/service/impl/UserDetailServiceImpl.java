@@ -9,16 +9,16 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uz.nt.userservice.client.GmailPlaceHolder;
+import uz.nt.userservice.dto.LoginDto;
+import shared.libs.utils.MyDateUtil;
+import shared.libs.dto.UserDto;
 import shared.libs.configuration.Config;
 import shared.libs.dto.JWTResponseDto;
 import shared.libs.dto.ResponseDto;
 import shared.libs.entity.UserSession;
 import shared.libs.repository.UserSessionRepository;
 import shared.libs.security.JwtService;
-import uz.nt.userservice.client.GmailPlaceHolder;
-import uz.nt.userservice.dto.LoginDto;
-import shared.libs.dto.UserDto;
-import shared.libs.utils.MyDateUtil;
 import uz.nt.userservice.entity.BanIp;
 import uz.nt.userservice.entity.CheckAttempt;
 import uz.nt.userservice.entity.User;
@@ -64,6 +64,7 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public ResponseDto<UserDto> addUser(UserDto userDto,HttpServletRequest request) {
+        
         try{
             User user = userMapper.toEntity(userDto);
             user.setPassword(passwordEncoder.encode(user.getPassword()));
