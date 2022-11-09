@@ -7,6 +7,7 @@ import uz.nt.deliveryservice.dto.DeliveryDto;
 import uz.nt.deliveryservice.service.DeliveryService;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/delivery")
@@ -16,8 +17,8 @@ public class DeliveryController {
     private final DeliveryService deliveryService;
 
     @GetMapping("/price")
-    public ResponseDto<Double> calculateDeliveryPrice(@RequestParam Double lat, Double lon) {
-        return deliveryService.calculateDeliveryPrice(lat, lon);
+    public ResponseDto<BigDecimal> calculateDeliveryPrice(@RequestParam String distance) {
+        return deliveryService.distanceCost(distance);
     }
 
     @PostMapping

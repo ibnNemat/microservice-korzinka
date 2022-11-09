@@ -5,10 +5,7 @@
 //import com.fasterxml.jackson.databind.ObjectMapper;
 //import com.fasterxml.jackson.databind.json.JsonMapper;
 //import lombok.extern.slf4j.Slf4j;
-//import org.junit.jupiter.api.*;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-//import org.springframework.boot.test.context.SpringBootTest;
+//import org.junit.jupiter.api.Assertions;
 //import org.springframework.http.MediaType;
 //import org.springframework.test.web.servlet.MockMvc;
 //import org.springframework.test.web.servlet.RequestBuilder;
@@ -20,22 +17,20 @@
 //import uz.nt.productservice.dto.LoginDto;
 //import uz.nt.productservice.feign.UserFeign;
 //
-//import javax.annotation.PostConstruct;
 //import java.text.ParseException;
 //import java.text.SimpleDateFormat;
-//import java.util.ArrayList;
 //import java.util.Date;
 //
-//@Slf4j
-//@SpringBootTest
-//@AutoConfigureMockMvc
-//@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+////@Slf4j
+////@SpringBootTestgBootTest
+////@AutoConfigureMockMvc
+////@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 //public class ProductControllerTest {
 //
-//    @Autowired
+////    @Autowired
 //    private MockMvc mvc;
 //
-//    @Autowired
+////    @Autowired
 //    private UserFeign feign;
 //
 //    private static String token;
@@ -44,14 +39,14 @@
 //
 //    private JsonMapper jsonMapper;
 //
-//    @PostConstruct
+////    @PostConstruct
 //    public void injecting(){
 //        objectMapper = new ObjectMapper();
 //        jsonMapper = new JsonMapper();
 //    }
 //
-//    @Test
-//    @Order(1)
+////    @Test
+////    @Order(1)
 //    public void unauthorized(){
 //        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/product/1");
 //        try {
@@ -63,8 +58,8 @@
 //        }
 //    }
 //
-//    @Test
-//    @Order(2)
+////    @Test
+////    @Order(2)
 //    public void getToken(){
 //        LoginDto loginDto = LoginDto.builder()
 //                .username("sardorbroo").password("password").build();
@@ -80,8 +75,8 @@
 //        token = response.getResponseData().getToken();
 //    }
 //
-//    @Test
-//    @Order(3)
+////    @Test
+////    @Order(3)
 //    public void dataIsNotFound(){
 //        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("http://localhost:8003/product/8")
 //                .contentType("application/json")
@@ -109,8 +104,8 @@
 //    }
 //
 //
-//    @Test
-//    @Order(4)
+////    @Test
+////    @Order(4)
 //    public void addNewProductTest(){
 //        SimpleDateFormat format = new SimpleDateFormat();
 //        Date date = null;
