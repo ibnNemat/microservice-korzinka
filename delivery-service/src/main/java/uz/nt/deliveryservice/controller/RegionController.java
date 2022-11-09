@@ -1,6 +1,5 @@
 package uz.nt.deliveryservice.controller;
 
-import org.springframework.context.MessageSource;
 import uz.nt.deliveryservice.dto.RegionDto;
 import uz.nt.deliveryservice.service.RegionService;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import shared.libs.dto.ResponseDto;
 
 import java.util.List;
-import java.util.Locale;
 
 @RestController
 @RequestMapping("/region")
@@ -16,8 +14,6 @@ import java.util.Locale;
 public class RegionController {
 
     private final RegionService regionService;
-
-    private final MessageSource messageSource;
 
     @GetMapping
     public ResponseDto<List<RegionDto>> getAll() {

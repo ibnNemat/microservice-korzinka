@@ -11,6 +11,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="delivery-service" />
+        <module name="orders-service" />
         <module name="discovery-server" />
         <module name="cloud-config-server" />
         <module name="product-service" />
@@ -28,6 +29,7 @@
       <module name="delivery-service" options="-parameters" />
       <module name="discovery-server" options="-parameters" />
       <module name="order-service" options="-parameters" />
+      <module name="orders-service" options="-parameters" />
       <module name="product-service" options="-parameters" />
       <module name="shared-libs" options="-parameters" />
       <module name="user-service" options="-parameters" />

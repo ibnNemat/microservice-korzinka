@@ -1,13 +1,12 @@
-package uz.nt.deliveryservice;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-
-@SpringBootTest
-class DeliveryServiceApplicationTests {
-
+//package uz.nt.deliveryservice;
+//
+//import org.springframework.boot.test.context.SpringBootTest;
+//
+//@SpringBootTest
+//class DeliveryServiceApplicationTests {
+//
 //    @Test
 //    void contextLoads() {
 //    }
-
-}
+//
+//}
