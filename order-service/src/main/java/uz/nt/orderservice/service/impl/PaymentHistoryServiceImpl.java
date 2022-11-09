@@ -6,6 +6,7 @@ import org.aspectj.apache.bcel.classfile.Module;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
+import shared.libs.dto.ResponseCode;
 import shared.libs.dto.ResponseDto;
 import uz.nt.orderservice.dto.PaymentHistoryDto;
 import uz.nt.orderservice.entity.PaymentHistory;
@@ -36,7 +37,7 @@ public class PaymentHistoryServiceImpl implements PaymentHistoryService {
             historyRepository.save(paymentHistory);
 
             return ResponseDto.builder()
-                    .code(0)
+                    .code(ResponseCode.OK)
                     .message(bundle.getString("response.success"))
                     .success(true)
                     .build();
@@ -45,7 +46,7 @@ public class PaymentHistoryServiceImpl implements PaymentHistoryService {
             log.error(e.getMessage());
 
             return ResponseDto.builder()
-                    .code(-1)
+                    .code(ResponseCode.SERVER_ERROR)
                     .message(bundle.getString("response.failed") + " " + e.getMessage())
                     .success(false)
                     .build();
@@ -61,7 +62,7 @@ public class PaymentHistoryServiceImpl implements PaymentHistoryService {
 
             if (paymentHistory.isEmpty()){
                 return ResponseDto.<PaymentHistoryDto>builder()
-                        .code(-4)
+                        .code(ResponseCode.NOT_FOUND)
                         .message(bundle.getString("response.not_found"))
                         .success(false)
                         .build();
@@ -70,7 +71,7 @@ public class PaymentHistoryServiceImpl implements PaymentHistoryService {
             PaymentHistoryDto paymentHistoryDto = historyMapper.toDto(paymentHistory.get());
 
             return ResponseDto.<PaymentHistoryDto>builder()
-                    .code(0)
+                    .code(ResponseCode.OK)
                     .message(bundle.getString("response.success"))
                     .responseData(paymentHistoryDto)
                     .success(true)
@@ -80,7 +81,7 @@ public class PaymentHistoryServiceImpl implements PaymentHistoryService {
             log.error(e.getMessage());
 
             return ResponseDto.<PaymentHistoryDto>builder()
-                    .code(-1)
+                    .code(ResponseCode.SERVER_ERROR)
                     .message(bundle.getString("response.failed.") + " " + e.getMessage())
                     .success(false)
                     .build();
@@ -96,7 +97,7 @@ public class PaymentHistoryServiceImpl implements PaymentHistoryService {
 
             if (historyList.isEmpty()){
                 return ResponseDto.<List<PaymentHistoryDto>>builder()
-                        .code(-4)
+                        .code(ResponseCode.NOT_FOUND)
                         .message(bundle.getString("response.not_found"))
                         .success(true)
                         .build();
@@ -106,7 +107,7 @@ public class PaymentHistoryServiceImpl implements PaymentHistoryService {
                     .map((historyMapper::toDto)).toList();
 
             return ResponseDto.<List<PaymentHistoryDto>>builder()
-                    .code(0)
+                    .code(ResponseCode.OK)
                     .message(bundle.getString("response.success"))
                     .responseData(paymentHistoryDtos)
                     .success(true)
@@ -116,7 +117,7 @@ public class PaymentHistoryServiceImpl implements PaymentHistoryService {
             log.error(e.getMessage());
 
             return ResponseDto.<List<PaymentHistoryDto>>builder()
-                    .code(-1)
+                    .code(ResponseCode.SERVER_ERROR)
                     .message(bundle.getString("response.failed") + " " + e.getMessage())
                     .success(false)
                     .build();
@@ -132,7 +133,7 @@ public class PaymentHistoryServiceImpl implements PaymentHistoryService {
 
             if (paymentHistory.isEmpty()){
                 return ResponseDto.builder()
-                        .code(-4)
+                        .code(ResponseCode.NOT_FOUND)
                         .message(bundle.getString("response.not_found"))
                         .success(false)
                         .build();
@@ -141,7 +142,7 @@ public class PaymentHistoryServiceImpl implements PaymentHistoryService {
             historyRepository.delete(paymentHistory.get());
 
             return ResponseDto.builder()
-                    .code(0)
+                    .code(ResponseCode.OK)
                     .message(bundle.getString("response.deleted"))
                     .success(true)
                     .build();
@@ -150,7 +151,7 @@ public class PaymentHistoryServiceImpl implements PaymentHistoryService {
             log.error(e.getMessage());
 
             return ResponseDto.builder()
-                    .code(-1)
+                    .code(ResponseCode.SERVER_ERROR)
                     .message(bundle.getString("response.failed") + " " + e.getMessage())
                     .success(false)
                     .build();
