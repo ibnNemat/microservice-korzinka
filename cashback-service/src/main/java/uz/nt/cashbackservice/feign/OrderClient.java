@@ -9,15 +9,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-@FeignClient(url = "http://locahost:8082/orders", name = "order-service")
+@FeignClient(url = "http://locahost:8082/order-products", name = "order-service")
 public interface OrderClient {
 
-    @GetMapping("/")
-    ResponseDto<HashMap<Integer, Double>> getUsersBoughtMoreMillion(@RequestParam Date date);
+    @GetMapping("/sum-order-monthly")
+    ResponseDto<HashMap<Integer, Double>> getUsersBoughtMoreMillion();
 
-
-    @GetMapping("/")
-    ResponseDto<HashMap<Integer, Double>> getUsersBoughtMoreThreeMillion(@RequestParam Date date);
+    @GetMapping("/sum-order-quarterly")
+    ResponseDto<HashMap<Integer, Double>> getUsersBoughtMoreThreeMillion();
 
 
 }

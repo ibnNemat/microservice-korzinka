@@ -1,15 +1,23 @@
 package shared.libs.dto;
 
-import javax.persistence.Column;
-import java.util.Date;
-import java.util.UUID;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CashbackCardDto {
 
     private Integer id;
 
     private Double amount;
 
-    private String barcode;
+    private Integer userId;
+
+    private Long barcode;
 
 }
