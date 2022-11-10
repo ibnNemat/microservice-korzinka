@@ -22,7 +22,7 @@ public class ReviewController {
         return service.getAll();
     }
     @GetMapping("{id}")
-    public ResponseDto<Review> getById(@PathVariable Integer id) {
+    public ResponseDto<ReviewDto> getById(@PathVariable Integer id) {
         return service.getById(id);
     }
 }
