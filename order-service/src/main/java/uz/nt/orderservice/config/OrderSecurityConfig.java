@@ -22,6 +22,7 @@ public class OrderSecurityConfig{
         http
                 .csrf().disable()
                 .authorizeRequests()
+                .antMatchers("/orders/check").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

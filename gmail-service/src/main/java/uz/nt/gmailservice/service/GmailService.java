@@ -10,4 +10,6 @@ public interface GmailService {
 
     ResponseDto checkGmailCode(String gmail,Integer code);
 
+    ResponseDto<String> sendVerificationCodeToGmail(String gmail, Integer code) throws MessagingException;
 }
+

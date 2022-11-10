@@ -149,4 +149,36 @@ public class GmailServiceImpl implements GmailService {
                 .success(false)
                 .build();
     }
+
+    @Override
+    public ResponseDto<String> sendVerificationCodeToGmail(String gmail, Integer code) throws MessagingException {
+//        Properties prop = new Properties();
+//        prop.put("mail.smtp.auth", true);
+//        prop.put("mail.smtp.starttls.enable", "true");
+//        prop.put("mail.smtp.host", "smtp.mailtrap.io");
+//        prop.put("mail.smtp.port", "25");
+//        prop.put("mail.smtp.ssl.trust", "smtp.mailtrap.io");
+//
+//        Session session = Session.getInstance(prop, new Authenticator() {
+//            @Override
+//            protected PasswordAuthentication getPasswordAuthentication() {
+//                return new PasswordAuthentication(username, password);
+//            }
+//        });
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("faxadev@gmail.com");
+//        message.setRecipients(Message.RecipientType.TO, new InternetAddress[]{new InternetAddress(gmail)});
+        message.setSubject("Verification code");
+        message.setText("Your verification code is " + code);
+        message.setTo(gmail);
+
+        mailSender.send(message);
+
+        return ResponseDto.<String>builder()
+                .code(0)
+                .success(true)
+                .message("OK")
+                .build();
+    }
 }

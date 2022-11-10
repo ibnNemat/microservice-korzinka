@@ -211,7 +211,7 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
         Optional<BanIp> optionalBanIp = banIpRepository.findById(request.getRemoteAddr());
         if(optionalBanIp.isEmpty()) {
             Optional<CheckAttempt> optionalCheckAttempt = checkAttemptRepository.findById(request.getRemoteAddr());
-            if(optionalCheckAttempt.isPresent() && optionalCheckAttempt.get().getUserDto().getIncrement() >= 3 && optionalCheckAttempt.get().getUserDto().getCode() != code) {
+            if(optionalCheckAttempt.isPresent() && optionalCheckAttempt.get().getUserDto().getIncrement() >= 3 && !optionalCheckAttempt.get().getUserDto().getCode().equals(code)) {
                 checkAttemptRepository.deleteById(request.getRemoteAddr());
                 banIpRepository.save(new BanIp(request.getRemoteAddr(),optionalCheckAttempt.get().getUserDto()));
                 return ResponseDto.<String>builder()
@@ -219,7 +219,7 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
                         .message("failed")
                         .success(false)
                         .responseData("Verify code is incorrect Your are banned 15 minute").build();
-            } else if(optionalCheckAttempt.isPresent() && optionalCheckAttempt.get().getUserDto().getCode() == code) {
+            } else if(optionalCheckAttempt.isPresent() && optionalCheckAttempt.get().getUserDto().getCode().equals(code)) {
                 UserDto userDto = optionalCheckAttempt.get().getUserDto();
                 userDto.setIsActive(true);
                 userRepository.save(userMapper.toEntity(userDto));

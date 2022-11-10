@@ -19,7 +19,12 @@ public class GmailController {
       return gmailService.sentToGmail(gmail);
     }
 
-    @GetMapping("gmail-verify")
+    @PostMapping("send-verify-code")
+    public ResponseDto sendToGmailVerificationCode(@RequestParam String gmail, @RequestParam Integer code) throws MessagingException {
+        return gmailService.sendVerificationCodeToGmail(gmail, code);
+    }
+
+    @PostMapping("gmail-verify")
     public ResponseDto verifyGmail(@RequestParam String gmail, @RequestParam Integer code){
         return gmailService.checkGmailCode(gmail,code);
     }

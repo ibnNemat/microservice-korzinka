@@ -23,12 +23,14 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/user/login/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/gmail-verify").permitAll()
+//                .antMatchers("/user/login/**").permitAll()
+//                .antMatchers(HttpMethod.GET, "/gmail-verify").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
-                .addFilterBefore(myFilterChain, UsernamePasswordAuthenticationFilter.class);
+                .httpBasic();
+//                .and();
+//                .addFilterBefore(myFilterChain, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
