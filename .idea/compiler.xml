@@ -19,9 +19,11 @@
         <module name="order-service" />
         <module name="user-service" />
         <module name="shared-libs" />
-        <module name="gmail-service" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="gmail-service" target="19" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
@@ -36,7 +38,7 @@
       <module name="product-service" options="-parameters" />
       <module name="shared-libs" options="-parameters" />
       <module name="user-service" options="-parameters" />
-      <module name="uz_nt-korzinka" options="-parameters" />
+      <module name="uz_nt-korzinka" options="" />
     </option>
   </component>
 </project>
