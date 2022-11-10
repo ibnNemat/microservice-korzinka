@@ -1,4 +1,5 @@
 package uz.nt.orderservice.service.impl;
+import shared.libs.response.standart.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -8,7 +9,6 @@ import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
-import shared.libs.dto.ResponseCode;
 import shared.libs.dto.ResponseDto;
 import shared.libs.utils.MyDateUtil;
 import uz.nt.orderservice.client.ProductClient;
@@ -21,13 +21,14 @@ import uz.nt.orderservice.repository.OrderRepository;
 import uz.nt.orderservice.repository.OrderedProductsRedisRepository;
 import uz.nt.orderservice.repository.helperRepository.OrderProductRepositoryHelper;
 import uz.nt.orderservice.service.OrderProductsService;
-import uz.nt.orderservice.service.OrderService;
 import uz.nt.orderservice.service.mapper.OrderProductsMapper;
 
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
+
+import static shared.libs.response.standart.ResponseCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +50,7 @@ public class OrderProductsServiceImpl implements OrderProductsService {
             return saveOrUpdateOrderProduct(orderId, orderedProductsDetails);
         }catch (Exception e){
             return ResponseDto.builder()
-                    .code(ResponseCode.SERVER_ERROR)
+                    .code(SERVER_ERROR)
                     .message(bundle.getString("response.failed") + " : " + e.getMessage())
                     .success(false)
                     .build();
@@ -82,7 +83,7 @@ public class OrderProductsServiceImpl implements OrderProductsService {
         }
 
         return ResponseDto.builder()
-                .code(ResponseCode.OK)
+                .code(OK)
                 .success(true)
                 .message(bundle.getString("response.success"))
                 .build();
@@ -97,7 +98,7 @@ public class OrderProductsServiceImpl implements OrderProductsService {
 
             if (orderProducts.isEmpty()){
                 return ResponseDto.<OrderProductsDto>builder()
-                        .code(-4)
+                        .code(NOT_FOUND)
                         .message("Order Product not found")
                         .success(false)
                         .build();
@@ -105,7 +106,7 @@ public class OrderProductsServiceImpl implements OrderProductsService {
             OrderProductsDto orderProductsDto = orderProductsMapper.toDto(orderProducts.get());
 
             return ResponseDto.<OrderProductsDto>builder()
-                    .code(ResponseCode.OK)
+                    .code(OK)
                     .responseData(orderProductsDto)
                     .message(bundle.getString("response.success"))
                     .success(true)
@@ -114,7 +115,7 @@ public class OrderProductsServiceImpl implements OrderProductsService {
             log.error(e.getMessage());
 
             return ResponseDto.<OrderProductsDto>builder()
-                    .code(ResponseCode.SERVER_ERROR)
+                    .code(SERVER_ERROR)
                     .message(bundle.getString("response.failed")+ " : " + e.getMessage())
                     .success(false)
                     .build();
@@ -128,7 +129,7 @@ public class OrderProductsServiceImpl implements OrderProductsService {
 
             if (page == null || size == null) {
                 return ResponseDto.<Page<OrderProductsDto>>builder()
-                        .code(ResponseCode.NULL_VALUE)
+                        .code(NULL_VALUE)
                         .message("Page or size is null")
                         .build();
             }
@@ -138,7 +139,7 @@ public class OrderProductsServiceImpl implements OrderProductsService {
                     .map(orderProductsMapper::toDto);
 
             return ResponseDto.<Page<OrderProductsDto>>builder()
-                    .code(ResponseCode.OK)
+                    .code(OK)
                     .success(true)
                     .message(bundle.getString("response.success"))
                     .responseData(productDtoList)
@@ -148,7 +149,7 @@ public class OrderProductsServiceImpl implements OrderProductsService {
             log.error(e.getMessage());
 
             return ResponseDto.<Page<OrderProductsDto>>builder()
-                    .code(ResponseCode.SERVER_ERROR)
+                    .code(SERVER_ERROR)
                     .message(bundle.getString("response.failed") + " : " + e.getMessage())
                     .success(false)
                     .build();
@@ -166,13 +167,13 @@ public class OrderProductsServiceImpl implements OrderProductsService {
                 orderProductsRepository.save(orderProducts);
 
                 return ResponseDto.builder()
-                        .code(ResponseCode.OK)
+                        .code(OK)
                         .message(bundle.getString("response.success"))
                         .success(true)
                         .build();
             }
             return ResponseDto.builder()
-                    .code(ResponseCode.NOT_FOUND)
+                    .code(NOT_FOUND)
                     .message(bundle.getString("response.not_found"))
                     .success(false)
                     .build();
@@ -196,7 +197,7 @@ public class OrderProductsServiceImpl implements OrderProductsService {
                 orderProductsRepository.deleteById(id);
 
                 return ResponseDto.builder()
-                        .code(ResponseCode.OK)
+                        .code(OK)
                         .message(bundle.getString("response.success"))
                         .success(true)
                         .build();
@@ -227,7 +228,7 @@ public class OrderProductsServiceImpl implements OrderProductsService {
                 orderProductsRepository.deleteByOrderId(orderId);
 
                 return ResponseDto.builder()
-                        .code(ResponseCode.OK)
+                        .code(OK)
                         .message(bundle.getString("response.deleted"))
                         .success(true)
                         .build();
@@ -256,7 +257,7 @@ public class OrderProductsServiceImpl implements OrderProductsService {
             orderProductsRepository.deleteByProductIdAndOrderId(productId, orderId);
 
             return ResponseDto.builder()
-                    .code(ResponseCode.OK)
+                    .code(OK)
                     .message(bundle.getString("response.deleted"))
                     .success(true)
                     .build();
@@ -326,7 +327,7 @@ public class OrderProductsServiceImpl implements OrderProductsService {
 
             HashMap<Integer, Double> map = hashMapResponse(1);
             return ResponseDto.<HashMap<Integer, Double>>builder()
-                    .code(ResponseCode.OK)
+                    .code(OK)
                     .success(true)
                     .responseData(map)
                     .message(bundle.getString("response.success"))
@@ -335,7 +336,7 @@ public class OrderProductsServiceImpl implements OrderProductsService {
             log.error(e.getMessage());
 
             return ResponseDto.<HashMap<Integer, Double>>builder()
-                    .code(ResponseCode.SERVER_ERROR)
+                    .code(SERVER_ERROR)
                     .message(bundle.getString("response.failed") + " : " + e.getMessage())
                     .success(false)
                     .build();
@@ -349,7 +350,7 @@ public class OrderProductsServiceImpl implements OrderProductsService {
 
             HashMap<Integer, Double> map = hashMapResponse(3);
             return ResponseDto.<HashMap<Integer, Double>>builder()
-                    .code(ResponseCode.OK)
+                    .code(OK)
                     .success(true)
                     .responseData(map)
                     .message(bundle.getString("response.success"))
@@ -357,7 +358,7 @@ public class OrderProductsServiceImpl implements OrderProductsService {
         }catch (Exception e){
             log.error(e.getMessage());
             return ResponseDto.<HashMap<Integer, Double>>builder()
-                    .code(ResponseCode.SERVER_ERROR)
+                    .code(SERVER_ERROR)
                     .message(bundle.getString("response.failed") + " : " + e.getMessage())
                     .success(false)
                     .build();
@@ -387,7 +388,7 @@ public class OrderProductsServiceImpl implements OrderProductsService {
         }catch (Exception e){
             log.error(e.getMessage());
             return ResponseDto.<Page<OrderProductsDto>>builder()
-                    .code(ResponseCode.SERVER_ERROR)
+                    .code(SERVER_ERROR)
                     .message(bundle.getString("response.failed") + " : " + e.getMessage())
                     .success(false)
                     .build();
