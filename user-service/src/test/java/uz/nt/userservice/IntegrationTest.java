@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -23,14 +24,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 //@AutoConfigureMockMvc
 //@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class IntegrationTest {
-//    @Autowired
+    @Autowired
     private MockMvc mockMvc;
     private String token;
     private String username = "fotima";
     private String password = "Aa12345";
 
-//    @Order(0)
-//    @Test
+    @Order(0)
+    @Test
     public void addUser() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         UserDto userDto = new UserDto();
@@ -61,8 +62,8 @@ public class IntegrationTest {
         Assertions.assertNotNull(responseDto.getResponseData());
     }
 
-//    @Order(1)
-//    @Test
+    @Order(1)
+    @Test
     public void getToken() throws Exception {
         LoginDto loginDto = new LoginDto(username,password);
 
@@ -89,8 +90,8 @@ public class IntegrationTest {
         token = responseDto.getResponseData().getToken();
     }
 
-//    @Order(3)
-//    @Test
+    @Order(3)
+    @Test
     public void deleteUser() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/user/delete")
                 .param("username",username).header("Authorization","Bearer ".concat(token));
