@@ -22,9 +22,8 @@
     <module>delivery-service</module>
     <module>shared-libs</module>
     <module>gmail-service</module>
-    <module>discovery-server</module>
+    <module>discovery-server-eureka</module>
     <module>cloud-config-server</module>
-<!--    <module>delivery-service</module>-->
   </modules>
 
   <dependencies>

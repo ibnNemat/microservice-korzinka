@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("card-type")
+@RequestMapping("/card-type")
 public class CardTypeController implements CardTypeService {
     private final CardTypeServiceImpl cardTypeService;
 

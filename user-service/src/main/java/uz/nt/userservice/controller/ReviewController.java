@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import shared.libs.dto.ResponseDto;
 import uz.nt.userservice.dto.ReviewDto;
-import uz.nt.userservice.entity.Review;
+
 import uz.nt.userservice.service.ReviewService;
 
 import javax.validation.Valid;
@@ -22,7 +22,7 @@ public class ReviewController {
         return service.getAll();
     }
     @GetMapping("{id}")
-    public ResponseDto<Review> getById(@PathVariable Integer id) {
+    public ResponseDto<ReviewDto> getById(@PathVariable Integer id) {
         return service.getById(id);
     }
 }
