@@ -7,6 +7,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import shared.libs.dto.OrderedProductsDetail;
 import shared.libs.dto.ProductDto;
+import shared.libs.dto.ProductServiceExchangeDto;
 import shared.libs.dto.ResponseDto;
 import uz.nt.productservice.dto.ProductSearchDto;
 import uz.nt.productservice.service.impl.ProductServiceImpl;
@@ -89,5 +90,10 @@ public class ProductController {
     @PostMapping("/rollback-product-amount")
     public void rollback(@RequestBody List<OrderedProductsDetail> orderedProducts){
         productService.rollbackProductsAmount(orderedProducts);
+    }
+
+    @GetMapping("check")
+    public ProductServiceExchangeDto check(){
+        return new ProductServiceExchangeDto("text", System.getProperty("server.port"));
     }
 }

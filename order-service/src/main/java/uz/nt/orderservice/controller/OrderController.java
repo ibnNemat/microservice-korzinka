@@ -2,7 +2,9 @@ package uz.nt.orderservice.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import shared.libs.dto.ProductServiceExchangeDto;
 import shared.libs.dto.ResponseDto;
+import uz.nt.orderservice.client.ProductClient;
 import uz.nt.orderservice.dto.OrderDto;
 
 
@@ -19,6 +21,8 @@ import java.util.List;
 @RequestMapping("/orders")
 public class OrderController {
     private final OrderService orderService;
+    private final ProductClient productClient;
+
     @GetMapping("/by-page")
     public ResponseDto<Page<OrderDto>> getAllOrdersByPage(@RequestParam Integer page,
                                                           @RequestParam Integer size) throws NoSuchMethodException {
@@ -58,4 +62,8 @@ public class OrderController {
         return orderService.getAllUsersOrderProductsIsPayedFalse();
     }
 
+    @GetMapping("check")
+    public ProductServiceExchangeDto check(){
+        return productClient.check();
+    }
 }

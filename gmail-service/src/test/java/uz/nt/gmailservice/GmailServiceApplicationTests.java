@@ -1,13 +1,13 @@
-//package uz.nt.gmailservice;
-//
-//import org.junit.jupiter.api.Test;
-//import org.springframework.boot.test.context.SpringBootTest;
-//
+package uz.nt.gmailservice;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
 //@SpringBootTest
-//class GmailServiceApplicationTests {
-//
+class GmailServiceApplicationTests {
+
 //    @Test
-//    void contextLoads() {
-//    }
-//
-//}
+    void contextLoads() {
+    }
+
+}

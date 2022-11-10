@@ -2,15 +2,16 @@ package uz.nt.orderservice.scheduled;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import shared.libs.dto.UserDto;
 import uz.nt.orderservice.client.ProductClient;
 import uz.nt.orderservice.entity.OrderedProductsRedis;
 import uz.nt.orderservice.repository.OrderRepository;
 import uz.nt.orderservice.repository.OrderedProductsRedisRepository;
 
-import java.util.*;
+import java.util.Date;
+import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @Component
 @RequiredArgsConstructor
@@ -38,7 +39,7 @@ public class TimerTaskOrderedProducts {
                             OrderedProductsRedis orderedProductsRedis = optionalRedis.get();
                             // TODO: Sardor ProductControllerda shunaqa endPoint
                             //  ochib productAmountni qaytatib olishi kerak
-                            productClient.addProductAmountBackWard(orderedProductsRedis.getOrderedProductsList());
+//                            productClient.addProductAmountBackWard(orderedProductsRedis.getOrderedProductsList());
                             redis.deleteById(orderId);
                         }
                     }

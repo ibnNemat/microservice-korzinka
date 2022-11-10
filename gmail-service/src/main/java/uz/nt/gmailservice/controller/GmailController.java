@@ -9,23 +9,23 @@ import shared.libs.dto.ResponseDto;
 import uz.nt.gmailservice.service.impl.GmailServiceImpl;
 
 import javax.mail.MessagingException;
-import java.util.Objects;
 
 @RequiredArgsConstructor
 @RestController
 public class GmailController {
     private final GmailServiceImpl gmailService;
     @GetMapping("sent")
-    public ResponseDto gg(@RequestParam String... gmail) throws MessagingException {
+    public ResponseDto gg(@RequestParam String gmail) throws MessagingException {
       return gmailService.sentToGmail(gmail);
     }
 
-    @PostMapping("gmail-verify")
-    public  ResponseDto verifyGmail(@RequestParam String gmail,Integer code){
-        return gmailService.checkGmailCode(gmail,code);
+    @PostMapping("send-verify-code")
+    public ResponseDto sendToGmailVerificationCode(@RequestParam String gmail, @RequestParam Integer code) throws MessagingException {
+        return gmailService.sendVerificationCodeToGmail(gmail, code);
     }
-    @GetMapping("like")
-    public void sendProductsSales(){
-        gmailService.SendDiscountProductToUser();
+
+    @PostMapping("gmail-verify")
+    public ResponseDto verifyGmail(@RequestParam String gmail, @RequestParam Integer code){
+        return gmailService.checkGmailCode(gmail,code);
     }
 }

@@ -1,13 +1,10 @@
-//package uz.nt.productservice;
-//
-//import org.junit.jupiter.api.Test;
-//import org.springframework.boot.test.context.SpringBootTest;
-//
+package uz.nt.productservice;
+
 //@SpringBootTest
-//class ProductServiceApplicationTests {
-//
-////    @Test
-////    void contextLoads() {
-////    }
-//
-//}
+class ProductServiceApplicationTests {
+
+//    @Test
+//    void contextLoads() {
+//    }
+
+}

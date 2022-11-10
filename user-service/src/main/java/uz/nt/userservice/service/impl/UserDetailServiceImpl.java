@@ -9,16 +9,16 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uz.nt.userservice.client.GmailPlaceHolder;
+import uz.nt.userservice.dto.LoginDto;
+import shared.libs.utils.MyDateUtil;
+import shared.libs.dto.UserDto;
 import shared.libs.configuration.Config;
 import shared.libs.dto.JWTResponseDto;
 import shared.libs.dto.ResponseDto;
 import shared.libs.entity.UserSession;
 import shared.libs.repository.UserSessionRepository;
 import shared.libs.security.JwtService;
-import uz.nt.userservice.client.GmailPlaceHolder;
-import uz.nt.userservice.dto.LoginDto;
-import shared.libs.dto.UserDto;
-import shared.libs.utils.MyDateUtil;
 import uz.nt.userservice.entity.BanIp;
 import uz.nt.userservice.entity.CheckAttempt;
 import uz.nt.userservice.entity.User;
@@ -64,6 +64,7 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public ResponseDto<UserDto> addUser(UserDto userDto,HttpServletRequest request) {
+        
         try{
             User user = userMapper.toEntity(userDto);
             user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -211,7 +212,7 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
         Optional<BanIp> optionalBanIp = banIpRepository.findById(request.getRemoteAddr());
         if(optionalBanIp.isEmpty()) {
             Optional<CheckAttempt> optionalCheckAttempt = checkAttemptRepository.findById(request.getRemoteAddr());
-            if(optionalCheckAttempt.isPresent() && optionalCheckAttempt.get().getUserDto().getIncrement() >= 3 && optionalCheckAttempt.get().getUserDto().getCode() != code) {
+            if(optionalCheckAttempt.isPresent() && optionalCheckAttempt.get().getUserDto().getIncrement() >= 3 && !optionalCheckAttempt.get().getUserDto().getCode().equals(code)) {
                 checkAttemptRepository.deleteById(request.getRemoteAddr());
                 banIpRepository.save(new BanIp(request.getRemoteAddr(),optionalCheckAttempt.get().getUserDto()));
                 return ResponseDto.<String>builder()
@@ -219,7 +220,7 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
                         .message("failed")
                         .success(false)
                         .responseData("Verify code is incorrect Your are banned 15 minute").build();
-            } else if(optionalCheckAttempt.isPresent() && optionalCheckAttempt.get().getUserDto().getCode() == code) {
+            } else if(optionalCheckAttempt.isPresent() && optionalCheckAttempt.get().getUserDto().getCode().equals(code)) {
                 UserDto userDto = optionalCheckAttempt.get().getUserDto();
                 userDto.setIsActive(true);
                 userRepository.save(userMapper.toEntity(userDto));

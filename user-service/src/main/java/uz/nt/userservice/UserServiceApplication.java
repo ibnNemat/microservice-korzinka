@@ -12,6 +12,7 @@ import org.springframework.data.repository.RepositoryDefinition;
 @ComponentScan({"shared.libs.security", "uz.nt.userservice.*"})
 @EnableRedisRepositories({"shared.libs", "uz.nt.userservice.*"})
 @EnableFeignClients
+@EnableConfigurationProperties
 public class UserServiceApplication {
 
     public static void main(String[] args) {

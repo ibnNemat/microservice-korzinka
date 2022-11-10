@@ -1,13 +1,10 @@
-//package uz.nt.orderservice;
-//
-//import org.junit.jupiter.api.Test;
-//import org.springframework.boot.test.context.SpringBootTest;
-//
+package uz.nt.orderservice;
+
 //@SpringBootTest
-//class OrderServiceApplicationTests {
-//
-////    @Test
-////    void contextLoads() {
-////    }
-//
-//}
+class OrderServiceApplicationTests {
+
+//    @Test
+//    void contextLoads() {
+//    }
+
+}
