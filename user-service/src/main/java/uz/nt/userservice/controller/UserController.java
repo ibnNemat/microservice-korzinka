@@ -31,8 +31,8 @@ public class UserController {
         return userService.getUserById(id);
     }
     @PostMapping
-    public ResponseDto<UserDto> addUser(@RequestBody UserDto userDto){
-        return userService.addUser(userDto);
+    public ResponseDto<UserDto> addUser(@RequestBody UserDto userDto, HttpServletRequest request){
+        return userService.addUser(userDto, request);
     }
 
     @PutMapping
