@@ -10,9 +10,7 @@ import uz.nt.userservice.service.ReviewService;
 import javax.validation.Valid;
 import java.util.List;
 
-@RestController
-@RequiredArgsConstructor
-@RequestMapping("/review")
+@RestController @RequiredArgsConstructor @RequestMapping("/review")
 public class ReviewController {
     private final ReviewService service;
     @PostMapping

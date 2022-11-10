@@ -28,7 +28,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public ResponseDto<List<ReviewDto>> getAll() {
         List<Review> reviews = repository.findAll();
-        if(reviews.size() != 0) {
+        if (reviews.size() != 0) {
             List<ReviewDto> reviewDtoList = reviews.stream()
                     .map(mapper::toDto)
                     .collect(Collectors.toList());
@@ -45,8 +45,8 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public ResponseDto<ReviewDto> getById(Integer id) {
-        Optional<Review> optionalReview =  repository.findById(id);
-        if(optionalReview.isPresent()) {
+        Optional<Review> optionalReview = repository.findById(id);
+        if (optionalReview.isPresent()) {
             return ResponseDto.<ReviewDto>builder()
                     .code(0)
                     .message("Success")
