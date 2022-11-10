@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import shared.libs.configuration.Config;
 import shared.libs.dto.JWTResponseDto;
 import shared.libs.dto.ResponseDto;
+import shared.libs.entity.UserSession;
+import shared.libs.repository.UserSessionRepository;
 import shared.libs.security.JwtService;
 import uz.nt.userservice.dto.LoginDto;
 import shared.libs.dto.UserDto;
@@ -20,10 +22,7 @@ import uz.nt.userservice.repository.UserRepository;
 import uz.nt.userservice.service.UserService;
 import uz.nt.userservice.service.mapper.UserMapper;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -35,6 +34,8 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
     public static Map<Integer, UserDto> usersMap = new HashMap<>();
     private final PasswordEncoder passwordEncoder = Config.passwordEncoder();
     private final JwtService jwtService;
+
+    private final UserSessionRepository userSessionRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -80,9 +81,10 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
         }
 
         try{
-            usersMap.put(user.getId(), userMapper.toDto(user));
+            UserSession userSession = new UserSession(sysGuid(), userMapper.toDto(user));
+            userSessionRepository.save(userSession);
 
-            String token = jwtService.generateToken(String.valueOf(user.getId()));
+            String token = jwtService.generateToken(userSession.getId());
 
             return ResponseDto.<JWTResponseDto>builder()
                     .code(200)
@@ -153,4 +155,20 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
                 .build();
     }
 
+    @Transactional
+    @Override
+    public void export (HttpServletRequest request, HttpServletResponse response){
+        Stream<User> users = userRepository.findAllByIdLessThan(1_000_000);
+        Stream<UserDto> userDtos = users.map(userMapper::toDto);
+
+        try {
+            excelService.export(userDtos, request, response);
+        } catch (IOException e) {
+            log.error("Excel exprot error " + e.getMessage());
+        }
+    }
+
+    private String sysGuid(){
+        return UUID.randomUUID().toString().replace("-","");
+    }
 }

@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserAuthorityDto {
     private Integer id;
-    private Integer user_id;
-    private Integer authority_id;
+    private Integer userId;
+    private Integer authorityId;
 }

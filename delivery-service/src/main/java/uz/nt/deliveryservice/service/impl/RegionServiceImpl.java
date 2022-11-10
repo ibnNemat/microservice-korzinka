@@ -12,6 +12,7 @@ import shared.libs.dto.ResponseDto;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.ResourceBundle;
 
 @Service
 @Slf4j
@@ -25,13 +26,15 @@ public class RegionServiceImpl implements RegionService {
         try {
             List<Region> regions = regionRepository.findAll();
 
+            ResourceBundle bundle = ResourceBundle.getBundle("lang");
+
             if (regions.isEmpty())
-                return ResponseDto.<List<RegionDto>>builder().code(404).success(false).message("Not found").build();
+                return ResponseDto.<List<RegionDto>>builder().code(404).success(false).message(bundle.getString("res.not_found")).build();
 
             return ResponseDto.<List<RegionDto>>builder()
                     .code(200)
                     .success(true)
-                    .message("Found")
+                    .message(bundle.getString("res.found"))
                     .responseData(regions.stream().map(RegionMap::toDtoWithOutCity).toList())
                     .build();
 
@@ -46,13 +49,15 @@ public class RegionServiceImpl implements RegionService {
         try {
             Optional<Region> region = regionRepository.findById(id);
 
+            ResourceBundle bundle = ResourceBundle.getBundle("lang");
+
             if (region.isEmpty())
-                return ResponseDto.<RegionDto>builder().code(404).success(false).message("Not found").build();
+                return ResponseDto.<RegionDto>builder().code(404).success(false).message(bundle.getString("res.not_found")).build();
 
             return ResponseDto.<RegionDto>builder()
                     .code(200)
                     .success(true)
-                    .message("Found")
+                    .message(bundle.getString("res.found"))
                     .responseData(RegionMap.toDtoWithOutCity(region.get()))
                     .build();
 
@@ -66,11 +71,13 @@ public class RegionServiceImpl implements RegionService {
     public ResponseDto<RegionDto> save(RegionDto regionDto) {
         try {
             Region region = regionRepository.save(RegionMap.toEntity(regionDto));
-            
+
+            ResourceBundle bundle = ResourceBundle.getBundle("lang");
+
             return ResponseDto.<RegionDto>builder()
                     .code(200)
                     .success(true)
-                    .message("Saved")
+                    .message(bundle.getString("res.save"))
                     .responseData(RegionMap.toDtoWithOutCity(region))
                     .build();
 
@@ -83,13 +90,15 @@ public class RegionServiceImpl implements RegionService {
     @Override
     public ResponseDto<RegionDto> update(RegionDto regionDto) {
         try {
+            ResourceBundle bundle = ResourceBundle.getBundle("lang");
+
             if (regionDto.getId() == null || regionDto.getId() < 1 || regionDto.getName() == null || regionDto.getName().equals(""))
-                return ResponseDto.<RegionDto>builder().code(1).success(false).message("Id null or negative number, name null or empty").build();
+                return ResponseDto.<RegionDto>builder().code(1).success(false).message(bundle.getString("res.id_null")).build();
 
             Optional<Region> region = regionRepository.findById(regionDto.getId());
 
             if (region.isEmpty())
-                return ResponseDto.<RegionDto>builder().code(404).success(false).message("Not found").build();
+                return ResponseDto.<RegionDto>builder().code(404).success(false).message(bundle.getString("res.not_found")).build();
 
             Region reg = region.get();
             reg.setName(regionDto.getName());
@@ -98,7 +107,7 @@ public class RegionServiceImpl implements RegionService {
             return ResponseDto.<RegionDto>builder()
                     .code(200)
                     .success(true)
-                    .message("Updated")
+                    .message(bundle.getString("res.update"))
                     .responseData(RegionMap.toDtoWithOutCity(reg))
                     .build();
 
@@ -111,20 +120,22 @@ public class RegionServiceImpl implements RegionService {
     @Override
     public ResponseDto<RegionDto> deleteById(Integer id) {
         try {
+            ResourceBundle bundle = ResourceBundle.getBundle("lang");
+
             if (id == null || id < 1)
-                return ResponseDto.<RegionDto>builder().code(1).success(false).message("Id null or negative number").build();
+                return ResponseDto.<RegionDto>builder().code(1).success(false).message(bundle.getString("res.id_null")).build();
 
             Optional<Region> region = regionRepository.findById(id);
 
             if (region.isEmpty())
-                return ResponseDto.<RegionDto>builder().code(404).success(false).message("Not found").build();
+                return ResponseDto.<RegionDto>builder().code(404).success(false).message(bundle.getString("res.not_found")).build();
 
             regionRepository.deleteById(id);
 
             return ResponseDto.<RegionDto>builder()
                     .code(200)
                     .success(true)
-                    .message("Deleted")
+                    .message(bundle.getString("res.delete"))
                     .responseData(RegionMap.toDtoWithOutCity(region.get()))
                     .build();
 

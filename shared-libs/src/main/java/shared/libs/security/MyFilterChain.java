@@ -6,10 +6,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import shared.libs.dto.UserDto;
 import shared.libs.entity.UserSession;
 import shared.libs.repository.UserSessionRepository;
-import shared.libs.utils.NumberUtil;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -30,12 +28,15 @@ public class MyFilterChain extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")){
             String token = authHeader.substring(7);
             if (jwtService.validateToken(token)){
-                Integer id = NumberUtil.parseToInteger(jwtService.getClaim(token, "sub"));
+                String id = String.valueOf(jwtService.getClaim(token, "sub"));
                 if (id != null){
                     Optional<UserSession> userSessionOptional = userSessionRepository.findById(id);
+
                     userSessionOptional.ifPresent(userSession -> {
-                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                            userSession.getUserDto(), null, userSession.getUserDto().getAuthorities());
+
+                        UsernamePasswordAuthenticationToken authentication =
+                                new UsernamePasswordAuthenticationToken(
+                            userSession.getUserDto(), token, userSession.getUserDto().getAuthorities());
 
                         // This object has requestAddress and sessionId
                         WebAuthenticationDetails details = new WebAuthenticationDetails(request);

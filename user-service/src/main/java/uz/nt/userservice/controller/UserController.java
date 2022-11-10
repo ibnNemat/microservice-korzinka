@@ -1,6 +1,7 @@
 package uz.nt.userservice.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shared.libs.dto.JWTResponseDto;
 import shared.libs.dto.ResponseDto;
@@ -9,6 +10,8 @@ import uz.nt.userservice.dto.LoginDto;
 import uz.nt.userservice.service.UserService;
 import uz.nt.userservice.service.impl.UserDetailServiceImpl;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
@@ -28,7 +31,7 @@ public class UserController {
         return userService.getUserById(id);
     }
     @PostMapping
-    public ResponseDto addUser(@RequestBody UserDto userDto){
+    public ResponseDto<UserDto> addUser(@RequestBody UserDto userDto){
         return userService.addUser(userDto);
     }
 
@@ -38,12 +41,17 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseDto deleteUser(@PathVariable Integer id){
+    public ResponseDto<UserDto> deleteUser(@PathVariable Integer id){
         return userService.deleteUserById(id);
     }
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public ResponseDto<JWTResponseDto> login(@RequestBody LoginDto loginDto){
         return userDetailService.login(loginDto);
+    }
+
+    @GetMapping("/excel")
+    public void export(HttpServletRequest request, HttpServletResponse response){
+        userService.export(request, response);
     }
 }
