@@ -5,8 +5,6 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/discovery-server/pom.xml" />
-        <option value="$PROJECT_DIR$/gmail-service/pom.xml" />
       </list>
     </option>
   </component>

@@ -32,21 +32,21 @@ public class OrderProductRepositoryHelper {
         return productsDetailList;
     }
 
-    @Transactional
-    @Scheduled(cron = "30 45 23 * * *")
-    public void removeAllNonOrderedProducts(){
-        List<Integer> orderIdList = orderRepository.getAllOrdersIdIsPayedFalse();
-
-        if (!orderIdList.isEmpty()) {
-            for (Integer orderId : orderIdList) {
-                List<OrderedProductsDetail> unpaidOrderedProducts = getOrderedProductDetails(orderId);
-                for (OrderedProductsDetail productsDetail : unpaidOrderedProducts) {
-                    productClient.setProductAmount(productsDetail.getAmount(), productsDetail.getProductId());
-                }
-                String stringQuery = "delete from OrderProducts op where op.orderId = " + orderId;
-                Query query = entityManager.createQuery(stringQuery);
-                query.executeUpdate();
-            }
-        }
-    }
+//    @Transactional
+//    @Scheduled(cron = "30 45 23 * * *")
+//    public void removeAllNonOrderedProducts(){
+//        List<Integer> orderIdList = orderRepository.getAllOrdersIdIsPayedFalse();
+//
+//        if (!orderIdList.isEmpty()) {
+//            for (Integer orderId : orderIdList) {
+//                List<OrderedProductsDetail> unpaidOrderedProducts = getOrderedProductDetails(orderId);
+//                for (OrderedProductsDetail productsDetail : unpaidOrderedProducts) {
+//                    productClient.setProductAmount(productsDetail.getAmount(), productsDetail.getProductId());
+//                }
+//                String stringQuery = "delete from OrderProducts op where op.orderId = " + orderId;
+//                Query query = entityManager.createQuery(stringQuery);
+//                query.executeUpdate();
+//            }
+//        }
+//    }
 }
