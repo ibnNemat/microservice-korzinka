@@ -1,4 +1,4 @@
-package shared.libs.dto;
+package shared.libs.response.standart;
 
 public class ResponseCode {
     public static Integer OK = 0;
