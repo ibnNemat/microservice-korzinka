@@ -8,7 +8,7 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 
 @EnableFeignClients
 @SpringBootApplication
-@EnableConfigurationProperties
+//@EnableConfigurationProperties
 @ComponentScan({"shared.libs", "uz.nt.productservice"})
 @EnableRedisRepositories({"shared.libs", "uz.nt.productservice"})
 public class ProductServiceApplication {

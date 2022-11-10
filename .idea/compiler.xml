@@ -12,8 +12,6 @@
         <outputRelativeToContentRoot value="true" />
         <module name="orders-service" />
         <module name="delivery-service" />
-        <module name="orders-service" />
-        <module name="discovery-server" />
         <module name="cloud-config-server" />
         <module name="cashback-service" />
         <module name="product-service" />
@@ -26,7 +24,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="KorzinkaProject" options="" />
+      <module name="KorzinkaProject" options="-parameters" />
       <module name="cashback-service" options="-parameters" />
       <module name="cloud-config-server" options="-parameters" />
       <module name="delivery-service" options="-parameters" />

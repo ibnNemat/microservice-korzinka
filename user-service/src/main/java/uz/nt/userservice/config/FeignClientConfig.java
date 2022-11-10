@@ -15,14 +15,15 @@ public class FeignClientConfig {
         return Logger.Level.FULL;
     }
 
-    public RequestInterceptor interceptor(){
-        return (req) ->{
-          if(SecurityContextHolder.getContext().getAuthentication() != null &&
-              SecurityContextHolder.getContext().getAuthentication().getCredentials() instanceof String token){
-              req.header("Authorization", "Bearer " + token);
-          }
-        };
-    }
+//    @Bean("microservices-interceptor")
+//    public RequestInterceptor interceptor(){
+//        return (req) ->{
+//          if(SecurityContextHolder.getContext().getAuthentication() != null &&
+//              SecurityContextHolder.getContext().getAuthentication().getCredentials() instanceof String token){
+//              req.header("Authorization", "Bearer " + token);
+//          }
+//        };
+//    }
 
 }
 

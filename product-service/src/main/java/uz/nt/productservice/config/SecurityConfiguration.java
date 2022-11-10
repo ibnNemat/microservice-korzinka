@@ -24,6 +24,7 @@ public class SecurityConfiguration {
         http
                 .csrf().disable()
                 .authorizeRequests()
+                .antMatchers("/product/check").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
