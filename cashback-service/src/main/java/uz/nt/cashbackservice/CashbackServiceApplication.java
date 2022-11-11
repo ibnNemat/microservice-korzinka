@@ -13,7 +13,7 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 @EnableConfigurationProperties
 @ComponentScan({"shared.libs.*", "uz.nt.cashbackservice.*"})
 @EnableRedisRepositories({"shared.libs.*", "uz.nt.cashbackservice.*"})
-public class CashbackCardServiceApplication {
+public class CashbackServiceApplication {
     public static void main(String[] args) {
         SpringApplication.run(CashbackServiceApplication.class, args);
     }

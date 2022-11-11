@@ -251,7 +251,7 @@ public class UserDetailServiceImpl implements UserDetailsService, UserService {
     public ResponseDto<String> sendToGmail(UserDto userDto,String IpAddress) {
         Random random = new Random();
         int rand = random.nextInt(1000,9999);
-        ResponseDto<String> responseDto = gmailPlaceHolder.sendToGmailAndGetVerifyCode(userDto.getEmail(),rand);      //send verify code and gmail to gmail-service
+        ResponseDto<String> responseDto = gmailPlaceHolder.sendToGmailAndGetVerifyCode(userDto.getEmail(), rand);      //send verify code and gmail to gmail-service
         if(responseDto.getSuccess()) {
             userDto.setCode(rand);
             userDto.setIncrement(0);
