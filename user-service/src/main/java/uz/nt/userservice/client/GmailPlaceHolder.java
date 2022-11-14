@@ -11,5 +11,5 @@ import uz.nt.userservice.config.GmailClientConfig;
 @FeignClient(url = "http://localhost:8006/gmail-api",name = "gmail-service", configuration = GmailClientConfig.class)
 public interface GmailPlaceHolder {
     @PostMapping("/send-verify-code")
-    ResponseDto<String> sendToGmailAndGetVerifyCode(@RequestParam(value = "gmail") String gmail, @RequestParam Integer code);
+    ResponseDto<String> sendToGmailAndGetVerifyCode(@RequestParam(value = "gmail") String gmail, @RequestParam(value = "code") Integer code);
 }

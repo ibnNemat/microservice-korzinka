@@ -17,6 +17,7 @@
         <module name="discovery-server-eureka" />
         <module name="cashback-service" />
         <module name="product-service" />
+        <module name="gateway-server" />
         <module name="order-service" />
         <module name="user-service" />
         <module name="shared-libs" />
@@ -32,6 +33,7 @@
       <module name="delivery-service" options="-parameters" />
       <module name="discovery-server" options="-parameters" />
       <module name="discovery-server-eureka" options="-parameters" />
+      <module name="gateway-server" options="-parameters" />
       <module name="gmail-service" options="-parameters" />
       <module name="order-service" options="-parameters" />
       <module name="orders-service" options="-parameters" />

@@ -24,6 +24,7 @@
     <module>gmail-service</module>
     <module>discovery-server-eureka</module>
     <module>cloud-config-server</module>
+    <module>gateway-server</module>
 <!--    <module>delivery-service</module>-->
   </modules>
 
