@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import shared.libs.dto.ResponseDto;
 import uz.nt.userservice.config.FeignClientConfig;
 import uz.nt.userservice.config.GmailClientConfig;
-
+//gmail-service
 @FeignClient(url = "http://localhost:8006/gmail-api",name = "gmail-service", configuration = GmailClientConfig.class)
 public interface GmailPlaceHolder {
     @PostMapping("/send-verify-code")
