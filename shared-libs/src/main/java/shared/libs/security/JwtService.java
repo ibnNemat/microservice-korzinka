@@ -18,15 +18,6 @@ public class JwtService {
 
     private final Environment environment;
 
-//    public static JwtService getInstance(){
-//        if (jwtService != null){
-//            return jwtService;
-//        }
-//
-//        jwtService = new JwtService();
-//        return jwtService;
-//    }
-
     @Value("${spring.security.key}")
     private String key;
 
